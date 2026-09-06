@@ -1,0 +1,1656 @@
+[
+  {
+    "id": "small-research-lab",
+    "name": "Small Research Lab",
+    "effects": "Allows you to build Small Research Labs. Research labs are required to carry out research into to designs and advances in a number of field",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 3000,
+      "energy": 3000,
+      "manpower": 1500
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": 300
+    },
+    "requires": {
+      "all": [
+        "small-research-lab"
+      ]
+    }
+  },
+  {
+    "id": "large-research-lab",
+    "name": "Large Research Lab",
+    "effects": "Allows you to build Large Research Labs. Research labs are required to carry out research into to designs and advances in a number of field",
+    "notes": "Allows for an additional Research to be undertaken in each colony turn. This effect stacks",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 4000,
+      "energy": 4000,
+      "manpower": 2500
+    },
+    "income": {
+      "credits": -10000,
+      "rawMats": -300,
+      "energy": -300,
+      "manpower": 500
+    },
+    "requires": {
+      "all": [
+        "large-research-lab"
+      ]
+    }
+  },
+  {
+    "id": "orbital-research-lab",
+    "name": "Orbital Research Lab",
+    "effects": "Allows for the building of Large facilities used for research in Space.",
+    "notes": "Allows for an additional Research to be undertaken in each colony turn. This effect stacks",
+    "cost": {
+      "credits": 75000,
+      "rawMats": 3000,
+      "energy": 3000,
+      "manpower": 2000
+    },
+    "income": {
+      "credits": -12000,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": 600
+    },
+    "requires": {
+      "all": [
+        "orbital-research-facilities"
+      ]
+    }
+  },
+  {
+    "id": "mineral-extractor",
+    "name": "Mineral Extractor",
+    "effects": "Building of Mineral Extractors for the productions of Raw Materials",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": 200,
+      "energy": -100,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "mineral-extractors-research"
+      ]
+    }
+  },
+  {
+    "id": "automated-mining-facilities",
+    "name": "Automated Mining Facilities",
+    "effects": "Can build Automated mining facilities",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 1000,
+      "energy": 1500,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 4000,
+      "rawMats": 400,
+      "energy": -300,
+      "manpower": -10
+    },
+    "requires": {
+      "all": [
+        "automated-mining",
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "fuel-extractors",
+    "name": "Fuel Extractors",
+    "effects": "Can build Fuel Extractors",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": -100,
+      "energy": 200,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "fuel-extractors-research"
+      ]
+    }
+  },
+  {
+    "id": "refinery",
+    "name": "Refinery",
+    "effects": "Can build Refinery Facilities",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 1500,
+      "energy": 1500,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -2000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "mineral-extractors-research",
+        "fuel-extractors-research"
+      ]
+    }
+  },
+  {
+    "id": "gas-cloud-mining-station",
+    "name": "Gas Cloud Mining Station",
+    "effects": "Can build Gas Cloud Mining Stations",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 2000,
+      "energy": 2000,
+      "manpower": 700
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "refinery-research",
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "small-mining-outpost",
+    "name": "Small Mining Outpost",
+    "effects": "Can build Small Mining Outpost",
+    "notes": "can be constructed on planets that have not been colonised and will benefit from planet type bonuses.",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 250
+    },
+    "income": {
+      "credits": -2000,
+      "rawMats": 400,
+      "energy": 200,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "small-mining-outpost"
+      ]
+    }
+  },
+  {
+    "id": "medium-mining-outpost",
+    "name": "Medium Mining Outpost",
+    "effects": "Can build Medium Mining Outpost",
+    "notes": "can be constructed on planets that have not been colonised and will benefit from planet type bonuses.",
+    "cost": {
+      "credits": 150000,
+      "rawMats": 1500,
+      "energy": 1500,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": 600,
+      "energy": 300,
+      "manpower": -300
+    },
+    "requires": {
+      "all": [
+        "medium-mining-outpost"
+      ]
+    }
+  },
+  {
+    "id": "large-mining-outpost",
+    "name": "Large Mining Outpost",
+    "effects": "Can build Large Mining Outpost",
+    "notes": "can be constructed on planets that have not been colonised and will benefit from planet type bonuses.",
+    "cost": {
+      "credits": 250000,
+      "rawMats": 2500,
+      "energy": 2500,
+      "manpower": 1000
+    },
+    "income": {
+      "credits": -10000,
+      "rawMats": 800,
+      "energy": 400,
+      "manpower": -400
+    },
+    "requires": {
+      "all": [
+        "large-mining-outpost"
+      ]
+    }
+  },
+  {
+    "id": "farms",
+    "name": "Farms",
+    "effects": "Can Build Farms",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": -50,
+      "energy": -100,
+      "manpower": 200
+    },
+    "requires": {
+      "all": [
+        "agricultural-farming"
+      ]
+    }
+  },
+  {
+    "id": "automated-farms",
+    "name": "Automated Farms",
+    "effects": "Can Build Automated Farms",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 150,
+      "energy": 250,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": -100,
+      "energy": -300,
+      "manpower": 300
+    },
+    "requires": {
+      "all": [
+        "automated-farming-research",
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "orbital-farms",
+    "name": "Orbital Farms",
+    "effects": "Can buid Orbital Farms",
+    "notes": "Increase Capital Ship Consumables by 1 Month",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 200,
+      "energy": 300,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -100,
+      "energy": -200,
+      "manpower": 300
+    },
+    "requires": {
+      "all": [
+        "hydroponics-bay-research",
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "solid-fuel-power-generator",
+    "name": "Solid Fuel Power Generator",
+    "effects": "Can Build Solid Fuel Power Generator",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 400,
+      "energy": 200,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 2500,
+      "rawMats": -200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "requires": {
+      "all": [
+        "power-generator-solid-fuel"
+      ]
+    }
+  },
+  {
+    "id": "solar-power-generator",
+    "name": "Solar Power Generator",
+    "effects": "Can Build Solar Fuel Power Generator",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 300,
+      "energy": 100,
+      "manpower": 150
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": 0,
+      "energy": 200,
+      "manpower": 200
+    },
+    "requires": {
+      "all": [
+        "power-generator-solid-fuel"
+      ]
+    }
+  },
+  {
+    "id": "wind-power-generator",
+    "name": "Wind Power Generator",
+    "effects": "Can Build Wind Fuel Power Generator",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 100,
+      "manpower": 150
+    },
+    "income": {
+      "credits": 7500,
+      "rawMats": 0,
+      "energy": 200,
+      "manpower": 200
+    },
+    "requires": {
+      "all": [
+        "power-generator-wind"
+      ]
+    }
+  },
+  {
+    "id": "hydroelectric-power-generators",
+    "name": "Hydroelectric Power Generators",
+    "effects": "Can Build Hydroelectric Fuel Power Generator",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 400,
+      "energy": 200,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": -100,
+      "energy": 300,
+      "manpower": 500
+    },
+    "requires": {
+      "all": [
+        "power-generator-hydroelectric"
+      ]
+    }
+  },
+  {
+    "id": "orbital-solar-power-generators",
+    "name": "Orbital Solar Power Generators",
+    "effects": "Can build Orbital and Solar Power Generators",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 400
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": -50,
+      "energy": 400,
+      "manpower": 400
+    },
+    "requires": {
+      "all": [
+        "power-generator-orbital-solar"
+      ]
+    }
+  },
+  {
+    "id": "geothermal-generators",
+    "name": "Geothermal Generators",
+    "effects": "Can Build Geothermal Fuel Power Generator",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 15000,
+      "rawMats": -100,
+      "energy": 500,
+      "manpower": 500
+    },
+    "requires": {
+      "all": [
+        "power-generator-geothermal"
+      ]
+    }
+  },
+  {
+    "id": "system-sensor-net",
+    "name": "System Sensor Net",
+    "effects": "Can produce a System Sensor net",
+    "notes": "Can monitor movement within the star system where this is installed",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 750,
+      "energy": 750,
+      "manpower": 500
+    },
+    "income": {
+      "credits": 2500,
+      "rawMats": -100,
+      "energy": -100,
+      "manpower": 200
+    },
+    "requires": {
+      "all": [
+        "advanced-civic-design"
+      ]
+    }
+  },
+  {
+    "id": "trade-ports",
+    "name": "Trade Ports",
+    "effects": "Can build Trade Ports Facilities",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 500
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -100,
+      "energy": -100,
+      "manpower": 100
+    },
+    "requires": {
+      "all": [
+        "space-station-design",
+        "deep-space-trade"
+      ]
+    }
+  },
+  {
+    "id": "trade-fleets",
+    "name": "Trade Fleets",
+    "effects": "Can build trade fleets linking two Trade Ports",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 750
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": -200,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "huge-cargo-holds"
+      ]
+    }
+  },
+  {
+    "id": "ground-based-hangers",
+    "name": "Ground Based Hangers",
+    "effects": "Can build ground based Fighter Hangers",
+    "notes": "Each Hangar can hold one Wing of Starfighters",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "colonisation-research"
+      ]
+    }
+  },
+  {
+    "id": "proximity-mines",
+    "name": "Proximity Mines",
+    "effects": "Can produce Proximity mines for use in high orbit or space mine fields",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 300,
+      "energy": 500,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "requires": {
+      "all": [
+        "hanger-defense-turrets"
+      ]
+    }
+  },
+  {
+    "id": "planetary-shields",
+    "name": "Planetary Shields",
+    "effects": "Can produce Planetary Shields",
+    "cost": {
+      "credits": 1000000,
+      "rawMats": 2000,
+      "energy": 5000,
+      "manpower": 5000
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": -100,
+      "energy": -1000,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "improved-shield-arrays"
+      ]
+    }
+  },
+  {
+    "id": "overlapping-planetary-shields",
+    "name": "Overlapping Planetary Shields",
+    "effects": "Can Produced Overlapping Planetary Shield Arrays",
+    "cost": {
+      "credits": 1500000,
+      "rawMats": 3000,
+      "energy": 7500,
+      "manpower": 5000
+    },
+    "income": {
+      "credits": -10000,
+      "rawMats": -200,
+      "energy": -2000,
+      "manpower": -400
+    },
+    "requires": {
+      "all": [
+        "planetary-shields"
+      ]
+    }
+  },
+  {
+    "id": "satellite",
+    "name": "Satellite",
+    "effects": "Can build Satellites",
+    "notes": "Extends Communications",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": 0,
+      "energy": 100,
+      "manpower": 0
+    },
+    "requires": {
+      "all": [
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "small-space-station",
+    "name": "Small Space Station",
+    "effects": "Can build Small Space Stations",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 500
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": -100,
+      "energy": 200,
+      "manpower": 100
+    },
+    "requires": {
+      "all": [
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "orbital-hangers",
+    "name": "Orbital Hangers",
+    "effects": "Can build orbital and deep space Fighter Hangers",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": -100,
+      "energy": -100,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "satellite",
+        "hanger-defense"
+      ]
+    }
+  },
+  {
+    "id": "asteroid-mining-stations",
+    "name": "Asteroid Mining Stations",
+    "effects": "Can build Asteroid Mining Stations",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": -300
+    },
+    "requires": {
+      "all": [
+        "asteroid-mining",
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "small-military-stations",
+    "name": "Small Military Stations",
+    "effects": "Can Build Small Military Space Stations",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 1000
+    },
+    "income": {
+      "credits": -10000,
+      "rawMats": -200,
+      "energy": -400,
+      "manpower": -500
+    },
+    "requires": {
+      "all": [
+        "military-space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "small-military-outpost",
+    "name": "Small Military Outpost",
+    "effects": "Can Build Small Military Outpost",
+    "cost": {
+      "credits": 80000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -8000,
+      "rawMats": -200,
+      "energy": -300,
+      "manpower": -400
+    },
+    "requires": {
+      "all": [
+        "hanger-defense"
+      ]
+    }
+  },
+  {
+    "id": "medium-military-outpost",
+    "name": "Medium Military Outpost",
+    "effects": "Can Build Medium Military Outpost",
+    "cost": {
+      "credits": 200000,
+      "rawMats": 800,
+      "energy": 800,
+      "manpower": 1000
+    },
+    "income": {
+      "credits": -20000,
+      "rawMats": -400,
+      "energy": -600,
+      "manpower": -800
+    },
+    "requires": {
+      "all": [
+        "small-military-outpost-research"
+      ]
+    }
+  },
+  {
+    "id": "large-military-outpost",
+    "name": "Large Military Outpost",
+    "effects": "Can Build Large Military Outpost",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 1600,
+      "energy": 1600,
+      "manpower": 2000
+    },
+    "income": {
+      "credits": -40000,
+      "rawMats": -800,
+      "energy": -1200,
+      "manpower": -1000
+    },
+    "requires": {
+      "all": [
+        "medium-military-outpost-research"
+      ]
+    }
+  },
+  {
+    "id": "small-repulsorlift-factory",
+    "name": "Small Repulsorlift Factory",
+    "effects": "Can Build A Small Repulsorlift Factory",
+    "notes": "Can produce 6 Speeder Scale Vehicles per Colony Turn",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -300,
+      "energy": -200,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "small-repulsorlift-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "medium-repulsorlift-factory",
+    "name": "Medium Repulsorlift Factory",
+    "effects": "Can Build A Medium Repulsorlift Factory",
+    "notes": "Can produce 12 Speeder Scale Vehicles Per Colony Turn",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "income": {
+      "credits": 7500,
+      "rawMats": -400,
+      "energy": -300,
+      "manpower": -150
+    },
+    "requires": {
+      "all": [
+        "medium-repulsorlift-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "large-repulsorlift-factory",
+    "name": "Large Repulsorlift Factory",
+    "effects": "Can Build A Large Repulsorlift Factory",
+    "notes": "Can produce 24 Speeder Scale Vehicles Per Colony Turn",
+    "cost": {
+      "credits": 45000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 600
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": -500,
+      "energy": -400,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "large-repulsorlift-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "small-walker-factory",
+    "name": "Small Walker Factory",
+    "effects": "Can Build A Small Walker Factory",
+    "notes": "Can produce 3 Walker Scale Vehicles Per Colony Turn",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "income": {
+      "credits": -2000,
+      "rawMats": -400,
+      "energy": -300,
+      "manpower": -150
+    },
+    "requires": {
+      "all": [
+        "small-walker-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "medium-walker-factory",
+    "name": "Medium Walker Factory",
+    "effects": "Can Build A Medium Walker Factory",
+    "notes": "Can produce 6 Walker Scale Vehicles Per Colony Turn",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -4000,
+      "rawMats": -500,
+      "energy": -400,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "small-walker-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "large-walker-factory",
+    "name": "Large Walker Factory",
+    "effects": "Can Build A Large Walker Factory",
+    "notes": "Can produce 12 Walker Scale Vehicles Per Colony Turn",
+    "cost": {
+      "credits": 120000,
+      "rawMats": 700,
+      "energy": 700,
+      "manpower": 700
+    },
+    "income": {
+      "credits": -6000,
+      "rawMats": -500,
+      "energy": -500,
+      "manpower": -250
+    },
+    "requires": {
+      "all": [
+        "small-walker-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "small-droid-factory",
+    "name": "Small Droid Factory",
+    "effects": "Can Build Small Droid Factory",
+    "notes": "Can produce 50 Droid Units per Colony Turn. Can produce an equal number of Skillware Packages per Colony Turn once unlocked.",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": 100
+    },
+    "requires": {
+      "all": [
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "small-computer-factory",
+    "name": "Small Computer Factory",
+    "effects": "Can Build Small Computer Factory",
+    "notes": "Can Produce 50 Units per Colony Turn",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 1000,
+      "rawMats": -100,
+      "energy": -200,
+      "manpower": 100
+    },
+    "requires": {
+      "all": [
+        "small-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "planet-wide-holonet-network",
+    "name": "Planet Wide Holonet Network",
+    "effects": "Can Build Planet Wide Holonet Network",
+    "notes": "Allows full communications, broadcast and data exchange planet wide",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 200,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": 0,
+      "energy": -200,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "planetwide-holonet"
+      ]
+    }
+  },
+  {
+    "id": "medium-droid-factory",
+    "name": "Medium Droid Factory",
+    "effects": "Can Build Medium Droid Factory",
+    "notes": "Can produce 100 Droid Units per Colony Turn. Can produce an equal number of Skillware Packages per Colony Turn once unlocked.",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": -400,
+      "energy": -300,
+      "manpower": -150
+    },
+    "requires": {
+      "all": [
+        "medium-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "medium-computer-factory",
+    "name": "Medium Computer Factory",
+    "effects": "Can Build Medium Computer Factory",
+    "notes": "Can Produce 100 Units per Colony Turn",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2000,
+      "rawMats": -200,
+      "energy": -300,
+      "manpower": -150
+    },
+    "requires": {
+      "all": [
+        "medium-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "intra-system-holonet-network",
+    "name": "Intra-System Holonet Network",
+    "effects": "Can Build Intra System Holonet Network",
+    "notes": "Allows full communications, broadcast and data exchange throughout system",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 400,
+      "energy": 300,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": 0,
+      "energy": -300,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "intra-systems-holonet"
+      ]
+    }
+  },
+  {
+    "id": "large-droid-factory",
+    "name": "Large Droid Factory",
+    "effects": "Can Build Large Droid Factory",
+    "notes": "Can produce 200 Droid Units per Colony Turn. Can produce an equal number of Skillware Packages per Colony Turn once unlocked.",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 400
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -500,
+      "energy": -400,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "large-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "large-computer-factory",
+    "name": "Large Computer Factory",
+    "effects": "Can Build Large Computer Factory",
+    "notes": "Can Produce 200 Units per Colony Turn",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 300
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -250,
+      "energy": -350,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "large-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "inter-system-holonet-network",
+    "name": "Inter-System Holonet Network",
+    "effects": "Can Build Inter System Holonet Network",
+    "notes": "Allows full communications, broadcast and data exchange beyond the system as long as the adjoining system has an Intra-system Network.",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 500,
+      "energy": 400,
+      "manpower": 400
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": 0,
+      "energy": -400,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "inter-systems-holonet"
+      ]
+    }
+  },
+  {
+    "id": "super-computer",
+    "name": "Super Computer",
+    "effects": "Can build Super Computer",
+    "notes": "Can Construct a Super Computer which assists with Civic Governance and Research (see additional rules under colony rules)",
+    "cost": {
+      "credits": 1000000,
+      "rawMats": 2500,
+      "energy": 2500,
+      "manpower": 5000
+    },
+    "income": {
+      "credits": -50000,
+      "rawMats": 0,
+      "energy": -1000,
+      "manpower": -100
+    },
+    "requires": {
+      "all": [
+        "super-computer-research"
+      ]
+    }
+  },
+  {
+    "id": "ship-board-ai",
+    "name": "Ship Board AI",
+    "effects": "Can build Ship Board AI",
+    "notes": "Can construct an AI to be installed on a Capital Ship (see additional rules under colony rules)",
+    "cost": {
+      "credits": 1000000,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 400
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": 0,
+      "energy": -100,
+      "manpower": -50
+    },
+    "requires": {
+      "all": [
+        "ship-board-ai"
+      ]
+    }
+  },
+  {
+    "id": "ai-holoprojector",
+    "name": "AI Holoprojector",
+    "effects": "Can Build Holoprojection Systems",
+    "notes": "Can install a Holographic projection system throughout a Capital Ship with an AI providing the AI with a Holographic Image that they can project anywhere within the ship.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": -50,
+      "manpower": 0
+    },
+    "requires": {
+      "all": [
+        "holographic-projector-systems"
+      ]
+    }
+  },
+  {
+    "id": "small-weapons-manufacturing-plant",
+    "name": "Small Weapons Manufacturing Plant",
+    "effects": "Can build Small Weapons Manufacturing Plant",
+    "notes": "Allows the production of 100 units per Colony Turn",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2500,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "small-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "medium-weapons-manufacturing-plant",
+    "name": "Medium Weapons Manufacturing Plant",
+    "effects": "Can build Medium Weapons Manufacturing Plant",
+    "notes": "Allows the production of 500 units per Colony Turn",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 400
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -400,
+      "energy": -400,
+      "manpower": -300
+    },
+    "requires": {
+      "all": [
+        "medium-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "large-weapons-manufacturing-plant",
+    "name": "Large Weapons Manufacturing Plant",
+    "effects": "Can build Large Weapons Manufacturing Plant",
+    "notes": "Allows the production of 1000 units per Colony Turn",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 1200,
+      "energy": 1200,
+      "manpower": 800
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": -800,
+      "energy": -800,
+      "manpower": -400
+    },
+    "requires": {
+      "all": [
+        "large-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "small-starfighter-factory",
+    "name": "Small Starfighter Factory",
+    "effects": "Can Build Small Starfighter Factory",
+    "notes": "Allows the production of 6 Starfighters or 3 Light Freighters or 1 Medium Freighter per Colony Turn",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 300
+    },
+    "income": {
+      "credits": -1000,
+      "rawMats": -300,
+      "energy": -300,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "medium-starfighter-factory",
+    "name": "Medium Starfighter Factory",
+    "effects": "Can Build Medium Starfighter Factory",
+    "notes": "Allows the production of 12 Starfighters or 6 Light Freighters, 2 Medium Freighter or 1 Light Transport per Colony Turn",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 400
+    },
+    "income": {
+      "credits": -2000,
+      "rawMats": -400,
+      "energy": -400,
+      "manpower": -300
+    },
+    "requires": {
+      "all": [
+        "medium-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "large-starfighter-factory",
+    "name": "Large Starfighter Factory",
+    "effects": "Can Build Large Starfighter Factory",
+    "notes": "Allows the production of 24 Starfighters or 12 Light Freighters, 4 Medium Freighter or 2 Light Transport per Colony Turn",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 800,
+      "energy": 800,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -3000,
+      "rawMats": -500,
+      "energy": -500,
+      "manpower": -500
+    },
+    "requires": {
+      "all": [
+        "large-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "small-capital-ship-dock",
+    "name": "Small Capital Ship Dock",
+    "effects": "Can Build Small Capital Ship Dock",
+    "notes": "Allows the Production of 1 Capital Ship of 200m or less per Colony Turn",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "income": {
+      "credits": -4000,
+      "rawMats": -600,
+      "energy": -600,
+      "manpower": -600
+    },
+    "requires": {
+      "all": [
+        "small-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "medium-capital-ship-dock",
+    "name": "Medium Capital Ship Dock",
+    "effects": "Can Build Medium Capital Ship Dock",
+    "notes": "Allows the Production of 1 Capital Ship of less than 600m per 3 Colony Turns",
+    "cost": {
+      "credits": 80000,
+      "rawMats": 800,
+      "energy": 800,
+      "manpower": 800
+    },
+    "income": {
+      "credits": -5000,
+      "rawMats": -700,
+      "energy": -700,
+      "manpower": -700
+    },
+    "requires": {
+      "all": [
+        "medium-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "large-capital-ship-dock",
+    "name": "Large Capital Ship Dock",
+    "effects": "Can Build Large Capital Ship Dock",
+    "notes": "Allows the Production of 1 Capital Ship of greater than 600m per 6 Colony Turns",
+    "cost": {
+      "credits": 120000,
+      "rawMats": 1200,
+      "energy": 1200,
+      "manpower": 1200
+    },
+    "income": {
+      "credits": -6000,
+      "rawMats": -800,
+      "energy": -800,
+      "manpower": -800
+    },
+    "requires": {
+      "all": [
+        "large-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "orbital-ship-yards-facilities",
+    "name": "Orbital Ship Yards Facilities",
+    "effects": "Can Build Orbital Ship Yards Facilities",
+    "notes": "Allows the Construction of upto 3 Capital Scale ships (per Turn for less than 200m, per 3 Turns for upto 600m and per 6 Turns for greater than 600m) and 36 Starfighters per turn.",
+    "cost": {
+      "credits": 200000,
+      "rawMats": 1500,
+      "energy": 1500,
+      "manpower": 1500
+    },
+    "income": {
+      "credits": -10000,
+      "rawMats": -1000,
+      "energy": -1000,
+      "manpower": -1000
+    },
+    "requires": {
+      "all": [
+        "orbital-ship-yards"
+      ]
+    }
+  },
+  {
+    "id": "military-boot-camp",
+    "name": "Military Boot Camp",
+    "effects": "Can Buid MIlitary Boot Camps",
+    "notes": "Each Military Boot Camp can train 100 Soldiers or Naval Crew per month",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "income": {
+      "credits": -1000,
+      "rawMats": -100,
+      "energy": -200,
+      "manpower": -50
+    },
+    "requires": {
+      "all": [
+        "basic-training"
+      ]
+    }
+  },
+  {
+    "id": "asteroid-mining-barges",
+    "name": "Asteroid Mining Barges",
+    "effects": "Can construct Asteroid Mining Barges",
+    "notes": "Quantities made depends on the Colony Factory capacity. Incomes are per ship produced",
+    "cost": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 30,
+      "energy": -10,
+      "manpower": -10
+    },
+    "requires": {
+      "all": [
+        "asteroid-mining-ship"
+      ],
+      "note": "Also requires a Starfighter Factory."
+    }
+  },
+  {
+    "id": "small-fabrication-factory",
+    "name": "Small Fabrication Factory",
+    "effects": "Can build Small Fabrication Factory",
+    "notes": "Allows the production of 100 units per Colony Turn",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "income": {
+      "credits": 2500,
+      "rawMats": -200,
+      "energy": -200,
+      "manpower": -200
+    },
+    "requires": {
+      "all": [
+        "small-fabrication-facility"
+      ]
+    }
+  },
+  {
+    "id": "medium-fabrication-factory",
+    "name": "Medium Fabrication Factory",
+    "effects": "Can build Medium Fabrication Factory",
+    "notes": "Allows the production of 500 units per Colony Turn",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 400
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -400,
+      "energy": -400,
+      "manpower": -300
+    },
+    "requires": {
+      "all": [
+        "small-fabrication-facility"
+      ]
+    }
+  },
+  {
+    "id": "large-fabrication-factory",
+    "name": "Large Fabrication Factory",
+    "effects": "Can build Large Fabrication Factory",
+    "notes": "Allows the production of 1000 units per Colony Turn",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 1200,
+      "energy": 1200,
+      "manpower": 800
+    },
+    "income": {
+      "credits": 10000,
+      "rawMats": -800,
+      "energy": -800,
+      "manpower": -400
+    },
+    "requires": {
+      "all": [
+        "small-fabrication-facility"
+      ]
+    }
+  },
+  {
+    "id": "mining-barges-speeder-scale",
+    "name": "Mining Barges (Speeder Scale)",
+    "effects": "Can travel and mine resources outside of established facilities",
+    "notes": "Can be produced in appropriate facilities with necessary Blueprints",
+    "cost": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 5,
+      "energy": -1,
+      "manpower": -1
+    },
+    "requires": {
+      "note": "Produced in a Repulsorlift Factory with the necessary blueprints."
+    }
+  },
+  {
+    "id": "mining-barges-walker-scale",
+    "name": "Mining Barges (Walker Scale)",
+    "effects": "Can travel and mine resources outside of established facilities",
+    "notes": "Can be produced in appropriate facilities with necessary Blueprints",
+    "cost": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 15,
+      "energy": -5,
+      "manpower": -5
+    },
+    "requires": {
+      "note": "Produced in a Walker Factory with the necessary blueprints."
+    }
+  },
+  {
+    "id": "mining-barges-starfighter-scale",
+    "name": "Mining Barges (Starfighter Scale)",
+    "effects": "Can travel and mine resources outside of established facilities",
+    "notes": "Can be produced in appropriate facilities with necessary Blueprints",
+    "cost": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 30,
+      "energy": -10,
+      "manpower": -10
+    },
+    "requires": {
+      "note": "Produced in a Starfighter Factory with the necessary blueprints."
+    }
+  },
+  {
+    "id": "mining-barges-capital-scale",
+    "name": "Mining Barges (Capital Scale)",
+    "effects": "Can travel and mine resources outside of established facilities",
+    "notes": "Can be produced in appropriate facilities with necessary Blueprints",
+    "cost": {
+      "credits": 0,
+      "rawMats": 0,
+      "energy": 0,
+      "manpower": 0
+    },
+    "income": {
+      "credits": 0,
+      "rawMats": 150,
+      "energy": -50,
+      "manpower": -50
+    },
+    "requires": {
+      "note": "Produced in a Capital Ship Dock with the necessary blueprints."
+    }
+  },
+  {
+    "id": "embassy",
+    "name": "Embassy",
+    "effects": "Allows for Diplomatic outpost on another planet",
+    "notes": "Real time news and negotiation with other planet.",
+    "cost": {
+      "credits": 75000,
+      "rawMats": 1500,
+      "energy": 2000,
+      "manpower": 1200
+    },
+    "income": {
+      "credits": 5000,
+      "rawMats": -10,
+      "energy": 0,
+      "manpower": -50
+    },
+    "requires": {
+      "all": [
+        "embassies"
+      ]
+    }
+  }
+]

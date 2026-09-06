@@ -1,0 +1,3846 @@
+[
+  {
+    "id": "higher-education",
+    "name": "Higher Education",
+    "field": "Research",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Unlocks Tier 2 Advances and Civics Tech Tree",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 1500,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "prereq": {}
+  },
+  {
+    "id": "r-and-d-program",
+    "name": "R&D Program",
+    "field": "Research",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Unlocks Tier 3 Advances",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 2000,
+      "energy": 3000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "reverse-engineering",
+    "name": "Reverse Engineering",
+    "field": "Research",
+    "tier": 2,
+    "effects": "Allows for equipment manufactured by others to be researched and copied so as to be produced at the colony. Producing the item can only be done if you have the appropriate Production Capability",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 3000,
+      "energy": 3000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "military-theory",
+    "name": "Military Theory",
+    "field": "Research",
+    "tier": 2,
+    "effects": "Unlocks the Military Tech Tree",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "governmental-systems",
+    "name": "Governmental Systems",
+    "field": "Research",
+    "tier": 2,
+    "effects": "Unlocks the Government Tech Tree and Diplomacy",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "small-research-lab",
+    "name": "Small Research Lab",
+    "field": "Research",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Unlocks Tier 4 and The ability to Build Small Research Labs",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "modular-architecture",
+    "name": "Modular Architecture",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Reduces Construction Costs for buildings by 10%",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 250,
+      "energy": 250,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "space-ship-design-research",
+    "name": "Space Ship Design Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Starship Tech Tree",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "weapons-design",
+    "name": "Weapons Design",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Weapon Tech Tree",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "agricultural-research",
+    "name": "Agricultural Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Agricultural Tech Tree",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "mining-and-refining-research",
+    "name": "Mining and Refining Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Mining and Refining Tech Tree",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "economics-research",
+    "name": "Economics Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Commerce Tech Tree",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "repulsorlift-design-research",
+    "name": "Repulsorlift Design Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Repulsorlift Tech Tree",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "droid-and-computer-research",
+    "name": "Droid and Computer Research",
+    "field": "Research",
+    "tier": 3,
+    "effects": "Unlocks the Droid and Computer Tech Tree",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program"
+      ]
+    }
+  },
+  {
+    "id": "recycling-programs",
+    "name": "Recycling Programs",
+    "field": "Research",
+    "tier": 4,
+    "effects": "Allows for the recycling of equipment for a return of resources. You must be in posession of at least one facility that produces the type of item being recycled. Use the following Rates:",
+    "notes": "Character Scale = Raw Mat 1 Droid = Raw Mat 3 Speeder = Raw Mat 5 Walker = Raw Mat 10 Starfighter = Raw Mat 50, Energy 50 Capital = Ruled case by case",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "r-and-d-program",
+        "reverse-engineering"
+      ]
+    }
+  },
+  {
+    "id": "large-research-lab",
+    "name": "Large Research Lab",
+    "field": "Research",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Unlocks Large Research Lab Construction Option and Tier 5",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 2000,
+      "energy": 2000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "small-research-lab"
+      ]
+    }
+  },
+  {
+    "id": "computer-assisted-research",
+    "name": "Computer Assisted Research",
+    "field": "Research",
+    "tier": 4,
+    "effects": "Allows for an additional reasearch to be carried out each Colony Turn.",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "large-research-lab",
+        "droid-and-computer-research"
+      ]
+    }
+  },
+  {
+    "id": "space-station-design",
+    "name": "Space Station Design",
+    "field": "Research",
+    "tier": 4,
+    "effects": "Unlocks Space Station Tech Tree",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 2500,
+      "energy": 2500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "large-research-lab",
+        "space-ship-design-research"
+      ]
+    }
+  },
+  {
+    "id": "interstellar-economics",
+    "name": "Interstellar Economics",
+    "field": "Research",
+    "tier": 4,
+    "effects": "Unlocks Diplomacy Tech Tree",
+    "cost": {
+      "credits": 45000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "large-research-lab",
+        "economics-research"
+      ]
+    }
+  },
+  {
+    "id": "orbital-research-facilities",
+    "name": "Orbital Research Facilities",
+    "field": "Research",
+    "tier": 5,
+    "effects": "Unlocks Orbital Research Facilities as a construction option",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "large-research-lab",
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "colonisation-research",
+    "name": "Colonisation Research",
+    "field": "Research",
+    "tier": 5,
+    "effects": "Unlocks Colonisation Tech Tree and Planetary Defense",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "large-research-lab"
+      ]
+    }
+  },
+  {
+    "id": "infrastructure-research",
+    "name": "Infrastructure Research",
+    "field": "Research",
+    "tier": 1,
+    "effects": "Unlocks Infrastructure Tech Tree",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {}
+  },
+  {
+    "id": "basic-training",
+    "name": "Basic Training",
+    "field": "Military",
+    "tier": 1,
+    "effects": "Allows for members of the Population to be trained for service in the military forces of a colony. Unlocks Boot Camp on the Construction Tree.",
+    "notes": "Military Personal are rated using the Average Rebel skill Range",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 500,
+      "energy": 1000,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "military-theory"
+      ]
+    }
+  },
+  {
+    "id": "militia",
+    "name": "Militia",
+    "field": "Military",
+    "tier": 1,
+    "effects": "In emergencies 20% of the planets population may be immediately drafted into service",
+    "notes": "Militia are treated as Recruit Rebels skill range",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 500,
+      "energy": 1000,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "military-theory"
+      ]
+    }
+  },
+  {
+    "id": "military-academy",
+    "name": "Military Academy",
+    "field": "Military",
+    "tier": 2,
+    "effects": "Improved levels of training for Officers and Non-Comms",
+    "notes": "Military Personal are rated using the Veteran Rebel skill Range",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 1000,
+      "energy": 1500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "basic-training"
+      ]
+    }
+  },
+  {
+    "id": "army-academy",
+    "name": "Army Academy",
+    "field": "Military",
+    "tier": 3,
+    "effects": "Dedicated Army Officer Training",
+    "notes": "Army Officers receive +1D Command",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 1500,
+      "energy": 2000,
+      "manpower": 750
+    },
+    "prereq": {
+      "all": [
+        "military-academy"
+      ]
+    }
+  },
+  {
+    "id": "naval-academy",
+    "name": "Naval Academy",
+    "field": "Military",
+    "tier": 3,
+    "effects": "Dedicated Navy Officer Training",
+    "notes": "Navy Officers receive +1D Command",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 1500,
+      "energy": 2000,
+      "manpower": 750
+    },
+    "prereq": {
+      "all": [
+        "military-academy"
+      ]
+    }
+  },
+  {
+    "id": "starfighter-command",
+    "name": "Starfighter Command",
+    "field": "Military",
+    "tier": 3,
+    "effects": "Dedicated Starfighter Officer Training",
+    "notes": "Starfighter Officers receive +1D Command",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 1500,
+      "energy": 2000,
+      "manpower": 750
+    },
+    "prereq": {
+      "all": [
+        "military-academy"
+      ]
+    }
+  },
+  {
+    "id": "advanced-officer-training",
+    "name": "Advanced Officer Training",
+    "field": "Military",
+    "tier": 4,
+    "effects": "Advanced Officer Training",
+    "notes": "Officers receive an addition +1D Command and a Tactics Skill of 4D",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 2000,
+      "energy": 3000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "any": [
+        "army-academy",
+        "naval-academy",
+        "starfighter-command"
+      ]
+    }
+  },
+  {
+    "id": "advanced-tactical-training",
+    "name": "Advanced Tactical Training",
+    "field": "Military",
+    "tier": 5,
+    "effects": "Advanced Tactical Training",
+    "notes": "Officers Tactical Skill is increased to 5D",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 2000,
+      "energy": 3000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "advanced-officer-training"
+      ]
+    }
+  },
+  {
+    "id": "advanced-mining-techniques",
+    "name": "Advanced Mining Techniques",
+    "field": "Mining",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Unlocks Tier 2",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "mining-and-refining-research"
+      ]
+    }
+  },
+  {
+    "id": "mineral-extractors-research",
+    "name": "Mineral Extractors Research",
+    "field": "Mining",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Unlocks Tier 3 Allows for the Construction of Mineral Extractors",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "advanced-mining-techniques"
+      ]
+    }
+  },
+  {
+    "id": "fuel-mining",
+    "name": "Fuel Mining",
+    "field": "Mining",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Unlocks Tier 3",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 125,
+      "energy": 125,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "advanced-mining-techniques"
+      ]
+    }
+  },
+  {
+    "id": "automated-mining",
+    "name": "Automated Mining",
+    "field": "Mining",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Unlocks Tier 4 and Automated Mining Facilities",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 300,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "mineral-extractors-research",
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "fuel-extractors-research",
+    "name": "Fuel Extractors Research",
+    "field": "Mining",
+    "tier": 3,
+    "effects": "Construction of Fuel Extractors",
+    "cost": {
+      "credits": 12500,
+      "rawMats": 225,
+      "energy": 225,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "fuel-mining"
+      ]
+    }
+  },
+  {
+    "id": "asteroid-mining",
+    "name": "Asteroid Mining",
+    "field": "Mining",
+    "tier": 4,
+    "effects": "Unlocks Asteroid Mining Stations and Ships",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "automated-mining"
+      ]
+    }
+  },
+  {
+    "id": "refinery-research",
+    "name": "Refinery Research",
+    "field": "Mining",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Unlocks Tier 5 and allows for Construction of Refinery",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "mineral-extractors-research",
+        "fuel-extractors-research"
+      ]
+    }
+  },
+  {
+    "id": "gas-cloud-mining-station-research",
+    "name": "Gas Cloud Mining Station Research",
+    "field": "Mining",
+    "tier": 5,
+    "effects": "Can build Gas Cloud Mining Facilities",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "refinery-research",
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "agricultural-farming",
+    "name": "Agricultural Farming",
+    "field": "Agriculture",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Capable of building Farms Unlocks Tier 2",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 50,
+      "energy": 50,
+      "manpower": 50
+    },
+    "prereq": {
+      "all": [
+        "agricultural-research"
+      ]
+    }
+  },
+  {
+    "id": "automated-farming-research",
+    "name": "Automated Farming Research",
+    "field": "Agriculture",
+    "tier": 1,
+    "effects": "Capable of Building Automated Farms",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "agricultural-research",
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "hydroponics-lab-research",
+    "name": "Hydroponics Lab Research",
+    "field": "Agriculture",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Unlocks Tier 3",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "agricultural-farming"
+      ]
+    }
+  },
+  {
+    "id": "hydroponics-bay-research",
+    "name": "Hydroponics Bay Research",
+    "field": "Agriculture",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Unlock Tier 4. Improves Space Vehicle and Station Consumables by 20%",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "hydroponics-lab-research"
+      ]
+    }
+  },
+  {
+    "id": "orbital-farms-research",
+    "name": "Orbital Farms Research",
+    "field": "Agriculture",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Unlocks Tier 5 Capable of Building Orbital Farms",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "hydroponics-bay-research",
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "high-yield-crops-research",
+    "name": "High Yield Crops Research",
+    "field": "Agriculture",
+    "tier": 5,
+    "effects": "Improves Farm resource production by 20%",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 400,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "hydroponics-lab-research"
+      ]
+    }
+  },
+  {
+    "id": "advanced-breeding-programs-research",
+    "name": "Advanced Breeding Programs Research",
+    "field": "Agriculture",
+    "tier": 5,
+    "effects": "Improves Farm Production Rates by 10%",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "agricultural-farming"
+      ]
+    }
+  },
+  {
+    "id": "high-density-zoning",
+    "name": "High Density Zoning",
+    "field": "Colonisation",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Unlocks Tier 2",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "colonisation-research"
+      ]
+    }
+  },
+  {
+    "id": "improved-arid-colonies",
+    "name": "Improved Arid Colonies",
+    "field": "Colonisation",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows for settlement of Arid Worlds and Unlocks Tier 3",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 150,
+      "energy": 150,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "high-density-zoning"
+      ]
+    }
+  },
+  {
+    "id": "small-mining-outpost",
+    "name": "Small Mining Outpost",
+    "field": "Colonisation",
+    "tier": 2,
+    "effects": "Can construct Small Mining Outposts on Planet that you have not colonised",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "high-density-zoning",
+        "mineral-extractors-research"
+      ]
+    }
+  },
+  {
+    "id": "arctic-exploitation",
+    "name": "Arctic Exploitation",
+    "field": "Colonisation",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows for settlement of Arctic Worlds and Unlocks Tier 4",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "improved-arid-colonies"
+      ]
+    }
+  },
+  {
+    "id": "barren-world-colonisation",
+    "name": "Barren World Colonisation",
+    "field": "Colonisation",
+    "tier": 3,
+    "effects": "Allows for the Settlement of Barren Worlds",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "improved-arid-colonies",
+        "life-support-systems"
+      ]
+    }
+  },
+  {
+    "id": "space-colonisation",
+    "name": "Space Colonisation",
+    "field": "Colonisation",
+    "tier": 3,
+    "effects": "Allows for the Settlement of Space Station Based Colonies",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "small-space-station-construction",
+        "life-support-systems"
+      ]
+    }
+  },
+  {
+    "id": "aquatic-colonies",
+    "name": "Aquatic Colonies",
+    "field": "Colonisation",
+    "tier": 3,
+    "effects": "",
+    "cost": {
+      "credits": 80000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "life-support-systems"
+      ]
+    }
+  },
+  {
+    "id": "medium-mining-outpost",
+    "name": "Medium Mining Outpost",
+    "field": "Colonisation",
+    "tier": 3,
+    "effects": "Can construct Medium Mining Outposts on Planet that you have not colonised",
+    "cost": {
+      "credits": 60000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "small-mining-outpost",
+        "automated-mining"
+      ]
+    }
+  },
+  {
+    "id": "volcanic-exploitation",
+    "name": "Volcanic Exploitation",
+    "field": "Colonisation",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows for settlement of Volcanic Worlds and Unlocks Tier 5",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "arctic-exploitation"
+      ]
+    }
+  },
+  {
+    "id": "terraforming",
+    "name": "Terraforming",
+    "field": "Colonisation",
+    "tier": 4,
+    "effects": "Allows for a Planet whose conditions are only slightly different to Type I to undergo terraforming over the course of a year to make it habitable.",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 1000
+    },
+    "prereq": {}
+  },
+  {
+    "id": "large-mining-outpost",
+    "name": "Large Mining Outpost",
+    "field": "Colonisation",
+    "tier": 4,
+    "effects": "Can construct Large Mining Outposts on Planet that you have not colonised",
+    "cost": {
+      "credits": 160000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "medium-mining-outpost",
+        "refinery-research"
+      ]
+    }
+  },
+  {
+    "id": "advanced-arctic-colonies",
+    "name": "Advanced Arctic Colonies",
+    "field": "Colonisation",
+    "tier": 5,
+    "effects": "Allows for Construction to take place anywhere on the Ice Planet",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "volcanic-exploitation"
+      ]
+    }
+  },
+  {
+    "id": "advanced-terraforming",
+    "name": "Advanced Terraforming",
+    "field": "Colonisation",
+    "tier": 5,
+    "effects": "Allows for a Planet whose conditions are extremely different to Type I to undergo terraforming over the course of a year to make it habitable.",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 2000
+    },
+    "prereq": {}
+  },
+  {
+    "id": "sealed-habitats",
+    "name": "Sealed Habitats",
+    "field": "Colonisation",
+    "tier": 5,
+    "effects": "May construct Mining Ouposts on planets with Hostile or Non Breathable Atmospheres",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "large-mining-outpost"
+      ]
+    }
+  },
+  {
+    "id": "basic-construction",
+    "name": "Basic Construction",
+    "field": "Infrastructure",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Unlocks the Construction Tree and Tier 2",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "infrastructure-research"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-solid-fuel",
+    "name": "Power Generator: Solid Fuel",
+    "field": "Infrastructure",
+    "tier": 1,
+    "effects": "Enables the Building of Solid Fuel Power Generator",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 500,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "infrastructure-research"
+      ]
+    }
+  },
+  {
+    "id": "life-support-systems",
+    "name": "Life Support Systems",
+    "field": "Infrastructure",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows for various life support systems and Unlocks Tier 3",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "basic-construction"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-solar",
+    "name": "Power Generator: Solar",
+    "field": "Infrastructure",
+    "tier": 2,
+    "effects": "Enables Construction of Solar Power Generators",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 400,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "power-generator-solid-fuel"
+      ]
+    }
+  },
+  {
+    "id": "advanced-construction",
+    "name": "Advanced Construction",
+    "field": "Infrastructure",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allow for more impressive building programs to be executed and Unlocks Tier 4",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "life-support-systems"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-wind",
+    "name": "Power Generator: Wind",
+    "field": "Infrastructure",
+    "tier": 3,
+    "effects": "Enables Construction of Wind Power Generators",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "power-generator-solar"
+      ]
+    }
+  },
+  {
+    "id": "advanced-civic-design",
+    "name": "Advanced Civic Design",
+    "field": "Infrastructure",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Unlocks Tier 5",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "advanced-construction"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-hydroelectric",
+    "name": "Power Generator: Hydroelectric",
+    "field": "Infrastructure",
+    "tier": 4,
+    "effects": "Enables Construction of Hydroelectric Power Generators",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "power-generator-wind"
+      ]
+    }
+  },
+  {
+    "id": "systems-sensor-net",
+    "name": "Systems Sensor Net",
+    "field": "Infrastructure",
+    "tier": 5,
+    "effects": "Allows Construction of System Wide Sensor Net",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "advanced-civic-design"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-orbital-solar",
+    "name": "Power Generator: Orbital Solar",
+    "field": "Infrastructure",
+    "tier": 4,
+    "effects": "Allows for Construction of Power Generators: Orbital Solar",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "space-station-design",
+        "power-generator-solar"
+      ]
+    }
+  },
+  {
+    "id": "power-generator-geothermal",
+    "name": "Power Generator: Geothermal",
+    "field": "Infrastructure",
+    "tier": 5,
+    "effects": "Enables Construction of Geothermal Power Generators",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "power-generator-hydroelectric"
+      ]
+    }
+  },
+  {
+    "id": "small-fabrication-facility",
+    "name": "Small Fabrication Facility",
+    "field": "Infrastructure",
+    "tier": 1,
+    "effects": "Enables building of Small Fabrication Facility",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "basic-construction"
+      ]
+    }
+  },
+  {
+    "id": "medium-fabrication-facility",
+    "name": "Medium Fabrication Facility",
+    "field": "Infrastructure",
+    "tier": 2,
+    "effects": "Enables building of Medium Fabrication Facility",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "small-fabrication-facility"
+      ]
+    }
+  },
+  {
+    "id": "large-fabrication-facility",
+    "name": "Large Fabrication Facility",
+    "field": "Infrastructure",
+    "tier": 3,
+    "effects": "Enables building of Large Fabrication Facility",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "medium-fabrication-facility"
+      ]
+    }
+  },
+  {
+    "id": "inter-city-trade",
+    "name": "Inter-City Trade",
+    "field": "Commerce",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Unlocks Tier 2 and increase taxation income from 1/10 to 2/10",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "economics-research"
+      ]
+    }
+  },
+  {
+    "id": "inter-continental-trade",
+    "name": "Inter-Continental Trade",
+    "field": "Commerce",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Unlocks Tier 3 and increase taxation income from 2/10 to 3/10",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "inter-city-trade"
+      ]
+    }
+  },
+  {
+    "id": "orbital-commerce",
+    "name": "Orbital Commerce",
+    "field": "Commerce",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Unlocks Tier 4",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "inter-continental-trade"
+      ]
+    }
+  },
+  {
+    "id": "deep-space-trade",
+    "name": "Deep Space Trade",
+    "field": "Commerce",
+    "tier": 3,
+    "effects": "Allows for Construction of Trade Ports",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "inter-continental-trade"
+      ]
+    }
+  },
+  {
+    "id": "inter-planetary-trade",
+    "name": "Inter-Planetary Trade",
+    "field": "Commerce",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Unlocks Tier 4 and increase taxation income from 3/10 to 4/10",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 350
+    },
+    "prereq": {
+      "all": [
+        "orbital-commerce"
+      ]
+    }
+  },
+  {
+    "id": "huge-cargo-holds",
+    "name": "Huge Cargo Holds",
+    "field": "Commerce",
+    "tier": 4,
+    "effects": "Unlocks Trade Fleets",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "deep-space-trade"
+      ]
+    }
+  },
+  {
+    "id": "docking-booms",
+    "name": "Docking Booms",
+    "field": "Commerce",
+    "tier": 4,
+    "effects": "Increase All Space Station Credit income by 1000 Credits",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "deep-space-trade"
+      ]
+    }
+  },
+  {
+    "id": "inter-system-trade",
+    "name": "Inter-System Trade",
+    "field": "Commerce",
+    "tier": 5,
+    "effects": "Increase taxation income from 4/10 to 5/10",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "inter-planetary-trade"
+      ]
+    }
+  },
+  {
+    "id": "trade-fleets",
+    "name": "Trade Fleets",
+    "field": "Commerce",
+    "tier": 5,
+    "effects": "Allows construction of Trade Fleets",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "huge-cargo-holds"
+      ]
+    }
+  },
+  {
+    "id": "satellite",
+    "name": "Satellite",
+    "field": "Space Station",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Allows construction of Satellites and Unlocks Tier 2",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "small-space-station-construction",
+    "name": "Small Space Station Construction",
+    "field": "Space Station",
+    "tier": 1,
+    "effects": "Allows Construction of Small Space Station",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "orbital-hangers",
+    "name": "Orbital Hangers",
+    "field": "Space Station",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows construction of Orbital Hangers and Unlocks Tier 3",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 250,
+      "energy": 250,
+      "manpower": 150
+    },
+    "prereq": {
+      "all": [
+        "satellite",
+        "hanger-defense"
+      ]
+    }
+  },
+  {
+    "id": "orbitals-warehouses",
+    "name": "Orbitals Warehouses",
+    "field": "Space Station",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Increases the Credits production of Space Stations and Trade Ports by 1000 Credits/Colony Turn and Unlocks Tier 4",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "orbital-hangers"
+      ]
+    }
+  },
+  {
+    "id": "asteroid-mining-stations",
+    "name": "Asteroid Mining Stations",
+    "field": "Space Station",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows Construction of Asteroid Mining Stations and Unlocks Tier 5",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "asteroid-mining",
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "military-space-station-design",
+    "name": "Military Space Station Design",
+    "field": "Space Station",
+    "tier": 5,
+    "effects": "allows research of Miliatary Space Stations",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "small-space-station-construction"
+      ]
+    }
+  },
+  {
+    "id": "small-military-space-station",
+    "name": "Small Military Space Station",
+    "field": "Space Station",
+    "tier": 5,
+    "effects": "Allows Construction of Small Military Space Stations",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "military-space-station-design"
+      ]
+    }
+  },
+  {
+    "id": "small-repulsorlift-factory-blueprints",
+    "name": "Small Repulsorlift Factory Blueprints",
+    "field": "Vehicles",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Allows for Construction of Small Repulsorlift Factories and Unlocks Tier 2",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "repulsorlift-design-research"
+      ]
+    }
+  },
+  {
+    "id": "medium-repulsorlift-factory-blueprints",
+    "name": "Medium Repulsorlift Factory Blueprints",
+    "field": "Vehicles",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows for Construction of Medium Repulsorlift Factories and Unlocks Tier 3",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "small-repulsorlift-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "large-repulsorlift-factory-blueprints",
+    "name": "Large Repulsorlift Factory Blueprints",
+    "field": "Vehicles",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows for Construction of Large Repulsorlift Factories and Unlocks Tier 4",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "medium-repulsorlift-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "small-walker-factory-blueprints",
+    "name": "Small Walker Factory Blueprints",
+    "field": "Vehicles",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows for Construction of Small Walker Factories and Unlocks Tier 4",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {}
+  },
+  {
+    "id": "air-speeder-research",
+    "name": "Air Speeder Research",
+    "field": "Vehicles",
+    "tier": 4,
+    "effects": "Allows for production of High Altitude Speeder scale vehicles such as Air Speeders and Atmospheric Starfigther Scale Vehicles",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 200
+    },
+    "prereq": {}
+  },
+  {
+    "id": "aquatic-vehicle-research",
+    "name": "Aquatic Vehicle Research",
+    "field": "Vehicles",
+    "tier": 4,
+    "effects": "Allows for Production of Underwater and Amphibious Vehicles.",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {}
+  },
+  {
+    "id": "medium-walker-factory",
+    "name": "Medium Walker Factory",
+    "field": "Vehicles",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows for Construction of Medium Walker Factories and Unlocks Tier 5",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "small-walker-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "powerful-repulsorlifts",
+    "name": "Powerful Repulsorlifts",
+    "field": "Vehicles",
+    "tier": 5,
+    "effects": "More powerful Repulsor Engines. Double Speeder Altitude and increase Speed by 1D",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {}
+  },
+  {
+    "id": "advanced-maneuvering",
+    "name": "Advanced Maneuvering",
+    "field": "Vehicles",
+    "tier": 5,
+    "effects": "Add +2 to Maneouvrability to Colony produced vehicles.",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {}
+  },
+  {
+    "id": "large-walker-factory",
+    "name": "Large Walker Factory",
+    "field": "Vehicles",
+    "tier": 5,
+    "effects": "Allows for Construction of Large Walker Factories",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 600
+    },
+    "prereq": {
+      "all": [
+        "small-walker-factory-blueprints"
+      ]
+    }
+  },
+  {
+    "id": "small-droid-factory-research",
+    "name": "Small Droid Factory Research",
+    "field": "Droids & Computers",
+    "tier": 1,
+    "effects": "Can construct small Droid Factory",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "droid-and-computer-research"
+      ]
+    }
+  },
+  {
+    "id": "small-computer-factory-research",
+    "name": "Small Computer Factory Research",
+    "field": "Droids & Computers",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Can construct Small Computer Factory and Unlocks Tier 2",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "droid-and-computer-research"
+      ]
+    }
+  },
+  {
+    "id": "planetwide-holonet",
+    "name": "Planetwide Holonet",
+    "field": "Droids & Computers",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows construction of Planet Wide Holonet services and Unlocks Tier 3",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 400,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "small-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "medium-droid-factory-research",
+    "name": "Medium Droid Factory Research",
+    "field": "Droids & Computers",
+    "tier": 2,
+    "effects": "Can construct Medium Droid Factory",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "medium-computer-factory-research",
+    "name": "Medium Computer Factory Research",
+    "field": "Droids & Computers",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Can construct Medium Computer Factory and Unlocks Tier 3",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "small-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "intra-systems-holonet",
+    "name": "Intra - Systems Holonet",
+    "field": "Droids & Computers",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows for construction of Intra-Systems Holonet Network and Unlocks Tier 4",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 800,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "satellite",
+        "small-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "large-droid-factory-research",
+    "name": "Large Droid Factory Research",
+    "field": "Droids & Computers",
+    "tier": 3,
+    "effects": "Can construct Large Droid Factory",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "medium-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "large-computer-factory-research",
+    "name": "Large Computer Factory Research",
+    "field": "Droids & Computers",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Can construct Large Computer Factory and Unlocks Tier 4",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "medium-computer-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "inter-systems-holonet",
+    "name": "Inter - Systems Holonet",
+    "field": "Droids & Computers",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows for construction of the Inter System Holonets Unlocks Tier 5",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 1200,
+      "energy": 1500,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "intra-systems-holonet"
+      ]
+    }
+  },
+  {
+    "id": "skillware-research",
+    "name": "SkillWare Research",
+    "field": "Droids & Computers",
+    "tier": 4,
+    "effects": "Allows for Production of Skillware to a Maximum of 6D for Upgrading Droids",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 200,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {}
+  },
+  {
+    "id": "super-computer-research",
+    "name": "Super Computer Research",
+    "field": "Droids & Computers",
+    "tier": 4,
+    "effects": "Allows for the constuction of a Super Computer to Support Civic Governance.",
+    "cost": {
+      "credits": 1000000,
+      "rawMats": 800,
+      "energy": 2000,
+      "manpower": 5000
+    },
+    "prereq": {}
+  },
+  {
+    "id": "traitware-research",
+    "name": "Traitware Research",
+    "field": "Droids & Computers",
+    "tier": 5,
+    "effects": "Allows for Production of Traitware to a Maximum of 3D for Creating Droid Chasis",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {}
+  },
+  {
+    "id": "ship-board-ai",
+    "name": "Ship Board AI",
+    "field": "Droids & Computers",
+    "tier": 5,
+    "effects": "Allows for the construction of a Ship Board AI",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 300,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "super-computer-research"
+      ]
+    }
+  },
+  {
+    "id": "holographic-projector-systems",
+    "name": "Holographic Projector Systems",
+    "field": "Droids & Computers",
+    "tier": 5,
+    "effects": "An upgrade to an AI, it requires extensive installation throughout the ship it is being installed in.",
+    "cost": {
+      "credits": 35000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "ship-board-ai"
+      ]
+    }
+  },
+  {
+    "id": "small-weapons-manufacturing",
+    "name": "Small Weapons Manufacturing",
+    "field": "Weapons",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Allows Construction of Small Weapons Manufacturing Plant and Unlock Tier 2",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "weapons-design"
+      ]
+    }
+  },
+  {
+    "id": "medium-weapons-manufacturing",
+    "name": "Medium Weapons Manufacturing",
+    "field": "Weapons",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows Construction of Medium Weapons Manufacturing Plant and Unlock Tier 3",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "small-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "large-weapons-manufacturing",
+    "name": "Large Weapons Manufacturing",
+    "field": "Weapons",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows Construction of Large Weapons Manufacturing Plant and Unlock Tier 4",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "medium-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "advanced-fire-control-systems",
+    "name": "Advanced Fire Control Systems",
+    "field": "Weapons",
+    "tier": 4,
+    "effects": "All Fire Control ratings of Colony produced systems is increased by 1D.",
+    "cost": {
+      "credits": 25000,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "large-weapons-manufacturing"
+      ]
+    }
+  },
+  {
+    "id": "improved-galvern-patterns",
+    "name": "Improved Galvern Patterns",
+    "field": "Weapons",
+    "tier": 4,
+    "effects": "Add +2 to Blaster Damage",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {}
+  },
+  {
+    "id": "advanced-focussing-crystals",
+    "name": "Advanced Focussing Crystals",
+    "field": "Weapons",
+    "tier": 4,
+    "effects": "Increase Blaster Ranges by 20% in each Range Bracket",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {}
+  },
+  {
+    "id": "jump-disruption-gravity-well-projectors",
+    "name": "Jump Disruption/Gravity Well Projectors",
+    "field": "Weapons",
+    "tier": 5,
+    "effects": "Can produce Gravity Well Projectors in your Weapons Plants",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 1000,
+      "manpower": 800
+    },
+    "prereq": {
+      "all": [
+        "advanced-fire-control-systems"
+      ]
+    }
+  },
+  {
+    "id": "improved-ergonomics",
+    "name": "Improved Ergonomics",
+    "field": "Weapons",
+    "tier": 5,
+    "effects": "Add +1D to quickdraw attempts with Pistol Weapons",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {}
+  },
+  {
+    "id": "improved-accuracy",
+    "name": "Improved Accuracy",
+    "field": "Weapons",
+    "tier": 5,
+    "effects": "Add +1D to Blaster Skill",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {}
+  },
+  {
+    "id": "small-starfighter-production",
+    "name": "Small Starfighter Production",
+    "field": "Starship",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Allows for Construction of Small Starfighter Factory and Unlocks Tier 2",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "space-ship-design-research"
+      ]
+    }
+  },
+  {
+    "id": "asteroid-mining-ship",
+    "name": "Asteroid Mining Ship",
+    "field": "Starship",
+    "tier": 1,
+    "effects": "Allows for production of Asteroid Mining Ships",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "asteroid-mining"
+      ]
+    }
+  },
+  {
+    "id": "repair-platform",
+    "name": "Repair Platform",
+    "field": "Starship",
+    "tier": 1,
+    "effects": "Allows for production of Repair Platforms",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "space-ship-design-research"
+      ]
+    }
+  },
+  {
+    "id": "hull-reinforcement",
+    "name": "Hull Reinforcement",
+    "field": "Starship",
+    "tier": 2,
+    "effects": "Increase Hull Ratings of ships produced or modified by +1",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 2000,
+      "rawMats": 200,
+      "energy": 100,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "improved-shield-arrays",
+    "name": "Improved Shield Arrays",
+    "field": "Starship",
+    "tier": 2,
+    "effects": "Increase Shield Ratings of Ships Produced or Modified by +1",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 2000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "expert-damage-control",
+    "name": "Expert Damage Control",
+    "field": "Starship",
+    "tier": 2,
+    "effects": "Add +5 to any Repair Rolls made during combat",
+    "cost": {
+      "credits": 2000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "impact-analysis",
+    "name": "Impact Analysis",
+    "field": "Starship",
+    "tier": 2,
+    "effects": "Add +1D to Hull ratings vs Missiles and Ballistic damage",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 3000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "superior-repair-bots",
+    "name": "Superior Repair Bots",
+    "field": "Starship",
+    "tier": 2,
+    "effects": "Add +5 to any Repair Rolls on ships equipped with this upgrade.",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "small-droid-factory-research"
+      ]
+    }
+  },
+  {
+    "id": "medium-starfighter-production",
+    "name": "Medium Starfighter Production",
+    "field": "Starship",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Allows for Construction of Medium Starfighter Factory and Unlocks Tier 3",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "small-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "small-capital-ship-production",
+    "name": "Small Capital Ship Production",
+    "field": "Starship",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows for Construction of Small Capital Ship Dock and Unlocks Tier 4",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "medium-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "fortified-superstructure",
+    "name": "Fortified Superstructure",
+    "field": "Starship",
+    "tier": 3,
+    "effects": "Increase Hull Ratings of Ships produced in the Colony by +1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 300,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "hull-reinforcement"
+      ]
+    }
+  },
+  {
+    "id": "titano-ferric-plating",
+    "name": "Titano-Ferric Plating",
+    "field": "Starship",
+    "tier": 3,
+    "effects": "Increase Hull Ratings of ships produced or modified by +1",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 300,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "fortified-superstructure"
+      ]
+    }
+  },
+  {
+    "id": "advance-maneuvering",
+    "name": "Advance Maneuvering",
+    "field": "Starship",
+    "tier": 3,
+    "effects": "Increase Ships Maneuverability by +1 for Ships Produced or Modified",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 5000,
+      "rawMats": 200,
+      "energy": 300,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "medium-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "large-starfighter-production",
+    "name": "Large Starfighter Production",
+    "field": "Starship",
+    "tier": 3,
+    "effects": "Allows for Construction of Large Starfighter Factory",
+    "cost": {
+      "credits": 40000,
+      "rawMats": 800,
+      "energy": 800,
+      "manpower": 800
+    },
+    "prereq": {
+      "all": [
+        "medium-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "efficient-generators",
+    "name": "Efficient Generators",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Allows Capital Ships to regenerate an additional 1D of Shield every third round",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "large-starfighter-production"
+      ]
+    }
+  },
+  {
+    "id": "superior-shield-emitters",
+    "name": "Superior Shield Emitters",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Increase Shield Ratings of Ships Produced or Modified by +1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "improved-shield-arrays"
+      ]
+    }
+  },
+  {
+    "id": "repelon-premium-armour",
+    "name": "Repelon Premium Armour",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Increase Hull Ratings of ships produced or modified by +1",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 400,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "titano-ferric-plating"
+      ]
+    }
+  },
+  {
+    "id": "laser-amplification",
+    "name": "Laser Amplification",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Increase Laser Weapon Damage ratings by +1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 200,
+      "energy": 400,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "efficient-generators"
+      ]
+    }
+  },
+  {
+    "id": "ferro-urinite-warheads",
+    "name": "Ferro-Urinite Warheads",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Increase Concussion Missile Damage by +1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "impact-analysis"
+      ]
+    }
+  },
+  {
+    "id": "enhanced-ecm",
+    "name": "Enhanced ECM",
+    "field": "Starship",
+    "tier": 4,
+    "effects": "Increase difficulties to hit target with Missiles and Torpedoes",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 7500,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "improved-shield-arrays"
+      ]
+    }
+  },
+  {
+    "id": "medium-capital-ship-production",
+    "name": "Medium Capital Ship Production",
+    "field": "Starship",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows for Construction of Medium Capital Ship Dock and Unlocks Tier 5",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "small-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "failsafe-jump-plotting",
+    "name": "Failsafe Jump Plotting",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Ships fitted with these systems are able to calculate and execute a small jump out of system within 1 round. It takes 10 rounds to calculate a new jump once this system has been used",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 200,
+      "energy": 300,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "advance-maneuvering"
+      ]
+    }
+  },
+  {
+    "id": "potent-reaction-chaining",
+    "name": "Potent Reaction Chaining",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Allows Capital Ships to regenerate an additional 1D of Shield every Second Round (replaces the effects of Efficient Shield Generators)",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "efficient-generators"
+      ]
+    }
+  },
+  {
+    "id": "high-intensity-lasers",
+    "name": "High Intensity Lasers",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Laser Weapon Damage ratings by +2D (replaces the effects of Laser Amplification",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "laser-amplification"
+      ]
+    }
+  },
+  {
+    "id": "refined-missile-avionics",
+    "name": "Refined Missile Avionics",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Fire Control of Missiles and Torpedoes by 1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "enhanced-ecm"
+      ]
+    }
+  },
+  {
+    "id": "advanced-ballistics",
+    "name": "Advanced Ballistics",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Fire Control of Ship Weapons by +1D",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "enhanced-ecm"
+      ]
+    }
+  },
+  {
+    "id": "dynamic-frequencies",
+    "name": "Dynamic Frequencies",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Shield Ratings of Ships Produced or Modified by +1",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "superior-shield-emitters"
+      ]
+    }
+  },
+  {
+    "id": "amplified-beam-output",
+    "name": "Amplified Beam Output",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Laser Weapon Damage ratings by +3D (replaces the effects of High Intensity Lasers)",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 300,
+      "energy": 500,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "high-intensity-lasers"
+      ]
+    }
+  },
+  {
+    "id": "extended-range-missiles",
+    "name": "Extended Range Missiles",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Can Engage the Enemy with Missile Fire 1 Round before entering weapons Range",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "advanced-ballistics"
+      ]
+    }
+  },
+  {
+    "id": "high-yields-warheads",
+    "name": "High Yields Warheads",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Increase Concussion Missile Damage by +2D (Replaces the effects of Ferro-Urinite Warheads)",
+    "notes": "Modification can be applied to exisiting ships if you have the production blueprints for them.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 500,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "ferro-urinite-warheads"
+      ]
+    }
+  },
+  {
+    "id": "large-capital-ship-production",
+    "name": "Large Capital Ship Production",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Can produce Large Capital Ship Dock",
+    "cost": {
+      "credits": 200000,
+      "rawMats": 2000,
+      "energy": 2000,
+      "manpower": 2000
+    },
+    "prereq": {
+      "all": [
+        "medium-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "orbital-ship-yards",
+    "name": "Orbital Ship Yards",
+    "field": "Starship",
+    "tier": 5,
+    "effects": "Can Produce Orbital Ship Yards",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 5000,
+      "energy": 5000,
+      "manpower": 5000
+    },
+    "prereq": {
+      "all": [
+        "large-capital-ship-production"
+      ]
+    }
+  },
+  {
+    "id": "hanger-defense",
+    "name": "Hanger Defense",
+    "field": "Planetary Defense",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Allows construction of Ground based fighter hangers and Unlocks Tier 2",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "colonisation-research"
+      ]
+    }
+  },
+  {
+    "id": "hanger-defense-turrets",
+    "name": "Hanger Defense Turrets",
+    "field": "Planetary Defense",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "Hangers are constructed with 4 turret mounts and Unlocks Tier 3",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "hanger-defense"
+      ]
+    }
+  },
+  {
+    "id": "small-military-outpost-research",
+    "name": "Small Military Outpost Research",
+    "field": "Planetary Defense",
+    "tier": 2,
+    "effects": "Allows for the Construction of Small Military Outposts",
+    "cost": {
+      "credits": 45000,
+      "rawMats": 250,
+      "energy": 250,
+      "manpower": 250
+    },
+    "prereq": {
+      "all": [
+        "hanger-defense"
+      ]
+    }
+  },
+  {
+    "id": "proximity-mines",
+    "name": "Proximity Mines",
+    "field": "Planetary Defense",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Allows construction of high orbit or space born mine fields and Unlocks Tier 4",
+    "cost": {
+      "credits": 15000,
+      "rawMats": 250,
+      "energy": 250,
+      "manpower": 100
+    },
+    "prereq": {
+      "all": [
+        "hanger-defense-turrets"
+      ]
+    }
+  },
+  {
+    "id": "medium-military-outpost-research",
+    "name": "Medium Military Outpost Research",
+    "field": "Planetary Defense",
+    "tier": 3,
+    "effects": "Allows for Construction of Medium Military Outposts",
+    "cost": {
+      "credits": 90000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "small-military-outpost-research"
+      ]
+    }
+  },
+  {
+    "id": "planetary-shields",
+    "name": "Planetary Shields",
+    "field": "Planetary Defense",
+    "tier": 4,
+    "effects": "Able to construct planetary shield Arrays",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 1000,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "improved-shield-arrays"
+      ]
+    }
+  },
+  {
+    "id": "large-military-outpost",
+    "name": "Large Military Outpost",
+    "field": "Planetary Defense",
+    "tier": 4,
+    "effects": "Allows for Construction of Large Military Outposts",
+    "cost": {
+      "credits": 180000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "medium-military-outpost-research"
+      ]
+    }
+  },
+  {
+    "id": "superior-planetary-shields",
+    "name": "Superior Planetary Shields",
+    "field": "Planetary Defense",
+    "tier": 5,
+    "effects": "Can produced overlapping shields",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 500,
+      "energy": 1500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "planetary-shields"
+      ]
+    }
+  },
+  {
+    "id": "sealed-habitats-military",
+    "name": "Sealed Habitats",
+    "field": "Planetary Defense",
+    "tier": 5,
+    "effects": "Military Outposts can be constructed on planets with Hostile or non breathable atmospheres.",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "large-military-outpost"
+      ]
+    }
+  },
+  {
+    "id": "diplomatic-relations",
+    "name": "Diplomatic Relations",
+    "field": "Diplomacy",
+    "tier": 1,
+    "effects": "You have a cadre of trained diplomats that can open up diplomatic relations on your behalf with other races.",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "trade-agreements",
+    "name": "Trade Agreements",
+    "field": "Diplomacy",
+    "tier": 2,
+    "effects": "May carry out one of trades or exchanges with any race that you have established diplomatic relationships with.",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "diplomatic-relations"
+      ]
+    }
+  },
+  {
+    "id": "embassies",
+    "name": "Embassies",
+    "field": "Diplomacy",
+    "tier": 3,
+    "effects": "You may now build Embassies on the planets that you have established Diplomatic relationships. Gives access to the Embassy construction.",
+    "notes": "Embassies give you real time negotion and up to date information on the system they are built in.",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "trade-agreements"
+      ]
+    }
+  },
+  {
+    "id": "trade-routes",
+    "name": "Trade Routes",
+    "field": "Diplomacy",
+    "tier": 3,
+    "effects": "Doubles the Positive Monthly Income factors for Trade Fleets established between trading partners",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "trade-agreements",
+        "trade-fleets"
+      ]
+    }
+  },
+  {
+    "id": "non-aggression-pacts",
+    "name": "Non-Aggression Pacts",
+    "field": "Diplomacy",
+    "tier": 4,
+    "effects": "Allows transit through allied systems",
+    "notes": "Terms of Treaty to be determined with GM",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "embassies"
+      ]
+    }
+  },
+  {
+    "id": "mutual-defence-treaties",
+    "name": "Mutual Defence Treaties",
+    "field": "Diplomacy",
+    "tier": 5,
+    "effects": "Allied systems will come to your aid with expectation of the same",
+    "notes": "Terms of Treaty to be determined with GM",
+    "cost": {
+      "credits": 10000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "non-aggression-pacts"
+      ]
+    }
+  },
+  {
+    "id": "military-alliance",
+    "name": "Military Alliance",
+    "field": "Diplomacy",
+    "tier": 5,
+    "effects": "Allows you to construct Military Outposts on Allied Planets",
+    "notes": "Terms of Treaty to be determined with GM",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "non-aggression-pacts"
+      ],
+      "any": [
+        "small-military-outpost-research",
+        "medium-military-outpost-research",
+        "large-military-outpost"
+      ]
+    }
+  },
+  {
+    "id": "occupational-forces",
+    "name": "Occupational Forces",
+    "field": "Diplomacy",
+    "tier": 5,
+    "effects": "Allows you to construct Military Outposts on Enemy Planets",
+    "cost": {
+      "credits": 30000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "non-aggression-pacts"
+      ],
+      "any": [
+        "small-military-outpost-research",
+        "medium-military-outpost-research",
+        "large-military-outpost"
+      ]
+    }
+  },
+  {
+    "id": "medical-centres",
+    "name": "Medical Centres",
+    "field": "Civics",
+    "tier": 1,
+    "effects": "Increase Population Growth by 1%",
+    "notes": "Stacks with other Population Growth increases",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 300,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "basic-education",
+    "name": "Basic Education",
+    "field": "Civics",
+    "tier": 1,
+    "effects": "Increase Income of Farms by 10%",
+    "notes": "Effects Positive income values only.",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "festivals",
+    "name": "Festivals",
+    "field": "Civics",
+    "tier": 1,
+    "effects": "Unlocks Plaza",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 100,
+      "energy": 100,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "spiritual-programs",
+    "name": "Spiritual Programs",
+    "field": "Civics",
+    "tier": 1,
+    "effects": "Agree with GM based on focus of Religion",
+    "cost": {
+      "credits": 150000,
+      "rawMats": 400,
+      "energy": 300,
+      "manpower": 300
+    },
+    "prereq": {
+      "all": [
+        "higher-education"
+      ]
+    }
+  },
+  {
+    "id": "hospitals",
+    "name": "Hospitals",
+    "field": "Civics",
+    "tier": 2,
+    "effects": "Increase Population Growth by 1%",
+    "notes": "Stacks with other Population Growth increases",
+    "cost": {
+      "credits": 200000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 600
+    },
+    "prereq": {
+      "all": [
+        "medical-centres"
+      ]
+    }
+  },
+  {
+    "id": "vocational-education",
+    "name": "Vocational Education",
+    "field": "Civics",
+    "tier": 2,
+    "effects": "Increase Income of Mines by 10%",
+    "notes": "Effects Positive income values only.",
+    "cost": {
+      "credits": 200000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 800
+    },
+    "prereq": {
+      "all": [
+        "basic-education"
+      ]
+    }
+  },
+  {
+    "id": "plaza",
+    "name": "Plaza",
+    "field": "Civics",
+    "tier": 2,
+    "effects": "Can Hold Festivals and Unlocks Grand Festivals",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 200
+    },
+    "prereq": {
+      "all": [
+        "festivals"
+      ]
+    }
+  },
+  {
+    "id": "places-of-worship",
+    "name": "Places of Worship",
+    "field": "Civics",
+    "tier": 2,
+    "effects": "Agree with GM based on focus of Religion",
+    "cost": {
+      "credits": 250000,
+      "rawMats": 800,
+      "energy": 600,
+      "manpower": 600
+    },
+    "prereq": {
+      "all": [
+        "spiritual-programs"
+      ]
+    }
+  },
+  {
+    "id": "family-planning",
+    "name": "Family Planning",
+    "field": "Civics",
+    "tier": 3,
+    "effects": "Increase Population Growth by 1%",
+    "notes": "Stacks with other Population Growth increases",
+    "cost": {
+      "credits": 300000,
+      "rawMats": 900,
+      "energy": 900,
+      "manpower": 900
+    },
+    "prereq": {
+      "all": [
+        "hospitals"
+      ]
+    }
+  },
+  {
+    "id": "university-programs",
+    "name": "University Programs",
+    "field": "Civics",
+    "tier": 3,
+    "effects": "Reduce monthly Costs of Factories by 10%",
+    "notes": "Effects Negative income values only.",
+    "cost": {
+      "credits": 300000,
+      "rawMats": 800,
+      "energy": 800,
+      "manpower": 1600
+    },
+    "prereq": {
+      "all": [
+        "vocational-education"
+      ]
+    }
+  },
+  {
+    "id": "grand-festivals",
+    "name": "Grand Festivals",
+    "field": "Civics",
+    "tier": 3,
+    "effects": "Unlocks Grand Plaza",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 400,
+      "energy": 400,
+      "manpower": 400
+    },
+    "prereq": {
+      "all": [
+        "plaza"
+      ]
+    }
+  },
+  {
+    "id": "cathedral",
+    "name": "Cathedral",
+    "field": "Civics",
+    "tier": 3,
+    "effects": "Agree with GM based on focus of Religion",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 1500,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "places-of-worship"
+      ]
+    }
+  },
+  {
+    "id": "recreational-centres",
+    "name": "Recreational Centres",
+    "field": "Civics",
+    "tier": 4,
+    "effects": "Increase Population Growth by 1%",
+    "notes": "Stacks with other Population Growth increases",
+    "cost": {
+      "credits": 400000,
+      "rawMats": 1200,
+      "energy": 1200,
+      "manpower": 1200
+    },
+    "prereq": {
+      "all": [
+        "family-planning"
+      ]
+    }
+  },
+  {
+    "id": "masters-programs",
+    "name": "Masters Programs",
+    "field": "Civics",
+    "tier": 4,
+    "effects": "Reduce monthly Costs of Military Facilities by 10%",
+    "notes": "Effects Negative income values only.",
+    "cost": {
+      "credits": 400000,
+      "rawMats": 1200,
+      "energy": 1200,
+      "manpower": 2000
+    },
+    "prereq": {
+      "all": [
+        "university-programs"
+      ]
+    }
+  },
+  {
+    "id": "grand-plaza",
+    "name": "Grand Plaza",
+    "field": "Civics",
+    "tier": 4,
+    "effects": "Can Hold Grand Festivals",
+    "cost": {
+      "credits": 150000,
+      "rawMats": 600,
+      "energy": 600,
+      "manpower": 600
+    },
+    "prereq": {
+      "all": [
+        "grand-festivals"
+      ]
+    }
+  },
+  {
+    "id": "doctorates",
+    "name": "Doctorates",
+    "field": "Civics",
+    "tier": 5,
+    "effects": "Reduce monthly Costs of Research Facilities by 10%",
+    "notes": "Effects Negative income values only.",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 1500,
+      "energy": 1500,
+      "manpower": 2500
+    },
+    "prereq": {
+      "all": [
+        "masters-programs"
+      ]
+    }
+  },
+  {
+    "id": "monarchy",
+    "name": "Monarchy",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Manpower Generation by 10%, Population Growth by 1%, Reduce Cost of Military Research by 10%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "democracy",
+    "name": "Democracy",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Raw Mats, Manpower and Energy Production by 10%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "communist",
+    "name": "Communist",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Raw Mat by 10%, Reduce Agricultural Research by 10%, Increase Population Growth by 1%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "theocracy",
+    "name": "Theocracy",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Population Growth by 2%, Reduce Cost of Spiritual Programs, Festivals, Places of Worship and Cathedrals by 50%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "dictatorship",
+    "name": "Dictatorship",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Weapons Production by 20%, Reduce Military Costs by 20%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "oligarchy",
+    "name": "Oligarchy",
+    "field": "Government",
+    "tier": 1,
+    "unlocksTier": 2,
+    "effects": "Increase Raw Mats and Energy Outputs by 20%",
+    "notes": "Can only have one System in operation at a time. Unlocks Tier 2",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "governmental-systems"
+      ]
+    }
+  },
+  {
+    "id": "civil-service",
+    "name": "Civil Service",
+    "field": "Government",
+    "tier": 2,
+    "unlocksTier": 3,
+    "effects": "You have established Civil Services to carry out Government sponsored activities.",
+    "notes": "They have relevant skills at a 5D rating. Unlocks Tier 3",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 200,
+      "energy": 200,
+      "manpower": 1000
+    },
+    "prereq": {
+      "any": [
+        "monarchy",
+        "democracy",
+        "communist",
+        "theocracy",
+        "dictatorship",
+        "oligarchy"
+      ]
+    }
+  },
+  {
+    "id": "revolution",
+    "name": "Revolution",
+    "field": "Government",
+    "tier": 2,
+    "effects": "Allows you to change your Government system. This is usually bloody and severe means of achieving this.",
+    "notes": "Requires you to have researched the system you are changing to.",
+    "cost": {
+      "credits": 500000,
+      "rawMats": 1000,
+      "energy": 5000,
+      "manpower": 15000
+    },
+    "prereq": {
+      "any": [
+        "monarchy",
+        "democracy",
+        "communist",
+        "theocracy",
+        "dictatorship",
+        "oligarchy"
+      ],
+      "anyCount": 2,
+      "note": "Requires you to have researched the system you are changing to."
+    }
+  },
+  {
+    "id": "mining-guild",
+    "name": "Mining Guild",
+    "field": "Government",
+    "tier": 2,
+    "effects": "Increase Raw Material output by 10%",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 200,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "any": [
+        "monarchy",
+        "democracy",
+        "communist",
+        "theocracy",
+        "dictatorship",
+        "oligarchy"
+      ]
+    }
+  },
+  {
+    "id": "agricultural-societies",
+    "name": "Agricultural Societies",
+    "field": "Government",
+    "tier": 2,
+    "effects": "Increase Manpower generation by 10%",
+    "cost": {
+      "credits": 20000,
+      "rawMats": 500,
+      "energy": 200,
+      "manpower": 500
+    },
+    "prereq": {
+      "any": [
+        "monarchy",
+        "democracy",
+        "communist",
+        "theocracy",
+        "dictatorship",
+        "oligarchy"
+      ]
+    }
+  },
+  {
+    "id": "emergency-services",
+    "name": "Emergency Services",
+    "field": "Government",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Fire and Medical Emergency Services",
+    "notes": "They have relevant skills at a 5D rating. Unlocks Tier 4",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "civil-service"
+      ]
+    }
+  },
+  {
+    "id": "security-forces",
+    "name": "Security Forces",
+    "field": "Government",
+    "tier": 3,
+    "effects": "Dedicated Police Forces",
+    "notes": "Trained to Average Rebel Skill Level",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "civil-service"
+      ]
+    }
+  },
+  {
+    "id": "system-defence-forces",
+    "name": "System Defence Forces",
+    "field": "Government",
+    "tier": 3,
+    "unlocksTier": 4,
+    "effects": "Dedicated System Defence Forces. Military Forces under the direct command of the Government",
+    "notes": "They have relevant skills at a 5D rating. Unlocks Tier 4",
+    "cost": {
+      "credits": 50000,
+      "rawMats": 500,
+      "energy": 500,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "civil-service"
+      ]
+    }
+  },
+  {
+    "id": "government-funding",
+    "name": "Government Funding",
+    "field": "Government",
+    "tier": 3,
+    "effects": "Once per Colony Turn you can reduce the Credit Cost of a Research or Construction by 10%",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 100,
+      "energy": 200,
+      "manpower": 500
+    },
+    "prereq": {
+      "all": [
+        "civil-service"
+      ]
+    }
+  },
+  {
+    "id": "reform",
+    "name": "Reform",
+    "field": "Government",
+    "tier": 4,
+    "unlocksTier": 5,
+    "effects": "Allows for the change of Government styles via the act of Reform. Unlocks Tier 5",
+    "notes": "Once researched you can change your government every 12 Colony Turns at 1/10 the cost of the research. You need to work with the GM to explain this.",
+    "cost": {
+      "credits": 250000,
+      "rawMats": 500,
+      "energy": 2500,
+      "manpower": 7500
+    },
+    "prereq": {
+      "all": [
+        "government-funding"
+      ],
+      "any": [
+        "monarchy",
+        "democracy",
+        "communist",
+        "theocracy",
+        "dictatorship",
+        "oligarchy"
+      ],
+      "anyCount": 2
+    }
+  },
+  {
+    "id": "police-academies",
+    "name": "Police Academies",
+    "field": "Government",
+    "tier": 4,
+    "effects": "Increased Training for Security Forces. Can create dedicated divisions",
+    "notes": "Increase Relevant Skills by +1D",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "security-forces"
+      ]
+    }
+  },
+  {
+    "id": "territorial-army-units",
+    "name": "Territorial Army Units",
+    "field": "Government",
+    "tier": 4,
+    "effects": "Increased Training for System Defense. Can create dedicated divisions",
+    "notes": "Increase Relevant Skills by +1D",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "system-defence-forces"
+      ]
+    }
+  },
+  {
+    "id": "advanced-civil-servants",
+    "name": "Advanced Civil Servants",
+    "field": "Government",
+    "tier": 4,
+    "effects": "Increased Training for Civil Services. Can create dedicated divisions",
+    "notes": "Increase Relevant Skills by +1D",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "civil-service"
+      ]
+    }
+  },
+  {
+    "id": "emt-and-fire-training",
+    "name": "EMT and Fire Training",
+    "field": "Government",
+    "tier": 4,
+    "effects": "Increased Training for Emergency Services. Can create dedicated divisions",
+    "notes": "Increase Relevant Skills by +1D",
+    "cost": {
+      "credits": 100000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "emergency-services"
+      ]
+    }
+  },
+  {
+    "id": "planetary-governors",
+    "name": "Planetary Governors",
+    "field": "Government",
+    "tier": 5,
+    "effects": "Allows for the selection and training of Planetary Governors to run things in your absence.",
+    "cost": {
+      "credits": 250000,
+      "rawMats": 1000,
+      "energy": 1000,
+      "manpower": 1000
+    },
+    "prereq": {
+      "all": [
+        "reform"
+      ]
+    }
+  }
+]
