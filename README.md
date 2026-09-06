@@ -4,6 +4,9 @@ A small static web app for two players to run colonies in a Star Wars RPG campai
 house rules in `docs/`. State lives as JSON files in a shared Google Drive folder; the app itself is
 hosted on GitHub Pages. No servers, nothing to pay for.
 
+- App: <https://jjwatson.github.io/little-empires/>
+- Shared Drive folder: <https://drive.google.com/drive/folders/1eLx_1K6oloAKsnnGlPQGx4jVtEeZh5vm>
+
 ## What it does (v1)
 
 - One **empire** per file: a homeworld plus any colonies you found, all sharing one stockpile of
@@ -26,20 +29,20 @@ routes, super computer actions, government/civics percentage modifiers, populati
    email, leave it in **Testing** status. Under *Test users* add both players' Google accounts.
    (Testing mode is what lets a two-person app use the Drive scope without Google's verification.)
 4. **APIs & Services → Credentials → Create credentials → OAuth client ID**, type *Web application*.
-   Authorised JavaScript origins:
+   Authorised JavaScript origins (origin only, no path, no trailing slash):
    - `http://localhost:5173`
-   - `https://<your-github-user>.github.io`
+   - `https://jjwatson.github.io`
    No redirect URIs are needed.
 5. Copy the client id. Locally: `cp .env.example .env` and paste it in. For GitHub Pages: repo
    **Settings → Secrets and variables → Actions → Variables**, add `VITE_GOOGLE_CLIENT_ID`.
-6. In Google Drive create a folder, share it with the other player (Editor), and paste its link into
-   the app on first run.
+6. The shared Drive folder above is pre-filled in the app. Make sure it is shared with the other
+   player as Editor. A different folder can be pasted in on the sign-in screen.
 
 ## Running locally
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/little_empires/
+npm run dev        # http://localhost:5173/little-empires/
 npm test           # data validation + model tests
 npm run build      # static output in dist/
 ```
@@ -48,7 +51,8 @@ npm run build      # static output in dist/
 
 Push to `main` (or `master`). `.github/workflows/deploy.yml` runs the tests, builds and publishes
 to GitHub Pages. In the repo settings set **Pages → Source** to *GitHub Actions* the first time.
-If the repo is renamed, update `base` in `vite.config.ts`.
+The workflow passes the repo name as the Vite base path, so renaming the repo needs no code change;
+only the fallback in `vite.config.ts` (used by `npm run dev`) would go stale.
 
 ## Updating the rules data
 

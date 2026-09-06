@@ -19,11 +19,13 @@ interface Loaded {
 }
 
 const FOLDER_KEY = 'little-empires.folderId'
+/** The players' shared Drive folder; pre-filled so nobody has to paste it. Can still be changed in the UI. */
+const DEFAULT_FOLDER_ID = '1eLx_1K6oloAKsnnGlPQGx4jVtEeZh5vm'
 const EMPTY_ACTIONS: TurnActions = { research: [], builds: [] }
 
 export function App() {
   const [user, setUser] = useState<string | null>(null)
-  const [folderId, setFolderId] = useState<string>(() => localStorage.getItem(FOLDER_KEY) ?? '')
+  const [folderId, setFolderId] = useState<string>(() => localStorage.getItem(FOLDER_KEY) ?? DEFAULT_FOLDER_ID)
   const [folderName, setFolderName] = useState<string>('')
   const [files, setFiles] = useState<DriveFile[]>([])
   const [loaded, setLoaded] = useState<Loaded | null>(null)
