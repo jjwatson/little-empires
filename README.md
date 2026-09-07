@@ -7,19 +7,45 @@ hosted on GitHub Pages. No servers, nothing to pay for.
 - App: <https://jjwatson.github.io/little-empires/>
 - Shared Drive folder: <https://drive.google.com/drive/folders/1eLx_1K6oloAKsnnGlPQGx4jVtEeZh5vm>
 
-## What it does (v1)
+## What it does
+
+The screens follow the tabs of the rule creator's own tracking sheet
+(`docs/Mandragor 12 System 3.0.xlsx`):
+
+| Sheet tab | Screen |
+|---|---|
+| Resources header, Balance totals | **Overview**: stockpile, income, bonuses in effect, government in operation, founding colonies |
+| Planets, Demographics | **Planets**: profile, species table with growth, facilities, this turn's build |
+| Completed Research | **Research**: the tree, what is unlocked, blueprint queue |
+| Resources, Balance Sheet | **Economy**: income statement by facility category; itemised ledger with manual adjustments |
+| all the slot columns | **End Turn**: research, prototypes, blueprints, construction, projected stockpile |
 
 - One **empire** per file: a homeworld plus any colonies you found, all sharing one stockpile of
   Credits, Raw Mats, Energy and Manpower.
-- **Research tree** from the spreadsheet: 17 fields × 5 tiers, with prerequisites and tier unlocks.
+- **Research tree** from the spreadsheet: 16 fields × 5 tiers, with prerequisites and tier unlocks.
 - **Construction** per planet: build costs, monthly income, planet-type bonuses and restrictions.
-- **End turn**: queue research (one per slot) and one build per planet, see the projected stockpile,
-  confirm, and the turn is written to the log and saved to Drive.
+- **Population** grows 1% a turn plus research bonuses (Monarchy +1%), per species if you list them.
+  Base credit income is one credit per ten population after growth, as in the sheet; Raw Mats,
+  Energy and Manpower base income stay GM-entered numbers.
+- **Ledger**: every turn is itemised (income, each research, each build, blueprints, prototypes,
+  colonies, manual adjustments) and always reconciles with the stockpile.
 - **Two players editing**: saves are checked against Drive's modified time. If the other player
   saved after you loaded, you get to choose reload or overwrite.
 
-Not yet covered: production/fabrication, troop training, blueprints, salvage, festivals, trade
-routes, super computer actions, government/civics percentage modifiers, population growth.
+Rulings from the rule creator (2026-09-07) that the app applies:
+
+- Every research lab (Small, Large, Orbital) adds a research slot; each kind can be built once per planet.
+- Completing the research for a building hands you one working prototype, its cost included in the
+  research. You pick the planet on the End Turn screen.
+- Blueprint costs follow the house-rules table (the sheet's 10-Energy Character row is a typo).
+- Governmental systems: only one is in operation at a time; pick it on the Overview.
+
+Not yet covered (the sheet's Production Capacity, Production, Production Items, Stores, Assets and
+Personnel tabs): production/fabrication, troop training, stores, personnel, salvage, festivals, trade
+routes, super computer actions, and percentage modifiers other than population growth.
+
+Files saved by the first version are migrated on load: the old per-turn log becomes ledger lines
+and the GM-entered credit base is dropped in favour of the population formula.
 
 ## One-time Google setup (do this once, then share the client id)
 
@@ -71,8 +97,8 @@ override there and re-run.
 ## Layout
 
 ```
-src/data     JSON rules data, types, planet-type modifiers
-src/model    pure game logic: prerequisites, income, end-turn (unit tested)
+src/data     JSON rules data, types, planet-type modifiers, facility categories, blueprint costs
+src/model    pure game logic: prerequisites, population, modifiers, ledger, end-turn (unit tested)
 src/drive    Google sign-in and Drive file access
 src/ui       React screens
 scripts      xlsx converter and data validator

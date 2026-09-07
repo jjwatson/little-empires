@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { ADVANCES, FIELDS } from '../data'
-import type { Advance } from '../data'
-import { advanceStatus, missingPrereqs, researchSlots, unlockedTier } from '../model'
+import { ADVANCES, BLUEPRINT_COSTS, BLUEPRINT_SCALES, FACILITIES, FIELDS } from '../data'
+import type { Advance, BlueprintScale } from '../data'
+import { advanceStatus, blueprintSlots, missingPrereqs, prereqMet, researchSlots, unlockedTier } from '../model'
 import type { Empire, TurnActions } from '../model'
 import { Res } from './common'
 
@@ -34,6 +34,11 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
 
   return (
     <section>
+      <div className="grid">
+        <Unlocked researched={researched} />
+        <Blueprints empire={empire} actions={actions} onActions={onActions} />
+      </div>
+
       <div className="card">
         <div className="row wrap">
           <input placeholder="Search all fields…" value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -108,5 +113,89 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
         )
       })}
     </section>
+  )
+}
+
+/** The sheet's "Available Trees / Tier Unlocked / Available Construction Items" summary. */
+function Unlocked({ researched }: { researched: ReadonlySet<string> }) {
+  const trees = FIELDS.map((f) => ({ field: f, tier: unlockedTier(f, researched), started: ADVANCES.some((a) => a.field === f && researched.has(a.id)) }))
+  const buildable = FACILITIES.filter((f) => (f.requires.all || f.requires.any) && prereqMet(f.requires, researched))
+  return (
+    <div className="card">
+      <h3>Unlocked</h3>
+      <div className="chips">
+        {trees.map((t) => (
+          <span key={t.field} className={`chip ${t.started ? 'on' : ''}`} title={t.started ? 'Research under way' : 'Nothing researched yet'}>
+            {t.field} <small>T{t.tier}</small>
+          </span>
+        ))}
+      </div>
+      <h4>Available construction items</h4>
+      {buildable.length === 0 ? (
+        <p className="muted">Nothing yet. Infrastructure Research opens the first buildings.</p>
+      ) : (
+        <p className="small">{buildable.map((f) => f.name).join(' · ')}</p>
+      )}
+    </div>
+  )
+}
+
+/** Reverse Engineering: one blueprint per research facility per turn, priced by scale. */
+function Blueprints({ empire, actions, onActions }: Props) {
+  const [name, setName] = useState('')
+  const [scale, setScale] = useState<BlueprintScale>('Character')
+  const slots = blueprintSlots(empire)
+  const unlocked = empire.researched.includes('reverse-engineering')
+
+  function addBlueprint() {
+    if (!name.trim()) return
+    onActions({ ...actions, blueprints: [...actions.blueprints, { name: name.trim(), scale }] })
+    setName('')
+  }
+
+  return (
+    <div className="card">
+      <h3>Blueprints</h3>
+      {!unlocked ? (
+        <p className="muted">Research Reverse Engineering to copy items you possess.</p>
+      ) : slots === 0 ? (
+        <p className="muted">Reverse Engineering is known, but you need a research lab for each blueprint per turn.</p>
+      ) : (
+        <>
+          <p className="muted small">
+            Queued {actions.blueprints.length}/{slots} this turn. Only common items (availability 2 or less); check with the GM.
+          </p>
+          <ul className="compact">
+            {actions.blueprints.map((b, i) => (
+              <li key={i}>
+                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />{' '}
+                <button onClick={() => onActions({ ...actions, blueprints: actions.blueprints.filter((_, j) => j !== i) })}>remove</button>
+              </li>
+            ))}
+          </ul>
+          {actions.blueprints.length < slots && (
+            <div className="row wrap">
+              <input placeholder="Item, e.g. E-11 blaster rifle" value={name} onChange={(e) => setName(e.target.value)} />
+              <select value={scale} onChange={(e) => setScale(e.target.value as BlueprintScale)}>
+                {BLUEPRINT_SCALES.map((s) => (
+                  <option key={s} value={s}>
+                    {s} scale
+                  </option>
+                ))}
+              </select>
+              <button onClick={addBlueprint} disabled={!name.trim()}>
+                Queue blueprint
+              </button>
+            </div>
+          )}
+        </>
+      )}
+      {empire.blueprints.length > 0 && (
+        <>
+          <h4>Blueprints held</h4>
+          <p className="small">{empire.blueprints.map((b) => `${b.name} (${b.scale})`).join(' · ')}</p>
+        </>
+      )}
+    </div>
   )
 }

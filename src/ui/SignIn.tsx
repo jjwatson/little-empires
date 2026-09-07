@@ -4,7 +4,7 @@ import { CLIENT_ID } from '../drive/auth'
 import { newEmpire, newPlanet } from '../model'
 import type { Empire } from '../model'
 import type { ResourceSet } from '../data'
-import { ResourceInputs } from './common'
+import { ResourceInputs, fmt } from './common'
 
 interface Props {
   user: string | null
@@ -96,8 +96,9 @@ function NewEmpireForm({ by, onCancel, onCreate }: { by: string; onCancel: () =>
   const [name, setName] = useState('')
   const [homeworld, setHomeworld] = useState('')
   const [population, setPopulation] = useState(1_000_000)
-  const [resources, setResources] = useState<ResourceSet>({ credits: 500_000, rawMats: 5_000, energy: 5_000, manpower: 5_000 })
-  const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 50_000, rawMats: 1_000, energy: 1_000, manpower: 1_000 })
+  // The tracking sheet's "Colony Start" line.
+  const [resources, setResources] = useState<ResourceSet>({ credits: 25_000_000, rawMats: 250_000, energy: 250_000, manpower: 50_000 })
+  const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 0, rawMats: 2_000, energy: 5_000, manpower: 550 })
 
   return (
     <form
@@ -121,9 +122,13 @@ function NewEmpireForm({ by, onCancel, onCreate }: { by: string; onCancel: () =>
         Homeworld population
         <input type="number" value={population} onChange={(e) => setPopulation(Number(e.target.value))} />
       </label>
+      <p className="muted small">
+        Credits come from population: one per ten people after the turn's 1% growth, so this many people yield about{' '}
+        {fmt(population * 1.01 * 0.1)} Cr a turn before research bonuses.
+      </p>
       <h4>Starting stockpile</h4>
       <ResourceInputs value={resources} onChange={setResources} />
-      <h4>Homeworld base income per turn (agree with your GM)</h4>
+      <h4>Homeworld base income per turn besides population credits (agree with your GM)</h4>
       <ResourceInputs value={baseIncome} onChange={setBaseIncome} />
       <div className="row">
         <button className="primary" type="submit">

@@ -1,78 +1,132 @@
 import { useState } from 'react'
-import { ADVANCE_BY_ID, FACILITY_BY_ID, PLANET_TYPES } from '../data'
+import { FACILITY_BY_ID, PLANET_TYPES } from '../data'
 import type { PlanetType, ResourceSet } from '../data'
 import {
   COLONY_POPULATION,
   COLONY_SETUP_COST,
   HOMEWORLD_MIN_POPULATION,
+  ZERO,
   actionCost,
-  covers,
-  newPlanet,
+  activeBonuses,
+  blueprintSlots,
+  colonyProblems,
+  foundColony,
+  governmentOptions,
+  growthRate,
+  ledgerTurns,
   planetIncome,
   projectedIncome,
   researchSlots,
   sub,
 } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { Res, ResourceInputs, ResourceTable, fmt } from './common'
+import { Res, ResourceInputs, ResourceTable, fmt, pct } from './common'
 
 interface Props {
   empire: Empire
   actions: TurnActions
+  by: string
   onChange: (e: Empire) => void
 }
 
-export function Dashboard({ empire, actions, onChange }: Props) {
+export function Overview({ empire, actions, by, onChange }: Props) {
   const [founding, setFounding] = useState(false)
   const income = projectedIncome(empire)
   const cost = actionCost(empire, actions)
+  const population = empire.planets.reduce((n, p) => n + p.population, 0)
+  const governments = governmentOptions(empire)
+  const bonuses = activeBonuses(empire)
+  const recentTurns = ledgerTurns(empire.ledger).filter((t) => t > 0).slice(0, 5)
 
   return (
     <section>
       <div className="card">
         <h2>
-          {empire.name} <span className="muted">· Turn {empire.turn}</span>
+          {empire.name} <span className="muted">· Colony Turn {empire.turn}</span>
         </h2>
         <ResourceTable
           rows={[
             { label: 'Stockpile', r: empire.resources },
             { label: 'Income next turn', r: income, signedValues: true },
-            { label: 'Queued this turn', r: sub({ credits: 0, rawMats: 0, energy: 0, manpower: 0 }, cost), signedValues: true },
+            { label: 'Queued this turn', r: sub(ZERO, cost), signedValues: true },
           ]}
         />
         <p className="muted">
-          Research slots: {researchSlots(empire)} · Researched advances: {empire.researched.length} · Planets:{' '}
-          {empire.planets.length}
+          Population {fmt(population)} · Research slots {researchSlots(empire)} · Blueprint slots {blueprintSlots(empire)} ·
+          Advances {empire.researched.length} · Planets {empire.planets.length}
         </p>
       </div>
 
       <div className="grid">
-        {empire.planets.map((p) => (
-          <div className="card" key={p.id}>
-            <h3>
-              {p.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === p.type)?.name}</span>
-            </h3>
-            <p className="muted">Population {fmt(p.population)}</p>
-            <p>
-              Income: <Res r={planetIncome(p)} signedValues />
-            </p>
-            {p.facilities.length === 0 && !p.inProgress && <p className="muted">No facilities yet.</p>}
-            <ul className="compact">
-              {p.facilities.map((f) => (
-                <li key={f.facilityId}>
-                  {FACILITY_BY_ID.get(f.facilityId)?.name ?? f.facilityId}
-                  {f.count > 1 ? ` ×${f.count}` : ''}
-                </li>
+        {empire.planets.map((p) => {
+          const rate = growthRate(empire, p)
+          return (
+            <div className="card" key={p.id}>
+              <h3>
+                {p.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === p.type)?.name}</span>
+              </h3>
+              <p className="muted">
+                Population {fmt(p.population)} · growing {pct(rate)} a turn
+              </p>
+              <p>
+                Income: <Res r={planetIncome(p, rate)} signedValues />
+              </p>
+              {p.facilities.length === 0 && !p.inProgress && <p className="muted">No facilities yet.</p>}
+              <ul className="compact">
+                {p.facilities.map((f) => (
+                  <li key={f.facilityId}>
+                    {FACILITY_BY_ID.get(f.facilityId)?.name ?? f.facilityId}
+                    {f.count > 1 ? ` ×${f.count}` : ''}
+                  </li>
+                ))}
+                {p.inProgress && (
+                  <li className="muted">
+                    Building {FACILITY_BY_ID.get(p.inProgress.facilityId)?.name} ({p.inProgress.turnsLeft} turn
+                    {p.inProgress.turnsLeft === 1 ? '' : 's'} left)
+                  </li>
+                )}
+              </ul>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="card">
+        <h3>Bonuses in effect</h3>
+        {governments.length > 0 && (
+          <label>
+            Governmental system in operation
+            <select value={empire.government ?? ''} onChange={(e) => onChange({ ...empire, government: e.target.value || undefined })}>
+              <option value="">None</option>
+              {governments.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
               ))}
-              {p.inProgress && (
-                <li className="muted">
-                  Building {FACILITY_BY_ID.get(p.inProgress.facilityId)?.name} ({p.inProgress.turnsLeft} turn
-                  {p.inProgress.turnsLeft === 1 ? '' : 's'} left)
-                </li>
-              )}
-            </ul>
-          </div>
-        ))}
+            </select>
+          </label>
+        )}
+        {bonuses.length === 0 ? (
+          <p className="muted">Nothing researched yet that changes the numbers.</p>
+        ) : (
+          <table className="advances">
+            <tbody>
+              {bonuses.map((b) => (
+                <tr key={b.source}>
+                  <td className="act">
+                    <strong>{b.source}</strong>
+                    <div className="muted small">{b.field}</div>
+                  </td>
+                  <td>{b.effect}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        <p className="muted small">
+          Population growth bonuses are applied automatically. Other percentages are listed for reference and still need
+          applying by hand.
+        </p>
       </div>
 
       <div className="card">
@@ -82,42 +136,41 @@ export function Dashboard({ empire, actions, onChange }: Props) {
           cannot drop below {fmt(HOMEWORLD_MIN_POPULATION)}).
         </p>
         {founding ? (
-          <FoundColony empire={empire} onCancel={() => setFounding(false)} onChange={onChange} />
+          <FoundColony empire={empire} by={by} onCancel={() => setFounding(false)} onChange={onChange} />
         ) : (
           <button onClick={() => setFounding(true)}>Found colony…</button>
         )}
       </div>
 
-      {empire.log.length > 0 && (
+      {recentTurns.length > 0 && (
         <div className="card">
           <h3>Recent turns</h3>
           <ul className="compact">
-            {[...empire.log]
-              .reverse()
-              .slice(0, 5)
-              .map((e) => (
-                <li key={e.turn}>
-                  <strong>Turn {e.turn}</strong>{' '}
-                  {e.researched.map((id) => ADVANCE_BY_ID.get(id)?.name ?? id).join(', ') || 'no research'};{' '}
-                  {e.builds.map((b) => FACILITY_BY_ID.get(b.facilityId)?.name ?? b.facilityId).join(', ') || 'no builds'}
-                  {e.notes ? ` — ${e.notes}` : ''}
+            {recentTurns.map((t) => {
+              const lines = empire.ledger.filter((l) => l.turn === t)
+              const research = lines.filter((l) => l.kind === 'research').map((l) => l.label)
+              const builds = lines.filter((l) => l.kind === 'construction' || l.kind === 'prototype').map((l) => l.label)
+              const other = lines.filter((l) => ['blueprint', 'colony', 'adjustment'].includes(l.kind)).map((l) => l.label)
+              return (
+                <li key={t}>
+                  <strong>Turn {t}</strong> {research.join(', ') || 'no research'}; {builds.join(', ') || 'no builds'}
+                  {other.length ? `; ${other.join(', ')}` : ''}
                 </li>
-              ))}
+              )
+            })}
           </ul>
+          <p className="muted small">Full detail is on the Economy tab under Ledger.</p>
         </div>
       )}
     </section>
   )
 }
 
-function FoundColony({ empire, onCancel, onChange }: { empire: Empire; onCancel: () => void; onChange: (e: Empire) => void }) {
+function FoundColony({ empire, by, onCancel, onChange }: { empire: Empire; by: string; onCancel: () => void; onChange: (e: Empire) => void }) {
   const [name, setName] = useState('')
   const [type, setType] = useState<PlanetType>('arid')
-  const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 5_000, rawMats: 200, energy: 200, manpower: 200 })
-  const home = empire.planets[0]
-  const problems: string[] = []
-  if (!covers(empire.resources, COLONY_SETUP_COST)) problems.push('Not enough resources for the setup cost.')
-  if (home.population - COLONY_POPULATION < HOMEWORLD_MIN_POPULATION) problems.push('Homeworld population would fall too low.')
+  const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 0, rawMats: 200, energy: 200, manpower: 200 })
+  const problems = colonyProblems(empire)
 
   return (
     <form
@@ -125,12 +178,7 @@ function FoundColony({ empire, onCancel, onChange }: { empire: Empire; onCancel:
       onSubmit={(e) => {
         e.preventDefault()
         if (problems.length || !name.trim()) return
-        const planet = newPlanet(name.trim(), type, COLONY_POPULATION, baseIncome)
-        onChange({
-          ...empire,
-          resources: sub(empire.resources, COLONY_SETUP_COST),
-          planets: [{ ...home, population: home.population - COLONY_POPULATION }, ...empire.planets.slice(1), planet],
-        })
+        onChange(foundColony(empire, name.trim(), type, baseIncome, by))
         onCancel()
       }}
     >
@@ -149,7 +197,7 @@ function FoundColony({ empire, onCancel, onChange }: { empire: Empire; onCancel:
         </select>
       </label>
       <p className="muted">{PLANET_TYPES.find((t) => t.id === type)?.summary}</p>
-      <h4>Base income per turn (agree with your GM)</h4>
+      <h4>Base income per turn besides population credits (agree with your GM)</h4>
       <ResourceInputs value={baseIncome} onChange={setBaseIncome} />
       {problems.map((p) => (
         <p key={p} className="error">

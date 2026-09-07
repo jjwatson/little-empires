@@ -47,3 +47,15 @@ export interface Facility {
   income: ResourceSet
   requires: Prereq
 }
+
+/** Reverse Engineering: blueprint cost by item scale (house-rules table; the sheet's 10-Energy Character row is a typo). */
+export const BLUEPRINT_SCALES = ['Character', 'Droid', 'Speeder', 'Walker', 'Starfighter', 'Capital'] as const
+export type BlueprintScale = (typeof BLUEPRINT_SCALES)[number]
+export const BLUEPRINT_COSTS: Record<BlueprintScale, ResourceSet> = {
+  Character: { credits: 500, rawMats: 10, energy: 100, manpower: 100 },
+  Droid: { credits: 1_000, rawMats: 20, energy: 200, manpower: 200 },
+  Speeder: { credits: 1_000, rawMats: 20, energy: 200, manpower: 200 },
+  Walker: { credits: 5_000, rawMats: 100, energy: 1_000, manpower: 1_000 },
+  Starfighter: { credits: 10_000, rawMats: 200, energy: 2_000, manpower: 2_000 },
+  Capital: { credits: 100_000, rawMats: 2_000, energy: 20_000, manpower: 20_000 },
+}

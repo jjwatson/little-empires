@@ -358,7 +358,7 @@
     },
     "requires": {
       "all": [
-        "power-generator-solid-fuel"
+        "power-generator-solar"
       ]
     }
   },
@@ -897,7 +897,7 @@
     },
     "requires": {
       "all": [
-        "small-walker-factory-blueprints"
+        "medium-walker-factory"
       ]
     }
   },
@@ -920,7 +920,7 @@
     },
     "requires": {
       "all": [
-        "small-walker-factory-blueprints"
+        "large-walker-factory"
       ]
     }
   },
@@ -1519,7 +1519,7 @@
     },
     "requires": {
       "all": [
-        "small-fabrication-facility"
+        "medium-fabrication-facility"
       ]
     }
   },
@@ -1542,7 +1542,7 @@
     },
     "requires": {
       "all": [
-        "small-fabrication-facility"
+        "large-fabrication-facility"
       ]
     }
   },

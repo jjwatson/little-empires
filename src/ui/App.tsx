@@ -2,15 +2,16 @@ import { useCallback, useEffect, useState } from 'react'
 import { signIn, signOut, whoAmI } from '../drive/auth'
 import { ConflictError, download, listJsonFiles, parseFolderId, updateJson, createJson, getFolder } from '../drive/files'
 import type { DriveFile } from '../drive/files'
-import type { Empire } from '../model'
-import type { TurnActions } from '../model'
+import { EMPTY_ACTIONS, migrate } from '../model'
+import type { Empire, TurnActions } from '../model'
 import { SignIn } from './SignIn'
-import { Dashboard } from './Dashboard'
+import { Overview } from './Dashboard'
 import { ResearchTree } from './ResearchTree'
 import { PlanetView } from './PlanetView'
+import { Economy } from './Economy'
 import { EndTurn } from './EndTurn'
 
-type Tab = 'dashboard' | 'research' | 'planets' | 'endturn'
+type Tab = 'overview' | 'planets' | 'research' | 'economy' | 'endturn'
 
 interface Loaded {
   empire: Empire
@@ -21,7 +22,8 @@ interface Loaded {
 const FOLDER_KEY = 'little-empires.folderId'
 /** The players' shared Drive folder; pre-filled so nobody has to paste it. Can still be changed in the UI. */
 const DEFAULT_FOLDER_ID = '1eLx_1K6oloAKsnnGlPQGx4jVtEeZh5vm'
-const EMPTY_ACTIONS: TurnActions = { research: [], builds: [] }
+
+const queuedCount = (a: TurnActions) => a.research.length + a.builds.length + a.blueprints.length
 
 export function App() {
   const [user, setUser] = useState<string | null>(null)
@@ -30,7 +32,7 @@ export function App() {
   const [files, setFiles] = useState<DriveFile[]>([])
   const [loaded, setLoaded] = useState<Loaded | null>(null)
   const [actions, setActions] = useState<TurnActions>(EMPTY_ACTIONS)
-  const [tab, setTab] = useState<Tab>('dashboard')
+  const [tab, setTab] = useState<Tab>('overview')
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [conflict, setConflict] = useState<{ remote: DriveFile; pending: Empire } | null>(null)
@@ -49,14 +51,11 @@ export function App() {
     }
   }, [])
 
-  const refreshFiles = useCallback(
-    async (id: string) => {
-      const folder = await getFolder(id)
-      setFolderName(folder.name)
-      setFiles(await listJsonFiles(id))
-    },
-    [],
-  )
+  const refreshFiles = useCallback(async (id: string) => {
+    const folder = await getFolder(id)
+    setFolderName(folder.name)
+    setFiles(await listJsonFiles(id))
+  }, [])
 
   async function handleSignIn() {
     await run('Signing in…', async () => {
@@ -85,11 +84,11 @@ export function App() {
 
   async function openFile(file: DriveFile) {
     await run('Loading empire…', async () => {
-      const { data, meta } = await download<Empire>(file.id)
-      setLoaded({ empire: data, fileId: meta.id, modifiedTime: meta.modifiedTime })
+      const { data, meta } = await download<unknown>(file.id)
+      setLoaded({ empire: migrate(data), fileId: meta.id, modifiedTime: meta.modifiedTime })
       setActions(EMPTY_ACTIONS)
       setDirty(false)
-      setTab('dashboard')
+      setTab('overview')
     })
   }
 
@@ -99,7 +98,7 @@ export function App() {
       setFiles(await listJsonFiles(folderId))
       setLoaded({ empire, fileId: meta.id, modifiedTime: meta.modifiedTime })
       setActions(EMPTY_ACTIONS)
-      setTab('dashboard')
+      setTab('overview')
     })
   }
 
@@ -142,6 +141,7 @@ export function App() {
   }, [dirty])
 
   const empire = loaded?.empire ?? null
+  const by = user ?? 'unknown'
 
   return (
     <div className="app">
@@ -151,10 +151,11 @@ export function App() {
           <nav>
             {(
               [
-                ['dashboard', 'Dashboard'],
-                ['research', 'Research'],
+                ['overview', 'Overview'],
                 ['planets', 'Planets'],
-                ['endturn', `End Turn ${actions.research.length + actions.builds.length ? '•' : ''}`],
+                ['research', 'Research'],
+                ['economy', 'Economy'],
+                ['endturn', `End Turn${queuedCount(actions) ? ' •' : ''}`],
               ] as [Tab, string][]
             ).map(([t, label]) => (
               <button key={t} className={tab === t ? 'active' : ''} onClick={() => setTab(t)}>
@@ -203,22 +204,24 @@ export function App() {
             onCreate={createEmpire}
             onRefresh={() => run('Refreshing…', () => refreshFiles(folderId))}
           />
-        ) : tab === 'dashboard' ? (
-          <Dashboard empire={empire} actions={actions} onChange={commit} />
+        ) : tab === 'overview' ? (
+          <Overview empire={empire} actions={actions} by={by} onChange={commit} />
         ) : tab === 'research' ? (
           <ResearchTree empire={empire} actions={actions} onActions={setActions} />
         ) : tab === 'planets' ? (
           <PlanetView empire={empire} actions={actions} onActions={setActions} onChange={commit} />
+        ) : tab === 'economy' ? (
+          <Economy empire={empire} by={by} onChange={commit} />
         ) : (
           <EndTurn
             empire={empire}
             actions={actions}
-            by={user}
+            by={by}
             onActions={setActions}
             onCommit={async (next) => {
               await commit(next)
               setActions(EMPTY_ACTIONS)
-              setTab('dashboard')
+              setTab('overview')
             }}
           />
         )}

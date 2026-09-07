@@ -1,8 +1,19 @@
 import { useState } from 'react'
-import { ADVANCE_BY_ID, FACILITY_BY_ID } from '../data'
-import { actionCost, add, endTurn, projectedIncome, sub, validateActions } from '../model'
+import { ADVANCE_BY_ID, BLUEPRINT_COSTS, FACILITY_BY_ID } from '../data'
+import {
+  ZERO,
+  actionCost,
+  add,
+  canHostPrototype,
+  endTurn,
+  projectedIncome,
+  prototypePlanet,
+  prototypesFor,
+  sub,
+  validateActions,
+} from '../model'
 import type { Empire, TurnActions } from '../model'
-import { ResourceTable } from './common'
+import { Res, ResourceTable } from './common'
 
 interface Props {
   empire: Empire
@@ -19,11 +30,13 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
   const income = projectedIncome(empire)
   const after = add(sub(empire.resources, cost), income)
   const planetName = (id: string) => empire.planets.find((p) => p.id === id)?.name ?? id
+  const prototypes = prototypesFor(empire, actions.research)
 
   return (
     <section>
       <div className="card">
-        <h2>End turn {empire.turn}</h2>
+        <h2>End Colony Turn {empire.turn}</h2>
+
         <h3>Research</h3>
         {actions.research.length === 0 ? (
           <p className="muted">Nothing queued.</p>
@@ -31,14 +44,59 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
           <ul className="compact">
             {actions.research.map((id) => (
               <li key={id}>
-                {ADVANCE_BY_ID.get(id)?.name ?? id}{' '}
-                <button onClick={() => onActions({ ...actions, research: actions.research.filter((r) => r !== id) })}>
-                  remove
-                </button>
+                {ADVANCE_BY_ID.get(id)?.name ?? id} <Res r={ADVANCE_BY_ID.get(id)?.cost ?? ZERO} />{' '}
+                <button onClick={() => onActions({ ...actions, research: actions.research.filter((r) => r !== id) })}>remove</button>
               </li>
             ))}
           </ul>
         )}
+
+        {prototypes.length > 0 && (
+          <>
+            <h3>Working prototypes</h3>
+            <p className="muted small">Completing a building's research hands you one of them, its cost included in the research.</p>
+            <ul className="compact">
+              {prototypes.map((f) => {
+                const hosts = empire.planets.filter((p) => canHostPrototype(p, f))
+                const target = prototypePlanet(empire, actions, f)
+                return (
+                  <li key={f.id}>
+                    {f.name}{' '}
+                    {hosts.length === 0 ? (
+                      <span className="neg small">no planet can take it, so none is granted</span>
+                    ) : (
+                      <>
+                        on{' '}
+                        <select value={target?.id ?? ''} onChange={(e) => onActions({ ...actions, prototypes: { ...actions.prototypes, [f.id]: e.target.value } })}>
+                          {hosts.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </>
+        )}
+
+        <h3>Blueprints</h3>
+        {actions.blueprints.length === 0 ? (
+          <p className="muted">Nothing queued.</p>
+        ) : (
+          <ul className="compact">
+            {actions.blueprints.map((b, i) => (
+              <li key={i}>
+                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />{' '}
+                <button onClick={() => onActions({ ...actions, blueprints: actions.blueprints.filter((_, j) => j !== i) })}>remove</button>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <h3>Construction</h3>
         {actions.builds.length === 0 ? (
           <p className="muted">Nothing queued.</p>
@@ -47,9 +105,7 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
             {actions.builds.map((b) => (
               <li key={b.planetId}>
                 {planetName(b.planetId)}: {FACILITY_BY_ID.get(b.facilityId)?.name ?? b.facilityId}{' '}
-                <button onClick={() => onActions({ ...actions, builds: actions.builds.filter((x) => x !== b) })}>
-                  remove
-                </button>
+                <button onClick={() => onActions({ ...actions, builds: actions.builds.filter((x) => x !== b) })}>remove</button>
               </li>
             ))}
           </ul>
@@ -58,14 +114,14 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
         <ResourceTable
           rows={[
             { label: 'Stockpile now', r: empire.resources },
-            { label: 'Spent on actions', r: sub({ credits: 0, rawMats: 0, energy: 0, manpower: 0 }, cost), signedValues: true },
-            { label: 'Income', r: income, signedValues: true },
+            { label: 'Spent on actions', r: sub(ZERO, cost), signedValues: true },
+            { label: 'Income (after growth)', r: income, signedValues: true },
             { label: 'Stockpile after', r: after },
           ]}
         />
 
         <label>
-          Notes for the log (optional)
+          Notes for the ledger (optional)
           <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. festival held, GM ruling…" />
         </label>
 
@@ -74,42 +130,11 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
             {e}
           </p>
         ))}
-        <button
-          className="primary"
-          disabled={errors.length > 0}
-          onClick={() => onCommit(endTurn(empire, actions, by, notes))}
-        >
+        <button className="primary" disabled={errors.length > 0} onClick={() => onCommit(endTurn(empire, actions, by, notes))}>
           End turn and save
         </button>
+        <p className="muted small">Population grows, income lands, builds progress and the turn is written to the ledger.</p>
       </div>
-
-      {empire.log.length > 0 && (
-        <div className="card">
-          <h3>Turn log</h3>
-          <table className="advances">
-            <tbody>
-              {[...empire.log].reverse().map((e) => (
-                <tr key={e.turn}>
-                  <td className="act">
-                    <strong>{e.turn}</strong>
-                  </td>
-                  <td>
-                    <div>{e.researched.map((id) => ADVANCE_BY_ID.get(id)?.name ?? id).join(', ') || 'No research'}</div>
-                    <div>
-                      {e.builds.map((b) => `${planetName(b.planetId)}: ${FACILITY_BY_ID.get(b.facilityId)?.name ?? b.facilityId}`).join(', ') ||
-                        'No builds'}
-                    </div>
-                    {e.notes && <div className="muted small">{e.notes}</div>}
-                    <div className="muted small">
-                      {new Date(e.at).toLocaleString()} by {e.by}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </section>
   )
 }

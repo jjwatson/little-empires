@@ -1,8 +1,17 @@
 import { useState } from 'react'
 import { FACILITY_BY_ID, PLANET_TYPES, facilityCostOn, facilityIncomeOn } from '../data'
-import { availableBuilds, planetIncome } from '../model'
-import type { Empire, Planet, TurnActions } from '../model'
-import { Res, ResourceInputs, fmt } from './common'
+import {
+  PROFILE_FIELDS,
+  availableBuilds,
+  growthRate,
+  oncePerPlanet,
+  planetHas,
+  planetIncome,
+  populationCredits,
+  withSpecies,
+} from '../model'
+import type { Empire, Planet, Species, TurnActions } from '../model'
+import { Res, ResourceInputs, fmt, pct } from './common'
 
 interface Props {
   empire: Empire
@@ -16,6 +25,7 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
   const planet = empire.planets.find((p) => p.id === planetId) ?? empire.planets[0]
   const [editing, setEditing] = useState(false)
   const [query, setQuery] = useState('')
+  const rate = growthRate(empire, planet)
 
   const queued = actions.builds.find((b) => b.planetId === planet.id)
   const options = availableBuilds(empire, planet).filter(
@@ -28,8 +38,8 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
     onActions({ ...actions, builds })
   }
 
-  function updatePlanet(patch: Partial<Planet>) {
-    onChange({ ...empire, planets: empire.planets.map((p) => (p.id === planet.id ? { ...p, ...patch } : p)) })
+  function updatePlanet(next: Planet) {
+    onChange({ ...empire, planets: empire.planets.map((p) => (p.id === planet.id ? next : p)) })
   }
 
   return (
@@ -47,15 +57,32 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
         </h2>
         <p className="muted">{PLANET_TYPES.find((t) => t.id === planet.type)?.summary}</p>
         {editing ? (
-          <PlanetEditor planet={planet} onSave={(patch) => { updatePlanet(patch); setEditing(false) }} onCancel={() => setEditing(false)} />
+          <PlanetEditor
+            planet={planet}
+            onSave={(next) => {
+              updatePlanet(next)
+              setEditing(false)
+            }}
+            onCancel={() => setEditing(false)}
+          />
         ) : (
           <>
             <p>
-              Population {fmt(planet.population)} · Base income <Res r={planet.baseIncome} signedValues /> · Total income{' '}
-              <Res r={planetIncome(planet)} signedValues /> <button onClick={() => setEditing(true)}>edit</button>
+              Population {fmt(planet.population)} · growing {pct(rate)} a turn
+              {planet.growthAdjust ? ` (includes GM adjustment ${pct(planet.growthAdjust)})` : ''} · yields{' '}
+              {fmt(populationCredits(planet, rate))} Cr <button onClick={() => setEditing(true)}>edit</button>
+            </p>
+            <p>
+              Other base income <Res r={planet.baseIncome} signedValues /> · Total income{' '}
+              <Res r={planetIncome(planet, rate)} signedValues />
             </p>
           </>
         )}
+      </div>
+
+      <div className="grid">
+        <ProfileCard planet={planet} onSave={updatePlanet} />
+        <SpeciesCard planet={planet} onSave={updatePlanet} />
       </div>
 
       <div className="card">
@@ -112,18 +139,24 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
               <tbody>
                 {options.map((f) => {
                   const isQueued = queued?.facilityId === f.id
+                  const blocked = oncePerPlanet(f.id) && planetHas(planet, f.id)
                   return (
-                    <tr key={f.id} className={isQueued ? 'available' : ''}>
+                    <tr key={f.id} className={isQueued ? 'available' : blocked ? 'locked' : ''}>
                       <td className="act">
-                        <button className={isQueued ? 'primary' : ''} onClick={() => setBuild(isQueued ? null : f.id)}>
-                          {isQueued ? 'Queued' : 'Queue'}
-                        </button>
+                        {blocked ? (
+                          <span className="muted small">built</span>
+                        ) : (
+                          <button className={isQueued ? 'primary' : ''} onClick={() => setBuild(isQueued ? null : f.id)}>
+                            {isQueued ? 'Queued' : 'Queue'}
+                          </button>
+                        )}
                       </td>
                       <td>
                         <strong>{f.name}</strong>
                         <div className="muted small">{f.effects}</div>
                         {f.notes && <div className="muted small">{f.notes}</div>}
                         {f.requires.note && <div className="muted small">Note: {f.requires.note}</div>}
+                        {oncePerPlanet(f.id) && <div className="muted small">One per planet; each adds a research slot.</div>}
                         {f.buildTime && f.buildTime > 1 && <div className="small">Build time: {f.buildTime} turns</div>}
                       </td>
                       <td className="cost">
@@ -146,22 +179,28 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
   )
 }
 
-function PlanetEditor({ planet, onSave, onCancel }: { planet: Planet; onSave: (p: Partial<Planet>) => void; onCancel: () => void }) {
-  const [population, setPopulation] = useState(planet.population)
+function PlanetEditor({ planet, onSave, onCancel }: { planet: Planet; onSave: (p: Planet) => void; onCancel: () => void }) {
+  const [population, setPopulation] = useState(Math.round(planet.population))
+  const [growthPct, setGrowthPct] = useState(planet.growthAdjust * 100)
   const [baseIncome, setBaseIncome] = useState(planet.baseIncome)
+  const hasSpecies = planet.species.length > 0
   return (
     <form
       className="inner"
       onSubmit={(e) => {
         e.preventDefault()
-        onSave({ population, baseIncome })
+        onSave({ ...planet, population: hasSpecies ? planet.population : population, growthAdjust: growthPct / 100, baseIncome })
       }}
     >
       <label>
-        Population
-        <input type="number" value={population} onChange={(e) => setPopulation(Number(e.target.value))} />
+        Population {hasSpecies && <span className="muted small">(set by the species table)</span>}
+        <input type="number" value={population} disabled={hasSpecies} onChange={(e) => setPopulation(Number(e.target.value))} />
       </label>
-      <h4>Base income per turn</h4>
+      <label>
+        GM growth adjustment, % per turn (base 1% plus research bonuses is automatic)
+        <input type="number" step="0.1" value={growthPct} onChange={(e) => setGrowthPct(Number(e.target.value))} />
+      </label>
+      <h4>Base income per turn besides population credits</h4>
       <ResourceInputs value={baseIncome} onChange={setBaseIncome} />
       <div className="row">
         <button className="primary" type="submit">
@@ -172,5 +211,149 @@ function PlanetEditor({ planet, onSave, onCancel }: { planet: Planet; onSave: (p
         </button>
       </div>
     </form>
+  )
+}
+
+function ProfileCard({ planet, onSave }: { planet: Planet; onSave: (p: Planet) => void }) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState<Record<string, string>>(planet.profile)
+  const filled = PROFILE_FIELDS.filter((k) => planet.profile[k])
+  return (
+    <div className="card">
+      <h3>
+        Profile{' '}
+        {!editing && (
+          <button
+            onClick={() => {
+              setDraft(planet.profile)
+              setEditing(true)
+            }}
+          >
+            edit
+          </button>
+        )}
+      </h3>
+      {editing ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            const profile = Object.fromEntries(Object.entries(draft).filter(([, v]) => v.trim()))
+            onSave({ ...planet, profile })
+            setEditing(false)
+          }}
+        >
+          {PROFILE_FIELDS.map((k) => (
+            <label key={k} className="tight">
+              {k}
+              <input value={draft[k] ?? ''} onChange={(e) => setDraft({ ...draft, [k]: e.target.value })} />
+            </label>
+          ))}
+          <div className="row">
+            <button className="primary" type="submit">
+              Save
+            </button>
+            <button type="button" onClick={() => setEditing(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : filled.length === 0 ? (
+        <p className="muted">No description yet. Star, atmosphere, terrain, starport, exports…</p>
+      ) : (
+        <table className="kv">
+          <tbody>
+            {filled.map((k) => (
+              <tr key={k}>
+                <th>{k}</th>
+                <td>{planet.profile[k]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  )
+}
+
+function SpeciesCard({ planet, onSave }: { planet: Planet; onSave: (p: Planet) => void }) {
+  const [editing, setEditing] = useState(false)
+  const [rows, setRows] = useState<Species[]>(planet.species)
+  const total = rows.reduce((n, s) => n + s.population, 0)
+
+  function start() {
+    setRows(planet.species.length ? planet.species.map((s) => ({ ...s, population: Math.round(s.population) })) : [{ name: '', population: Math.round(planet.population) }])
+    setEditing(true)
+  }
+
+  return (
+    <div className="card">
+      <h3>Demographics {!editing && <button onClick={start}>edit</button>}</h3>
+      {editing ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onSave(withSpecies(planet, rows.filter((s) => s.name.trim() && s.population > 0)))
+            setEditing(false)
+          }}
+        >
+          <table className="kv">
+            <tbody>
+              {rows.map((s, i) => (
+                <tr key={i}>
+                  <td>
+                    <input placeholder="Species" value={s.name} onChange={(e) => setRows(rows.map((r, j) => (j === i ? { ...r, name: e.target.value } : r)))} />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={s.population}
+                      onChange={(e) => setRows(rows.map((r, j) => (j === i ? { ...r, population: Number(e.target.value) } : r)))}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => setRows(rows.filter((_, j) => j !== i))}>
+                      ×
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="muted small">Total {fmt(total)}. Leaving the table empty keeps a single population figure.</p>
+          <div className="row">
+            <button type="button" onClick={() => setRows([...rows, { name: '', population: 0 }])}>
+              Add species
+            </button>
+            <button className="primary" type="submit">
+              Save
+            </button>
+            <button type="button" onClick={() => setEditing(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : planet.species.length === 0 ? (
+        <p className="muted">Single population figure of {fmt(planet.population)}. Add species to track them separately.</p>
+      ) : (
+        <table className="kv">
+          <tbody>
+            {planet.species.map((s) => (
+              <tr key={s.name}>
+                <th>{s.name}</th>
+                <td className="num">{fmt(s.population)}</td>
+                <td className="num muted">{pct(s.population / planet.population)}</td>
+              </tr>
+            ))}
+            <tr>
+              <th>Total</th>
+              <td className="num">
+                <strong>{fmt(planet.population)}</strong>
+              </td>
+              <td />
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </div>
   )
 }

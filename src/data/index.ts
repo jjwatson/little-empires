@@ -13,3 +13,4 @@ export const FIELDS = [...new Set(ADVANCES.map((a) => a.field))]
 
 export * from './types'
 export * from './planetTypes'
+export * from './categories'

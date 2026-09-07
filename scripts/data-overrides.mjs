@@ -68,6 +68,12 @@ export const PREREQ_OVERRIDES = {
   'facility:farms': { all: ['agricultural-farming'] }, // sheet says "Agricultural Research"; Agricultural Farming is what "unlocks Farms"
   'facility:automated-farms': { all: ['automated-farming-research', 'small-droid-factory-research'] },
   'facility:solid-fuel-power-generator': { all: ['power-generator-solid-fuel'] },
+  'facility:solar-power-generator': { all: ['power-generator-solar'] }, // sheet says Solid Fuel; Power Generator: Solar is the matching advance
+  // sheet lists every size under the Small research; the Medium/Large advances exist, so use them
+  'facility:medium-walker-factory': { all: ['medium-walker-factory'] },
+  'facility:large-walker-factory': { all: ['large-walker-factory'] },
+  'facility:medium-fabrication-factory': { all: ['medium-fabrication-facility'] },
+  'facility:large-fabrication-factory': { all: ['large-fabrication-facility'] },
   'facility:small-mining-outpost': { all: ['small-mining-outpost'] },
   'facility:medium-mining-outpost': { all: ['medium-mining-outpost'] },
   'facility:large-mining-outpost': { all: ['large-mining-outpost'] },
