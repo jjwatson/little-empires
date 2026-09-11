@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { Simulation, forceLink } from 'd3-force'
 import { select } from 'd3-selection'
 import { zoom, zoomIdentity } from 'd3-zoom'
 import type { D3ZoomEvent, ZoomBehavior, ZoomTransform } from 'd3-zoom'
@@ -19,10 +18,7 @@ import {
   buildSimLinks,
   buildSimNodes,
   fieldLabelPosition,
-  formatLayout,
-  makeSimulation,
   pickLabelSides,
-  toLayoutPositions,
 } from './researchGraphForces'
 import type { LabelSide, LayoutPositions, SimLink, SimNode } from './researchGraphForces'
 
@@ -37,7 +33,7 @@ interface Props {
 }
 
 const MODEL = buildGraphModel(ADVANCES)
-/** Curated positions (see scripts/layout-research.ts and the Copy layout button). */
+/** Curated positions, fixed in the app (see scripts/layout-research.ts and README). */
 const LAYOUT = layoutJson as unknown as LayoutPositions
 const LABEL_ZOOM = 0.6
 const OUTER_R = (MODEL.maxDepth + 0.8) * RING_GAP
@@ -46,16 +42,11 @@ const fieldColor = (field: string) => (field ? `var(--f${FIELD_INDEX.get(field) 
 
 type LabelMode = 'auto' | 'all' | 'none'
 
-/** Positions survive view switches and remounts, including the user's drags. */
-const cache: { nodes: SimNode[]; links: SimLink[] } = { nodes: [], links: [] }
-
-function resetCache(): void {
-  cache.nodes = buildSimNodes(MODEL, LAYOUT)
-  cache.links = buildSimLinks(MODEL, cache.nodes)
-}
-
-/** Advances without a baked position (after a data re-convert) are placed by the forces. */
-const hasFreeNodes = () => cache.nodes.some((n) => n.fx == null)
+/** The graph is static: positions, label sides and field captions are computed once. */
+const NODES: readonly SimNode[] = buildSimNodes(MODEL, LAYOUT)
+const LINKS: readonly SimLink[] = buildSimLinks(MODEL, NODES as SimNode[])
+const LABEL_SIDE_BY_ID = pickLabelSides(NODES, LINKS)
+const FIELD_LABEL_POS = new Map(FIELDS.map((f) => [f, fieldLabelPosition(f, NODES)]))
 
 /** SVG text placement for a label on the given side of a node of radius r. */
 function labelAttrs(side: LabelSide, r: number): { x: number; y: number; textAnchor: 'middle' | 'start' | 'end' } {
@@ -97,23 +88,12 @@ const linkPath = (l: SimLink): string => {
 export function ResearchGraph({ empireName, researched, queued, slots, query, onlyAvailable, onToggle }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown>>()
-  const simRef = useRef<Simulation<SimNode, SimLink>>()
-  const [version, bump] = useState(0)
   const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity)
   const [selected, setSelected] = useState<string | null>(null)
   const [fieldFocus, setFieldFocus] = useState<string | null>(null)
   const [labelMode, setLabelMode] = useState<LabelMode>('auto')
-  const [copied, setCopied] = useState<string | null>(null)
-  const [layoutDump, setLayoutDump] = useState<string | null>(null)
-
-  if (cache.nodes.length === 0) resetCache()
 
   const queuedSet = useMemo(() => new Set(queued), [queued])
-  // Which side of each node its label sits on, re-chosen whenever positions change.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const labelSides = useMemo(() => pickLabelSides(cache.nodes, cache.links), [version])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fieldLabels = useMemo(() => new Map(FIELDS.map((f) => [f, fieldLabelPosition(f, cache.nodes)])), [version])
   const statusById = useMemo(() => {
     const m = new Map<string, AdvanceStatus>()
     for (const a of ADVANCES) m.set(a.id, advanceStatus(a, researched))
@@ -134,7 +114,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
     const svg = svgRef.current
     const zb = zoomRef.current
     if (!svg || !zb) return
-    const pts = cache.nodes.filter((n) => !ids || ids.has(n.id))
+    const pts = NODES.filter((n) => !ids || ids.has(n.id))
     if (!pts.length) return
     const xs = pts.map((n) => n.x ?? 0)
     const ys = pts.map((n) => n.y ?? 0)
@@ -152,7 +132,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
   const panTo = useCallback((id: string) => {
     const svg = svgRef.current
     const zb = zoomRef.current
-    const n = cache.nodes.find((n) => n.id === id)
+    const n = NODES.find((n) => n.id === id)
     if (!svg || !zb || !n) return
     const { width, height } = svg.getBoundingClientRect()
     const k = Math.max(transform.k, 1)
@@ -174,92 +154,11 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
     }
   }, [])
 
-  // The layout is baked, so the simulation only ever places nodes that lack a position.
+  // Fit once the svg has its size.
   useEffect(() => {
-    const sim = makeSimulation(MODEL, cache.nodes, cache.links).on('tick', () => bump((v) => v + 1))
-    simRef.current = sim
-    if (hasFreeNodes()) {
-      sim.tick(250)
-      bump((v) => v + 1)
-    }
     const raf = requestAnimationFrame(() => fitToNodes())
-    return () => {
-      cancelAnimationFrame(raf)
-      sim.stop()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  function resetLayout() {
-    resetCache()
-    setSelected(null)
-    const sim = simRef.current
-    if (sim) {
-      sim.nodes(cache.nodes)
-      ;(sim.force('link') as ReturnType<typeof forceLink<SimNode, SimLink>>).links(cache.links)
-      if (hasFreeNodes()) sim.tick(250)
-    }
-    bump((v) => v + 1)
-    requestAnimationFrame(() => fitToNodes())
-  }
-
-  async function copyLayout() {
-    const text = formatLayout(toLayoutPositions(cache.nodes))
-    const count = cache.nodes.length - 1
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(`Copied ${count} positions`)
-      setLayoutDump(null)
-    } catch {
-      setCopied(null)
-      setLayoutDump(text)
-    }
-    window.setTimeout(() => setCopied(null), 3000)
-  }
-
-  // Node drag: pins the node where it is dropped. Reset layout restores the baked positions.
-  function startDrag(node: SimNode, e: React.PointerEvent<SVGGElement>) {
-    if (node.depth === 0 || e.button !== 0) return
-    const svg = svgRef.current
-    if (!svg) return
-    e.preventDefault()
-    const target = e.currentTarget
-    try {
-      target.setPointerCapture(e.pointerId)
-    } catch {
-      /* synthetic or already-released pointer; dragging still works via bubbling */
-    }
-    const rect = svg.getBoundingClientRect()
-    const toGraph = (ev: PointerEvent) => transform.invert([ev.clientX - rect.left, ev.clientY - rect.top])
-    const start = toGraph(e.nativeEvent)
-    const ox = (node.x ?? 0) - start[0]
-    const oy = (node.y ?? 0) - start[1]
-    let moved = false
-    const sim = simRef.current
-    const free = hasFreeNodes()
-    const move = (ev: PointerEvent) => {
-      const [gx, gy] = toGraph(ev)
-      if (!moved && Math.hypot(gx - start[0], gy - start[1]) > 3) {
-        moved = true
-        if (free) sim?.alphaTarget(0.2).restart()
-      }
-      if (!moved) return
-      node.fx = node.x = gx + ox
-      node.fy = node.y = gy + oy
-      bump((v) => v + 1)
-    }
-    const up = () => {
-      target.removeEventListener('pointermove', move)
-      target.removeEventListener('pointerup', up)
-      target.removeEventListener('pointercancel', up)
-      if (moved) {
-        if (free) sim?.alphaTarget(0)
-      } else setSelected((s) => (s === node.id ? null : node.id))
-    }
-    target.addEventListener('pointermove', move)
-    target.addEventListener('pointerup', up)
-    target.addEventListener('pointercancel', up)
-  }
+    return () => cancelAnimationFrame(raf)
+  }, [fitToNodes])
 
   const selectedNode = selected ? MODEL.nodeById.get(selected) : undefined
   const selectedAdvance = selectedNode?.advance
@@ -289,12 +188,6 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
           <button onClick={() => fitToNodes()} title="Fit the whole graph in view">
             Fit
           </button>
-          <button onClick={resetLayout} title="Put every node back where the saved layout has it">
-            Reset layout
-          </button>
-          <button onClick={copyLayout} title="Layout tuning: copy every node's position as JSON for src/data/researchLayout.json">
-            Copy layout
-          </button>
           <label className="inline">
             Labels
             <select value={labelMode} onChange={(e) => setLabelMode(e.target.value as LabelMode)}>
@@ -304,19 +197,10 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
             </select>
           </label>
           <span className="muted small">
-            {copied ?? `${Math.round(transform.k * 100)}%`}
+            {`${Math.round(transform.k * 100)}%`}
             {matches ? ` · ${matches.size} match${matches.size === 1 ? '' : 'es'}` : ''}
           </span>
         </div>
-        {layoutDump && (
-          <textarea
-            className="layoutdump"
-            readOnly
-            value={layoutDump}
-            onFocus={(e) => e.currentTarget.select()}
-            aria-label="Layout JSON; select all and copy"
-          />
-        )}
         <svg ref={svgRef} className="graph" role="img" aria-label="Research graph">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -332,7 +216,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                 <circle key={i} className="ring" r={(i + 1) * RING_GAP} />
               ))}
               {FIELDS.map((f) => {
-                const { x, y } = fieldLabels.get(f)!
+                const { x, y } = FIELD_LABEL_POS.get(f)!
                 return (
                   <text
                     key={f}
@@ -348,7 +232,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
               })}
             </g>
             <g className="links">
-              {cache.links.map((l, i) => {
+              {LINKS.map((l, i) => {
                 const s = l.source as SimNode
                 const t = l.target as SimNode
                 const hi = related ? related.has(s.id) && related.has(t.id) : false
@@ -364,7 +248,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
               })}
             </g>
             <g className="nodes">
-              {cache.nodes.map((n) => {
+              {NODES.map((n) => {
                 const status = n.depth === 0 ? undefined : statusById.get(n.id)
                 const isQueued = queuedSet.has(n.id)
                 const isSel = selected === n.id
@@ -374,7 +258,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                   n.depth === 0 || isSel || (related?.has(n.id) ?? false) || (matches?.has(n.id) ?? false) || (showLabelsGlobally && !dim)
                 const color = fieldColor(n.field)
                 const label = n.depth === 0 ? empireName : truncateLabel(n.label)
-                const side: LabelSide = labelSides.get(n.id) ?? 'below'
+                const side: LabelSide = LABEL_SIDE_BY_ID.get(n.id) ?? 'below'
                 const multi = n.advance?.prereq.all && n.advance.prereq.all.length > 1 ? n.advance.prereq.all.length : 0
                 return (
                   <g
@@ -388,7 +272,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                     role="button"
                     aria-pressed={isSel}
                     aria-label={n.depth === 0 ? empireName : `${n.label}, ${n.field} tier ${n.tier}, ${status}${isQueued ? ', queued' : ''}`}
-                    onPointerDown={(e) => startDrag(n, e)}
+                    onClick={() => setSelected((s) => (s === n.id ? null : n.id))}
                     onDoubleClick={() => {
                       if (n.depth === 0) return
                       setSelected(n.id)
@@ -449,8 +333,8 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
           <>
             <h3>Research graph</h3>
             <p className="muted small">
-              Click an advance to see its details and light up everything it needs and everything it leads to. Drag nodes to
-              rearrange, scroll to zoom, double-click to focus on a chain. Dashed lines mean “one of”; dotted lines are tier
+              Click an advance to see its details and light up everything it needs and everything it leads to. Scroll to
+              zoom, drag the background to pan, double-click a node to focus on its chain. Dashed lines mean “one of”; dotted lines are tier
               unlocks within a field. A numbered badge marks an advance that needs all of several prerequisites.
             </p>
           </>

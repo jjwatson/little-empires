@@ -216,7 +216,6 @@ svg.graph:active { cursor: grabbing; }
   .graph .node, .graph .link, .graph .node circle.core { transition: none; }
   .graph .node .halo { animation: none; }
 }
-.layoutdump { display: block; width: 100%; height: 140px; margin-bottom: 8px; font: 12px/1.4 ui-monospace, Consolas, monospace; white-space: pre; }
 .graph .node .badge circle { fill: var(--text); stroke: var(--card); stroke-width: 1.5; }
 .graph .node .badge text { font-size: 8px; font-weight: 700; fill: var(--card); text-anchor: middle; pointer-events: none; }
 .graph .node.locked .badge circle { fill: var(--muted); }

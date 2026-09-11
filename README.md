@@ -97,11 +97,11 @@ Spelling fixes, prerequisite parsing overrides and tier corrections live in
 `scripts/data-overrides.mjs`. When the converter prints `UNRESOLVED PREREQS`, add an alias or an
 override there and re-run.
 
-The Graph view's node positions are curated in `src/data/researchLayout.json`. After the advances
-change, regenerate a starting layout with `npx vite-node scripts/layout-research.ts` (it settles the
-force layout, then swaps and nudges nodes within each field's wedge until link crossings stop
-falling). To hand-tune, drag nodes in the Graph view, press **Copy layout**, and paste the JSON over
-that file; `npm test` checks every advance has a position, nothing overlaps, and crossings stay low.
+The Graph view's node positions are curated by hand in `src/data/researchLayout.json` (advance id →
+`[x, y]`, hub at the origin) and are fixed in the app. After the advances change, generate a fresh
+starting point with `npx vite-node scripts/layout-research.ts --mode centre` (Research ringing the hub;
+`--mode spokes` gives one wedge per field), then edit the JSON as needed. `npm test` checks every
+advance has a position, nothing overlaps, and link crossings and label clashes stay under their ceilings.
 
 ## Layout
 
