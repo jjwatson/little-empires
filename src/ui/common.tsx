@@ -1,5 +1,6 @@
 import { RESOURCE_KEYS, RESOURCE_LABELS } from '../data'
 import type { ResourceSet } from '../data'
+import type { AdvanceStatus } from '../model'
 
 export const fmt = (n: number): string => (Number.isInteger(n) ? n : Math.round(n)).toLocaleString()
 
@@ -96,5 +97,28 @@ export function SubTabs<T extends string>({ tabs, value, onChange }: { tabs: [T,
         </button>
       ))}
     </div>
+  )
+}
+
+/** The tick / Queue / lock control for an advance, shared by the research table and graph. */
+export function QueueButton({
+  status,
+  queued,
+  slots,
+  queuedCount,
+  onToggle,
+}: {
+  status: AdvanceStatus
+  queued: boolean
+  slots: number
+  queuedCount: number
+  onToggle: () => void
+}) {
+  if (status === 'researched') return <span title="Researched">✓</span>
+  if (status === 'locked') return <span title="Locked">🔒</span>
+  return (
+    <button className={queued ? 'primary' : ''} disabled={!queued && queuedCount >= slots} onClick={onToggle}>
+      {queued ? 'Queued' : 'Queue'}
+    </button>
   )
 }

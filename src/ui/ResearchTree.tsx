@@ -3,7 +3,8 @@ import { ADVANCES, BLUEPRINT_COSTS, BLUEPRINT_SCALES, FACILITIES, FIELDS } from 
 import type { Advance, BlueprintScale } from '../data'
 import { advanceStatus, blueprintSlots, missingPrereqs, prereqMet, researchSlots, unlockedTier } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { Res } from './common'
+import { QueueButton, Res, SubTabs } from './common'
+import { ResearchGraph } from './ResearchGraph'
 
 interface Props {
   empire: Empire
@@ -11,12 +12,21 @@ interface Props {
   onActions: (a: TurnActions) => void
 }
 
+type View = 'table' | 'graph'
+const VIEW_KEY = 'little-empires.researchView'
+
 export function ResearchTree({ empire, actions, onActions }: Props) {
+  const [view, setViewState] = useState<View>(() => (localStorage.getItem(VIEW_KEY) === 'graph' ? 'graph' : 'table'))
   const [field, setField] = useState<string>(FIELDS[0])
   const [query, setQuery] = useState('')
   const [onlyAvailable, setOnlyAvailable] = useState(false)
   const researched = useMemo(() => new Set(empire.researched), [empire.researched])
   const slots = researchSlots(empire)
+
+  function setView(v: View) {
+    setViewState(v)
+    localStorage.setItem(VIEW_KEY, v)
+  }
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -41,6 +51,7 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
 
       <div className="card">
         <div className="row wrap">
+          <SubTabs tabs={[['table', 'Table'], ['graph', 'Graph']]} value={view} onChange={setView} />
           <input placeholder="Search all fields…" value={query} onChange={(e) => setQuery(e.target.value)} />
           <label className="inline">
             <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)} />
@@ -50,7 +61,7 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
             Queued {actions.research.length}/{slots} research slot{slots === 1 ? '' : 's'}
           </span>
         </div>
-        {!query && (
+        {view === 'table' && !query && (
           <div className="tabs">
             {FIELDS.map((f) => (
               <button key={f} className={f === field ? 'active' : ''} onClick={() => setField(f)}>
@@ -61,57 +72,63 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
         )}
       </div>
 
-      {[1, 2, 3, 4, 5].map((tier) => {
-        const rows = shown.filter((a) => a.tier === tier)
-        if (!rows.length) return null
-        return (
-          <div className="card" key={tier}>
-            <h3>Tier {tier}</h3>
-            <table className="advances">
-              <tbody>
-                {rows.map((a) => {
-                  const status = advanceStatus(a, researched)
-                  const queued = actions.research.includes(a.id)
-                  const missing = status === 'locked' ? missingPrereqs(a.prereq, researched) : []
-                  return (
-                    <tr key={a.id} className={status}>
-                      <td className="act">
-                        {status === 'researched' ? (
-                          <span title="Researched">✓</span>
-                        ) : status === 'available' ? (
-                          <button
-                            className={queued ? 'primary' : ''}
-                            disabled={!queued && actions.research.length >= slots}
-                            onClick={() => toggle(a)}
-                          >
-                            {queued ? 'Queued' : 'Queue'}
-                          </button>
-                        ) : (
-                          <span title="Locked">🔒</span>
-                        )}
-                      </td>
-                      <td>
-                        <strong>{a.name}</strong>
-                        {query && <span className="muted"> · {a.field}</span>}
-                        <div className="muted small">{a.effects}</div>
-                        {a.notes && <div className="muted small">{a.notes}</div>}
-                        {missing.length > 0 && <div className="small neg">Needs: {missing.join('; ')}</div>}
-                        {status === 'locked' && missing.length === 0 && (
-                          <div className="small neg">Needs Tier {a.tier} of {a.field} unlocked.</div>
-                        )}
-                        {a.prereq.note && <div className="small muted">Note: {a.prereq.note}</div>}
-                      </td>
-                      <td className="cost">
-                        <Res r={a.cost} />
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )
-      })}
+      {view === 'graph' ? (
+        <ResearchGraph
+          empireName={empire.name}
+          researched={researched}
+          queued={actions.research}
+          slots={slots}
+          query={query}
+          onlyAvailable={onlyAvailable}
+          onToggle={toggle}
+        />
+      ) : (
+        [1, 2, 3, 4, 5].map((tier) => {
+          const rows = shown.filter((a) => a.tier === tier)
+          if (!rows.length) return null
+          return (
+            <div className="card" key={tier}>
+              <h3>Tier {tier}</h3>
+              <table className="advances">
+                <tbody>
+                  {rows.map((a) => {
+                    const status = advanceStatus(a, researched)
+                    const queued = actions.research.includes(a.id)
+                    const missing = status === 'locked' ? missingPrereqs(a.prereq, researched) : []
+                    return (
+                      <tr key={a.id} className={status}>
+                        <td className="act">
+                          <QueueButton
+                            status={status}
+                            queued={queued}
+                            slots={slots}
+                            queuedCount={actions.research.length}
+                            onToggle={() => toggle(a)}
+                          />
+                        </td>
+                        <td>
+                          <strong>{a.name}</strong>
+                          {query && <span className="muted"> · {a.field}</span>}
+                          <div className="muted small">{a.effects}</div>
+                          {a.notes && <div className="muted small">{a.notes}</div>}
+                          {missing.length > 0 && <div className="small neg">Needs: {missing.join('; ')}</div>}
+                          {status === 'locked' && missing.length === 0 && (
+                            <div className="small neg">Needs Tier {a.tier} of {a.field} unlocked.</div>
+                          )}
+                          {a.prereq.note && <div className="small muted">Note: {a.prereq.note}</div>}
+                        </td>
+                        <td className="cost">
+                          <Res r={a.cost} />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )
+        })
+      )}
     </section>
   )
 }

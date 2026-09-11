@@ -23,6 +23,9 @@ The screens follow the tabs of the rule creator's own tracking sheet
 - One **empire** per file: a homeworld plus any colonies you found, all sharing one stockpile of
   Credits, Raw Mats, Energy and Manpower.
 - **Research tree** from the spreadsheet: 16 fields × 5 tiers, with prerequisites and tier unlocks.
+  The Research screen has a Table view (one field at a time) and a Graph view: a force-directed
+  radial map of all 207 advances with your empire at the centre, one spoke per field, rings by
+  distance from the start. Click an advance to light up its whole chain and queue it from the side panel.
 - **Construction** per planet: build costs, monthly income, planet-type bonuses and restrictions.
 - **Population** grows 1% a turn plus research bonuses (Monarchy +1%), per species if you list them.
   Base credit income is one credit per ten population after growth, as in the sheet; Raw Mats,
@@ -93,6 +96,12 @@ npm run validate-data    # checks every prerequisite resolves
 Spelling fixes, prerequisite parsing overrides and tier corrections live in
 `scripts/data-overrides.mjs`. When the converter prints `UNRESOLVED PREREQS`, add an alias or an
 override there and re-run.
+
+The Graph view's node positions are curated in `src/data/researchLayout.json`. After the advances
+change, regenerate a starting layout with `npx vite-node scripts/layout-research.ts` (it settles the
+force layout, then swaps and nudges nodes within each field's wedge until link crossings stop
+falling). To hand-tune, drag nodes in the Graph view, press **Copy layout**, and paste the JSON over
+that file; `npm test` checks every advance has a position, nothing overlaps, and crossings stay low.
 
 ## Layout
 
