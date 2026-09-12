@@ -100,7 +100,8 @@ override there and re-run.
 The Graph view's node positions are curated by hand in `src/data/researchLayout.json` (advance id →
 `[x, y]`, hub at the origin) and are fixed in the app. After the advances change, generate a fresh
 starting point with `npx vite-node scripts/layout-research.ts --mode centre` (Research ringing the hub;
-`--mode spokes` gives one wedge per field), then edit the JSON as needed. `npm test` checks every
+`--mode spokes` gives one wedge per field), then edit the JSON as needed. To adjust by hand, open the app
+with `?tune` on the URL: nodes become draggable and **Copy layout** puts the positions on the clipboard. `npm test` checks every
 advance has a position, nothing overlaps, and link crossings and label clashes stay under their ceilings.
 
 ## Layout

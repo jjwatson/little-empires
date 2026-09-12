@@ -18,7 +18,9 @@ import {
   buildSimLinks,
   buildSimNodes,
   fieldLabelPosition,
+  formatLayout,
   pickLabelSides,
+  toLayoutPositions,
 } from './researchGraphForces'
 import type { LabelSide, LayoutPositions, SimLink, SimNode } from './researchGraphForces'
 
@@ -42,11 +44,26 @@ const fieldColor = (field: string) => (field ? `var(--f${FIELD_INDEX.get(field) 
 
 type LabelMode = 'auto' | 'all' | 'none'
 
-/** The graph is static: positions, label sides and field captions are computed once. */
-const NODES: readonly SimNode[] = buildSimNodes(MODEL, LAYOUT)
-const LINKS: readonly SimLink[] = buildSimLinks(MODEL, NODES as SimNode[])
+/**
+ * Layout tuning mode: open the app with `?tune` in the URL to drag nodes and copy the
+ * positions as JSON for src/data/researchLayout.json. Without it the graph is locked.
+ */
+const TUNING = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('tune')
+
+/** The graph is static: positions, label sides and field captions are computed once (unless tuning). */
+const NODES: SimNode[] = buildSimNodes(MODEL, LAYOUT)
+const LINKS: SimLink[] = buildSimLinks(MODEL, NODES)
 const LABEL_SIDE_BY_ID = pickLabelSides(NODES, LINKS)
 const FIELD_LABEL_POS = new Map(FIELDS.map((f) => [f, fieldLabelPosition(f, NODES)]))
+
+/** Tuning only: put every node back on its saved position. */
+function resetPositions(): void {
+  const seed = buildSimNodes(MODEL, LAYOUT)
+  NODES.forEach((n, i) => {
+    n.x = seed[i].x
+    n.y = seed[i].y
+  })
+}
 
 /** SVG text placement for a label on the given side of a node of radius r. */
 function labelAttrs(side: LabelSide, r: number): { x: number; y: number; textAnchor: 'middle' | 'start' | 'end' } {
@@ -92,8 +109,19 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
   const [selected, setSelected] = useState<string | null>(null)
   const [fieldFocus, setFieldFocus] = useState<string | null>(null)
   const [labelMode, setLabelMode] = useState<LabelMode>('auto')
+  // Tuning only: bumps after a drag so label sides and captions follow the new positions.
+  const [version, bump] = useState(0)
+  const [copied, setCopied] = useState<string | null>(null)
+  const [layoutDump, setLayoutDump] = useState<string | null>(null)
 
   const queuedSet = useMemo(() => new Set(queued), [queued])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const labelSides = useMemo(() => (TUNING && version ? pickLabelSides(NODES, LINKS) : LABEL_SIDE_BY_ID), [version])
+  const fieldLabels = useMemo(
+    () => (TUNING && version ? new Map(FIELDS.map((f) => [f, fieldLabelPosition(f, NODES)])) : FIELD_LABEL_POS),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [version],
+  )
   const statusById = useMemo(() => {
     const m = new Map<string, AdvanceStatus>()
     for (const a of ADVANCES) m.set(a.id, advanceStatus(a, researched))
@@ -160,6 +188,63 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
     return () => cancelAnimationFrame(raf)
   }, [fitToNodes])
 
+  async function copyLayout() {
+    const text = formatLayout(toLayoutPositions(NODES))
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(`Copied ${NODES.length - 1} positions`)
+      setLayoutDump(null)
+    } catch {
+      setCopied(null)
+      setLayoutDump(text)
+    }
+    window.setTimeout(() => setCopied(null), 3000)
+  }
+
+  function resetLayout() {
+    resetPositions()
+    setSelected(null)
+    bump((v) => v + 1)
+    requestAnimationFrame(() => fitToNodes())
+  }
+
+  // Tuning only: drag a node to a new position. A press without movement still selects.
+  function startDrag(node: SimNode, e: React.PointerEvent<SVGGElement>) {
+    if (!TUNING || node.depth === 0 || e.button !== 0) return
+    const svg = svgRef.current
+    if (!svg) return
+    e.preventDefault()
+    const target = e.currentTarget
+    try {
+      target.setPointerCapture(e.pointerId)
+    } catch {
+      /* synthetic or already-released pointer */
+    }
+    const rect = svg.getBoundingClientRect()
+    const toGraph = (ev: PointerEvent) => transform.invert([ev.clientX - rect.left, ev.clientY - rect.top])
+    const start = toGraph(e.nativeEvent)
+    const ox = (node.x ?? 0) - start[0]
+    const oy = (node.y ?? 0) - start[1]
+    let moved = false
+    const move = (ev: PointerEvent) => {
+      const [gx, gy] = toGraph(ev)
+      if (!moved && Math.hypot(gx - start[0], gy - start[1]) > 3) moved = true
+      if (!moved) return
+      node.x = gx + ox
+      node.y = gy + oy
+      bump((v) => v + 1)
+    }
+    const up = () => {
+      target.removeEventListener('pointermove', move)
+      target.removeEventListener('pointerup', up)
+      target.removeEventListener('pointercancel', up)
+      if (!moved) setSelected((s) => (s === node.id ? null : node.id))
+    }
+    target.addEventListener('pointermove', move)
+    target.addEventListener('pointerup', up)
+    target.addEventListener('pointercancel', up)
+  }
+
   const selectedNode = selected ? MODEL.nodeById.get(selected) : undefined
   const selectedAdvance = selectedNode?.advance
   const showLabelsGlobally = labelMode === 'all' || (labelMode === 'auto' && transform.k >= LABEL_ZOOM)
@@ -188,6 +273,16 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
           <button onClick={() => fitToNodes()} title="Fit the whole graph in view">
             Fit
           </button>
+          {TUNING && (
+            <>
+              <button onClick={resetLayout} title="Put every node back where the saved layout has it">
+                Reset layout
+              </button>
+              <button onClick={copyLayout} title="Copy every node's position as JSON for src/data/researchLayout.json">
+                Copy layout
+              </button>
+            </>
+          )}
           <label className="inline">
             Labels
             <select value={labelMode} onChange={(e) => setLabelMode(e.target.value as LabelMode)}>
@@ -197,10 +292,20 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
             </select>
           </label>
           <span className="muted small">
-            {`${Math.round(transform.k * 100)}%`}
+            {copied ?? `${Math.round(transform.k * 100)}%`}
+            {TUNING && !copied ? ' · tuning' : ''}
             {matches ? ` · ${matches.size} match${matches.size === 1 ? '' : 'es'}` : ''}
           </span>
         </div>
+        {layoutDump && (
+          <textarea
+            className="layoutdump"
+            readOnly
+            value={layoutDump}
+            onFocus={(e) => e.currentTarget.select()}
+            aria-label="Layout JSON; select all and copy"
+          />
+        )}
         <svg ref={svgRef} className="graph" role="img" aria-label="Research graph">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -216,7 +321,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                 <circle key={i} className="ring" r={(i + 1) * RING_GAP} />
               ))}
               {FIELDS.map((f) => {
-                const { x, y } = FIELD_LABEL_POS.get(f)!
+                const { x, y } = fieldLabels.get(f)!
                 return (
                   <text
                     key={f}
@@ -258,7 +363,7 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                   n.depth === 0 || isSel || (related?.has(n.id) ?? false) || (matches?.has(n.id) ?? false) || (showLabelsGlobally && !dim)
                 const color = fieldColor(n.field)
                 const label = n.depth === 0 ? empireName : truncateLabel(n.label)
-                const side: LabelSide = LABEL_SIDE_BY_ID.get(n.id) ?? 'below'
+                const side: LabelSide = labelSides.get(n.id) ?? 'below'
                 const multi = n.advance?.prereq.all && n.advance.prereq.all.length > 1 ? n.advance.prereq.all.length : 0
                 return (
                   <g
@@ -272,7 +377,8 @@ export function ResearchGraph({ empireName, researched, queued, slots, query, on
                     role="button"
                     aria-pressed={isSel}
                     aria-label={n.depth === 0 ? empireName : `${n.label}, ${n.field} tier ${n.tier}, ${status}${isQueued ? ', queued' : ''}`}
-                    onClick={() => setSelected((s) => (s === n.id ? null : n.id))}
+                    onClick={TUNING ? undefined : () => setSelected((s) => (s === n.id ? null : n.id))}
+                    onPointerDown={TUNING ? (e) => startDrag(n, e) : undefined}
                     onDoubleClick={() => {
                       if (n.depth === 0) return
                       setSelected(n.id)
