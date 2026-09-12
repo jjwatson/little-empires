@@ -43,6 +43,8 @@ export interface GraphModel {
   /** Angular wedge per field, radians, -PI/2 is 12 o'clock. */
   fieldWedge: Map<string, Wedge>
   fieldAngle: Map<string, number>
+  /** "source>target" -> kind, for labelling a prerequisite in the UI. */
+  linkKind: Map<string, LinkKind>
 }
 
 /**
@@ -70,12 +72,27 @@ export function buildGraphModel(advances: readonly Advance[]): GraphModel {
   }
 
   for (const a of advances) {
-    const explicit = [...(a.prereq.all ?? []), ...(a.prereq.any ?? [])].filter((id) => byId.has(id))
     for (const id of a.prereq.all ?? []) if (byId.has(id)) addLink(id, a.id, 'all')
     for (const id of a.prereq.any ?? []) if (byId.has(id)) addLink(id, a.id, 'any')
-    if (explicit.length === 0) {
-      const gate = tierGateFor(a, advances)
-      if (gate) addLink(gate.id, a.id, 'gate')
+  }
+  // Tier gates: the advance that opens this one's tier is a real requirement (see tierOpen), so draw
+  // it unless some other path already leads through it. Add every candidate first, then prune the
+  // redundant ones, so the result does not depend on iteration order.
+  const gateOf = new Map<string, string>()
+  for (const a of advances) {
+    const gate = tierGateFor(a, advances)
+    if (gate && !closure(a.id, preds).has(gate.id)) {
+      addLink(gate.id, a.id, 'gate')
+      gateOf.set(a.id, gate.id)
+    }
+  }
+  for (const [id, gate] of gateOf) {
+    const without = new Map(preds)
+    without.set(id, preds.get(id)!.filter((p) => p !== gate))
+    if (closure(id, without).has(gate)) {
+      preds.set(id, without.get(id)!)
+      succs.set(gate, succs.get(gate)!.filter((t) => t !== id))
+      links.splice(links.findIndex((l) => l.kind === 'gate' && l.source === gate && l.target === id), 1)
     }
   }
   for (const a of advances) if (!preds.has(a.id)) addLink(HUB_ID, a.id, 'start')
@@ -104,6 +121,7 @@ export function buildGraphModel(advances: readonly Advance[]): GraphModel {
   ]
   const nodeById = new Map(nodes.map((n) => [n.id, n]))
   const maxDepth = Math.max(...nodes.map((n) => n.depth))
+  const linkKind = new Map(links.map((l) => [`${l.source}>${l.target}`, l.kind]))
 
   // Wedges proportional to field size, in sheet order, first field centred at 12 o'clock.
   const counts = new Map(fields.map((f) => [f, advances.filter((a) => a.field === f).length]))
@@ -119,7 +137,7 @@ export function buildGraphModel(advances: readonly Advance[]): GraphModel {
     cursor += width
   }
 
-  return { nodes, nodeById, links, preds, succs, maxDepth, fields, fieldWedge, fieldAngle }
+  return { nodes, nodeById, links, preds, succs, maxDepth, fields, fieldWedge, fieldAngle, linkKind }
 }
 
 function closure(id: string, next: Map<string, string[]>): Set<string> {

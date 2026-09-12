@@ -5,7 +5,7 @@ import type { D3ZoomEvent, ZoomBehavior, ZoomTransform } from 'd3-zoom'
 import { ADVANCES, FIELDS } from '../data'
 import type { Advance } from '../data'
 import layoutJson from '../data/researchLayout.json'
-import { advanceStatus, missingPrereqs, unlockedTier } from '../model'
+import { advanceStatus, missingPrereqs, tierOpen, unlockedTier } from '../model'
 import type { AdvanceStatus } from '../model'
 import { QueueButton, Res } from './common'
 import { HUB_ID, ancestorsOf, buildGraphModel, descendantsOf, truncateLabel } from './researchGraphModel'
@@ -408,7 +408,7 @@ function SelectedAdvance({
         <Res r={a.cost} />
       </p>
       {missing.length > 0 && <p className="small neg">Needs: {missing.join('; ')}</p>}
-      {status === 'locked' && missing.length === 0 && (
+      {status === 'locked' && !tierOpen(a, researched) && (
         <p className="small neg">
           Needs Tier {a.tier} of {a.field} unlocked.
         </p>
@@ -427,6 +427,9 @@ function SelectedAdvance({
                   {nameOf(id)}
                 </button>
                 {a.prereq.any?.includes(id) && <span className="muted"> (one of)</span>}
+                {MODEL.linkKind.get(`${id}>${a.id}`) === 'gate' && (
+                  <span className="muted"> (unlocks Tier {a.tier} of {a.field})</span>
+                )}
               </li>
             ))}
           </ul>

@@ -4,7 +4,6 @@ import { HUB_ID, ancestorsOf, buildGraphModel, descendantsOf, seedPositions, tie
 
 const model = buildGraphModel(ADVANCES)
 const prereqLinks = ADVANCES.reduce((n, a) => n + (a.prereq.all?.length ?? 0) + (a.prereq.any?.length ?? 0), 0)
-const gated = ADVANCES.filter((a) => !a.prereq.all && !a.prereq.any && tierGateFor(a, ADVANCES))
 
 describe('research graph model', () => {
   it('has one node per advance plus the hub', () => {
@@ -26,9 +25,21 @@ describe('research graph model', () => {
       expect(model.nodeById.has(l.target), l.target).toBe(true)
     }
     expect(kinds.all + kinds.any).toBe(prereqLinks)
-    expect(kinds.gate).toBe(gated.length)
     expect(kinds.start).toBe(2)
-    expect(model.links).toHaveLength(prereqLinks + gated.length + 2)
+    expect(kinds.gate).toBeGreaterThan(0)
+    expect(model.links).toHaveLength(prereqLinks + kinds.gate + 2)
+  })
+
+  it('draws a tier-gate link exactly when the gate is not reachable another way', () => {
+    for (const a of ADVANCES) {
+      const gate = tierGateFor(a, ADVANCES)
+      if (!gate) continue
+      const direct = model.linkKind.get(`${gate.id}>${a.id}`) === 'gate'
+      const without = new Map(model.preds)
+      without.set(a.id, (model.preds.get(a.id) ?? []).filter((p) => !(direct && p === gate.id)))
+      const reachable = ancestorsOf(a.id, without).has(gate.id)
+      expect(direct, `${a.id} gate ${gate.id}`).toBe(!reachable)
+    }
   })
 
   it('marks any-links only where the target lists the source under prereq.any', () => {
@@ -42,11 +53,14 @@ describe('research graph model', () => {
     for (const l of model.links.filter((l) => l.kind === 'gate')) {
       const src = ADVANCE_BY_ID.get(l.source)!
       const tgt = ADVANCE_BY_ID.get(l.target)!
-      expect(tgt.prereq.all ?? tgt.prereq.any).toBeUndefined()
       expect(src.field).toBe(tgt.field)
       expect(src.unlocksTier!).toBeLessThanOrEqual(tgt.tier)
     }
     expect(tierGateFor(ADVANCE_BY_ID.get('terraforming')!, ADVANCES)?.id).toBe('arctic-exploitation')
+    // Aquatic Colonies lists only Life Support Systems, but its tier 3 is opened by Improved Arid Colonies.
+    expect(model.linkKind.get('improved-arid-colonies>aquatic-colonies')).toBe('gate')
+    // Arctic Exploitation already requires the tier 3 gate directly, so no extra gate link is drawn.
+    expect(model.links.filter((l) => l.target === 'arctic-exploitation')).toHaveLength(1)
     expect(tierGateFor(ADVANCE_BY_ID.get('higher-education')!, ADVANCES)).toBeUndefined()
   })
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ADVANCES, BLUEPRINT_COSTS, BLUEPRINT_SCALES, FACILITIES, FIELDS } from '../data'
 import type { Advance, BlueprintScale } from '../data'
-import { advanceStatus, blueprintSlots, missingPrereqs, prereqMet, researchSlots, unlockedTier } from '../model'
+import { advanceStatus, blueprintSlots, missingPrereqs, prereqMet, researchSlots, tierOpen, unlockedTier } from '../model'
 import type { Empire, TurnActions } from '../model'
 import { QueueButton, Res, SubTabs } from './common'
 import { ResearchGraph } from './ResearchGraph'
@@ -126,7 +126,7 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
                           <div className="muted small">{a.effects}</div>
                           {a.notes && <div className="muted small">{a.notes}</div>}
                           {missing.length > 0 && <div className="small neg">Needs: {missing.join('; ')}</div>}
-                          {status === 'locked' && missing.length === 0 && (
+                          {status === 'locked' && !tierOpen(a, researched) && (
                             <div className="small neg">Needs Tier {a.tier} of {a.field} unlocked.</div>
                           )}
                           {a.prereq.note && <div className="small muted">Note: {a.prereq.note}</div>}
