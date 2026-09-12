@@ -28,6 +28,12 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
     localStorage.setItem(VIEW_KEY, v)
   }
 
+  /** Fields with at least one advance that can be queued now; used to dull empty tabs in "available only" mode. */
+  const fieldsWithAvailable = useMemo(
+    () => new Set(ADVANCES.filter((a) => advanceStatus(a, researched) === 'available').map((a) => a.field)),
+    [researched],
+  )
+
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
     return ADVANCES.filter((a) => {
@@ -63,11 +69,19 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
         </div>
         {view === 'table' && !query && (
           <div className="tabs">
-            {FIELDS.map((f) => (
-              <button key={f} className={f === field ? 'active' : ''} onClick={() => setField(f)}>
-                {f} <small>T{unlockedTier(f, researched)}</small>
-              </button>
-            ))}
+            {FIELDS.map((f) => {
+              const dull = onlyAvailable && !fieldsWithAvailable.has(f)
+              return (
+                <button
+                  key={f}
+                  className={`${f === field ? 'active' : ''} ${dull ? 'dull' : ''}`}
+                  title={dull ? 'Nothing available to research in this field yet' : undefined}
+                  onClick={() => setField(f)}
+                >
+                  {f} <small>T{unlockedTier(f, researched)}</small>
+                </button>
+              )
+            })}
           </div>
         )}
       </div>
