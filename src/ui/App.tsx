@@ -219,9 +219,11 @@ export function App() {
             by={by}
             onActions={setActions}
             onCommit={async (next) => {
-              await commit(next)
+              // Clear the queue before the save, not after: the empire is advanced locally at once, and
+              // re-validating the old queue against it would flash "not available" for every advance.
               setActions(EMPTY_ACTIONS)
               setTab('overview')
+              await commit(next)
             }}
           />
         )}
