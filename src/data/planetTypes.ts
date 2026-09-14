@@ -2,21 +2,32 @@ import type { Facility, ResourceSet } from './types'
 
 export type PlanetType = 'homeworld' | 'arid' | 'arctic' | 'barren' | 'space' | 'aquatic' | 'volcanic'
 
-export const PLANET_TYPES: { id: PlanetType; name: string; summary: string }[] = [
-  { id: 'homeworld', name: 'Homeworld / Type I', summary: 'No bonuses or penalties.' },
-  { id: 'arid', name: 'Arid', summary: 'Solar generators double income. Farms half output, double costs.' },
-  { id: 'arctic', name: 'Arctic', summary: 'Buildings cost 20% less Raw Mats. Cannot build Geothermal.' },
-  { id: 'barren', name: 'Barren', summary: 'Solid Fuel has no Raw Mat upkeep. Mining +20% Raw Mats. No farms.' },
+/**
+ * Planet types. `unlockedBy` is the Colonisation advance that allows settling that kind of
+ * world; Type I worlds match the homeworld and need no research (house rules, "Planet Types").
+ */
+export const PLANET_TYPES: { id: PlanetType; name: string; summary: string; unlockedBy?: string }[] = [
+  { id: 'homeworld', name: 'Type I', summary: 'Matches the homeworld: no bonuses or penalties, and no research needed to settle.' },
+  { id: 'arid', name: 'Arid', summary: 'Solar generators double income. Farms half output, double costs.', unlockedBy: 'improved-arid-colonies' },
+  { id: 'arctic', name: 'Arctic', summary: 'Buildings cost 20% less Raw Mats. Cannot build Geothermal.', unlockedBy: 'arctic-exploitation' },
+  {
+    id: 'barren',
+    name: 'Barren',
+    summary: 'Solid Fuel has no Raw Mat upkeep. Mining +20% Raw Mats. No farms.',
+    unlockedBy: 'barren-world-colonisation',
+  },
   {
     id: 'space',
     name: 'Space Colony',
     summary: 'Ship factories +20% output. Only small factories; many ground buildings barred.',
+    unlockedBy: 'space-colonisation',
   },
-  { id: 'aquatic', name: 'Aquatic', summary: 'Hydroelectric half cost to build, double output.' },
+  { id: 'aquatic', name: 'Aquatic', summary: 'Hydroelectric half cost to build, double output.', unlockedBy: 'aquatic-colonies' },
   {
     id: 'volcanic',
     name: 'Volcanic',
     summary: 'Mining double positive output. Geothermal half cost, no Raw Mat upkeep. Farms half output, double costs.',
+    unlockedBy: 'volcanic-exploitation',
   },
 ]
 

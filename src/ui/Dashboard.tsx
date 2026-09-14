@@ -12,6 +12,7 @@ import {
   blueprintSlots,
   colonyProblems,
   foundColony,
+  planetTypeLock,
   governmentOptions,
   growthRate,
   ledgerTurns,
@@ -174,9 +175,10 @@ export function Overview({ empire, actions, by, onChange }: Props) {
 
 function FoundColony({ empire, by, onCancel, onChange }: { empire: Empire; by: string; onCancel: () => void; onChange: (e: Empire) => void }) {
   const [name, setName] = useState('')
-  const [type, setType] = useState<PlanetType>('arid')
+  const [type, setType] = useState<PlanetType>('homeworld')
   const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 0, rawMats: 200, energy: 200, manpower: 200 })
-  const problems = colonyProblems(empire)
+  const researched = new Set(empire.researched)
+  const problems = colonyProblems(empire, type)
 
   return (
     <form
@@ -194,12 +196,24 @@ function FoundColony({ empire, by, onCancel, onChange }: { empire: Empire; by: s
       </label>
       <label className="tight">Planet type</label>
       <div className="typepick" role="radiogroup" aria-label="Planet type">
-        {PLANET_TYPES.filter((t) => t.id !== 'homeworld').map((t) => (
-          <button key={t.id} type="button" role="radio" aria-checked={t.id === type} className={t.id === type ? 'active' : ''} onClick={() => setType(t.id)}>
-            <PlanetGlobe type={t.id} size={48} />
-            {t.name}
-          </button>
-        ))}
+        {PLANET_TYPES.map((t) => {
+          const lock = planetTypeLock(t.id, researched)
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="radio"
+              aria-checked={t.id === type}
+              className={`${t.id === type ? 'active' : ''} ${lock ? 'locked' : ''}`}
+              title={lock ? `Needs ${lock.name} (${lock.field} Tier ${lock.tier})` : t.summary}
+              onClick={() => setType(t.id)}
+            >
+              <PlanetGlobe type={t.id} size={48} />
+              {t.name}
+              {lock && <small className="muted">🔒 {lock.name}</small>}
+            </button>
+          )
+        })}
       </div>
       <p className="muted">{PLANET_TYPES.find((t) => t.id === type)?.summary}</p>
       <h4>Base income per turn besides population credits (agree with your GM)</h4>

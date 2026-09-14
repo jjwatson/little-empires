@@ -4,6 +4,8 @@ import type { Empire } from './empire'
 import {
   EMPTY_ACTIONS,
   blueprintSlots,
+  colonyProblems,
+  planetTypeLock,
   endTurn,
   foundColony,
   projectedIncome,
@@ -171,9 +173,27 @@ describe('endTurn', () => {
   })
 })
 
+describe('colony types', () => {
+  it('lets Type I worlds be settled without research', () => {
+    const e = foundColony(empire(), 'Nova', 'homeworld', base, 'tester')
+    expect(e.planets[1].type).toBe('homeworld')
+    expect(colonyProblems(empire(), 'homeworld')).toEqual([])
+  })
+
+  it('locks each other type behind its Colonisation advance', () => {
+    const e = empire()
+    expect(colonyProblems(e, 'barren')[0]).toMatch(/needs Barren World Colonisation/)
+    expect(planetTypeLock('volcanic', new Set())?.id).toBe('volcanic-exploitation')
+    expect(() => foundColony(e, 'Ash', 'volcanic', base, 'tester')).toThrow(/Volcanic Exploitation/)
+    const unlocked = empire({ researched: ['barren-world-colonisation'] })
+    expect(planetTypeLock('barren', new Set(unlocked.researched))).toBeUndefined()
+    expect(foundColony(unlocked, 'Dust', 'barren', base, 'tester').planets[1].type).toBe('barren')
+  })
+})
+
 describe('ledger', () => {
   it('records adjustments and colonies so the ledger always reconciles', () => {
-    let e = addAdjustment(empire(), 'Repairs', { credits: 0, rawMats: -100, energy: -100, manpower: -200 }, 'tester')
+    let e = addAdjustment(empire({ researched: ['improved-arid-colonies'] }), 'Repairs', { credits: 0, rawMats: -100, energy: -100, manpower: -200 }, 'tester')
     expect(e.resources.rawMats).toBe(start.rawMats - 100)
     e = foundColony(e, 'Sphinx', 'arid', base, 'tester')
     expect(e.planets).toHaveLength(2)

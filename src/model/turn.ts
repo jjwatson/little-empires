@@ -6,8 +6,9 @@ import {
   canBuildOnPlanet,
   facilityCostOn,
   facilityIncomeOn,
+  PLANET_TYPES,
 } from '../data'
-import type { BlueprintScale, Facility, PlanetType, ResourceSet } from '../data'
+import type { Advance, BlueprintScale, Facility, PlanetType, ResourceSet } from '../data'
 import {
   COLONY_POPULATION,
   COLONY_SETUP_COST,
@@ -288,19 +289,29 @@ export function endTurn(empire: Empire, actions: TurnActions, by: string, notes?
   }
 }
 
-/** Why a colony cannot be founded right now; empty when it can. */
-export function colonyProblems(empire: Empire): string[] {
+/** The Colonisation advance still needed before this kind of world can be settled, if any. */
+export function planetTypeLock(type: PlanetType, researched: ReadonlySet<string>): Advance | undefined {
+  const needs = PLANET_TYPES.find((t) => t.id === type)?.unlockedBy
+  return needs && !researched.has(needs) ? ADVANCE_BY_ID.get(needs) : undefined
+}
+
+/** Why a colony cannot be founded right now; empty when it can. Pass the type to check its research. */
+export function colonyProblems(empire: Empire, type?: PlanetType): string[] {
   const problems: string[] = []
   const home = empire.planets[0]
   if (!covers(empire.resources, COLONY_SETUP_COST)) problems.push('Not enough resources for the setup cost.')
   if (home.population - COLONY_POPULATION < HOMEWORLD_MIN_POPULATION)
     problems.push('Homeworld population would fall too low.')
+  if (type) {
+    const lock = planetTypeLock(type, new Set(empire.researched))
+    if (lock) problems.push(`Settling ${PLANET_TYPES.find((t) => t.id === type)?.name ?? type} worlds needs ${lock.name}.`)
+  }
   return problems
 }
 
 /** Found a colony: pay the setup cost, move 50,000 people off the homeworld, write the ledger line. */
 export function foundColony(empire: Empire, name: string, type: PlanetType, baseIncome: ResourceSet, by: string): Empire {
-  const problems = colonyProblems(empire)
+  const problems = colonyProblems(empire, type)
   if (problems.length) throw new Error(problems.join(' '))
   const at = new Date().toISOString()
   const { planet: home, movers } = takePopulation(empire.planets[0], COLONY_POPULATION)
