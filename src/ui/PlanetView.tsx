@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FACILITY_BY_ID, PLANET_TYPES, facilityCostOn, facilityIncomeOn } from '../data'
+import { MarkerLegend, PlanetGlobe } from './PlanetGlobe'
 import {
   PROFILE_FIELDS,
   availableBuilds,
@@ -48,14 +49,28 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
         <div className="tabs">
           {empire.planets.map((p) => (
             <button key={p.id} className={p.id === planet.id ? 'active' : ''} onClick={() => setPlanetId(p.id)}>
+              <PlanetGlobe type={p.type} seed={p.id} size={18} />
               {p.name}
             </button>
           ))}
         </div>
-        <h2>
-          {planet.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === planet.type)?.name}</span>
-        </h2>
-        <p className="muted">{PLANET_TYPES.find((t) => t.id === planet.type)?.summary}</p>
+        <div className="planethead">
+          <PlanetGlobe
+            type={planet.type}
+            seed={planet.id}
+            size={112}
+            facilities={planet.facilities}
+            inProgress={planet.inProgress}
+            label={`${planet.name}, ${PLANET_TYPES.find((t) => t.id === planet.type)?.name}`}
+          />
+          <div>
+            <h2>
+              {planet.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === planet.type)?.name}</span>
+            </h2>
+            <p className="muted">{PLANET_TYPES.find((t) => t.id === planet.type)?.summary}</p>
+            <MarkerLegend facilities={planet.facilities} />
+          </div>
+        </div>
         {editing ? (
           <PlanetEditor
             planet={planet}

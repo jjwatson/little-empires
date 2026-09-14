@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FACILITY_BY_ID, PLANET_TYPES } from '../data'
+import { PlanetGlobe } from './PlanetGlobe'
 import type { PlanetType, ResourceSet } from '../data'
 import {
   COLONY_POPULATION,
@@ -62,12 +63,17 @@ export function Overview({ empire, actions, by, onChange }: Props) {
           const rate = growthRate(empire, p)
           return (
             <div className="card" key={p.id}>
-              <h3>
-                {p.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === p.type)?.name}</span>
-              </h3>
-              <p className="muted">
-                Population {fmt(p.population)} · growing {pct(rate)} a turn
-              </p>
+              <div className="planethead">
+                <PlanetGlobe type={p.type} seed={p.id} size={64} facilities={p.facilities} inProgress={p.inProgress} label={`${p.name}, ${PLANET_TYPES.find((t) => t.id === p.type)?.name}`} />
+                <div>
+                  <h3>
+                    {p.name} <span className="muted">· {PLANET_TYPES.find((t) => t.id === p.type)?.name}</span>
+                  </h3>
+                  <p className="muted">
+                    Population {fmt(p.population)} · growing {pct(rate)} a turn
+                  </p>
+                </div>
+              </div>
               <p>
                 Income: <Res r={planetIncome(p, rate)} signedValues />
               </p>
@@ -186,16 +192,15 @@ function FoundColony({ empire, by, onCancel, onChange }: { empire: Empire; by: s
         Planet name
         <input value={name} onChange={(e) => setName(e.target.value)} required />
       </label>
-      <label>
-        Planet type
-        <select value={type} onChange={(e) => setType(e.target.value as PlanetType)}>
-          {PLANET_TYPES.filter((t) => t.id !== 'homeworld').map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <label className="tight">Planet type</label>
+      <div className="typepick" role="radiogroup" aria-label="Planet type">
+        {PLANET_TYPES.filter((t) => t.id !== 'homeworld').map((t) => (
+          <button key={t.id} type="button" role="radio" aria-checked={t.id === type} className={t.id === type ? 'active' : ''} onClick={() => setType(t.id)}>
+            <PlanetGlobe type={t.id} size={48} />
+            {t.name}
+          </button>
+        ))}
+      </div>
       <p className="muted">{PLANET_TYPES.find((t) => t.id === type)?.summary}</p>
       <h4>Base income per turn besides population credits (agree with your GM)</h4>
       <ResourceInputs value={baseIncome} onChange={setBaseIncome} />
