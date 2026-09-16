@@ -5,7 +5,6 @@ import {
   FACILITY_BY_ID,
   canBuildOnPlanet,
   facilityCostOn,
-  facilityIncomeOn,
   PLANET_TYPES,
 } from '../data'
 import type { Advance, BlueprintScale, Facility, PlanetType, ResourceSet } from '../data'
@@ -26,6 +25,7 @@ import {
   sub,
 } from './empire'
 import type { Empire, LedgerLine, Planet } from './empire'
+import { ownedIncome } from './facilities'
 import { line } from './ledger'
 import { isGovernmentSystem } from './modifiers'
 import { CREDITS_PER_HEAD, grow, growthRate, takePopulation, withSpecies } from './population'
@@ -136,10 +136,7 @@ export function populationCredits(planet: Planet, rate: number): number {
 /** Income generated each turn by a single planet: population credits + GM base + finished facilities. */
 export function planetIncome(planet: Planet, rate: number): ResourceSet {
   let total = add(planet.baseIncome, { ...ZERO, credits: populationCredits(planet, rate) })
-  for (const owned of planet.facilities) {
-    const f = FACILITY_BY_ID.get(owned.facilityId)
-    if (f) total = add(total, mul(facilityIncomeOn(planet.type, f), owned.count))
-  }
+  for (const owned of planet.facilities) total = add(total, mul(ownedIncome(planet.type, owned), owned.count))
   return total
 }
 
@@ -163,6 +160,20 @@ export function actionCost(empire: Empire, actions: TurnActions): ResourceSet {
     if (f && p) total = add(total, facilityCostOn(p.type, f))
   }
   return add(total, blueprintCost(actions))
+}
+
+/** Drop queued actions a GM edit has made meaningless: builds and prototypes on a planet that has gone, research now already known. */
+export function pruneActions(empire: Empire, actions: TurnActions): TurnActions {
+  const planets = new Set(empire.planets.map((p) => p.id))
+  const researched = new Set(empire.researched)
+  const prototypes: Record<string, string> = {}
+  for (const [fid, pid] of Object.entries(actions.prototypes)) if (planets.has(pid)) prototypes[fid] = pid
+  return {
+    ...actions,
+    research: actions.research.filter((id) => !researched.has(id)),
+    builds: actions.builds.filter((b) => planets.has(b.planetId)),
+    prototypes,
+  }
 }
 
 export function validateActions(empire: Empire, actions: TurnActions): string[] {

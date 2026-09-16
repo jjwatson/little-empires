@@ -15,7 +15,7 @@ The screens follow the tabs of the rule creator's own tracking sheet
 | Sheet tab | Screen |
 |---|---|
 | Resources header, Balance totals | **Overview**: stockpile, income, bonuses in effect, government in operation, founding colonies |
-| Planets, Demographics | **Planets**: profile, species table with growth, facilities, this turn's build |
+| Planets, Demographics | **Planets**: profile, species table with growth, facilities (with GM edits), this turn's build |
 | Completed Research | **Research**: the tree, what is unlocked, blueprint queue |
 | Resources, Balance Sheet | **Economy**: income statement by facility category; itemised ledger with manual adjustments |
 | all the slot columns | **End Turn**: research, prototypes, blueprints, construction, projected stockpile |
@@ -34,6 +34,13 @@ The screens follow the tabs of the rule creator's own tracking sheet
   colonies, manual adjustments) and always reconciles with the stockpile.
 - **Two players editing**: saves are checked against Drive's modified time. If the other player
   saved after you loaded, you get to choose reload or overwrite.
+- **GM edits** for what happens in the roleplaying game outside the colony rules. Each screen has a
+  "GM edit" control: on Planets you can add any catalogue facility (researched or not), add a custom
+  facility with its own name and monthly yield, remove or reduce facilities, cancel a build in progress
+  and remove a colony (never the homeworld); on Overview you can add a world without paying the setup
+  cost; on Research you can grant or revoke advances (no cascade, a revoked government is cleared) and
+  add or delete held blueprints. Every edit asks what happened, is free unless you also change the
+  stockpile, and is written to the ledger as a **GM event** so the history stays complete.
 
 Rulings from the rule creator (2026-09-07) that the app applies:
 
@@ -47,8 +54,11 @@ Not yet covered (the sheet's Production Capacity, Production, Production Items, 
 Personnel tabs): production/fabrication, troop training, stores, personnel, salvage, festivals, trade
 routes, super computer actions, and percentage modifiers other than population growth.
 
-Files saved by the first version are migrated on load: the old per-turn log becomes ledger lines
-and the GM-entered credit base is dropped in favour of the population formula.
+Files saved by earlier versions are migrated on load, one schema step at a time: v1's per-turn log
+becomes ledger lines and the GM-entered credit base is dropped in favour of the population formula;
+v2 files only gain the optional fields GM edits use. A file saved by a newer app than the one loaded
+is refused with a prompt to reload, so an out-of-date tab cannot rewrite it. When a release changes
+the schema, both players should reload the site before either saves.
 
 ## One-time Google setup (do this once, then share the client id)
 

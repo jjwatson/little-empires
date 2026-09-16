@@ -1,6 +1,7 @@
 import { useId } from 'react'
-import { FACILITY_BY_ID, PLANET_TYPES, facilityCategory } from '../data'
+import { FACILITY_BY_ID, PLANET_TYPES } from '../data'
 import type { FacilityCategory, PlanetType } from '../data'
+import { describeFacility } from '../model'
 import type { BuildInProgress, OwnedFacility } from '../model'
 
 /**
@@ -66,12 +67,12 @@ export interface Marker {
 export function markersFor(facilities: readonly OwnedFacility[]): Marker[] {
   const byGroup = new Map<MarkerGroup, Marker>()
   for (const owned of facilities) {
-    const f = FACILITY_BY_ID.get(owned.facilityId)
-    if (!f) continue
-    const group = GROUP_OF[facilityCategory(f)]
+    const info = describeFacility(owned)
+    if (!info) continue
+    const group = GROUP_OF[info.category]
     const m = byGroup.get(group) ?? { group, count: 0, names: [] }
     m.count += owned.count
-    m.names.push(owned.count > 1 ? `${f.name} ×${owned.count}` : f.name)
+    m.names.push(owned.count > 1 ? `${info.name} ×${owned.count}` : info.name)
     byGroup.set(group, m)
   }
   return MARKER_GROUPS.filter((g) => byGroup.has(g)).map((g) => byGroup.get(g)!)

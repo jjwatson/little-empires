@@ -1,11 +1,21 @@
 import { ADVANCE_BY_ID, FACILITY_BY_ID, facilityCostOn } from '../data'
 import type { BlueprintScale, PlanetType, ResourceSet } from '../data'
 
-export const SCHEMA_VERSION = 2
+export const SCHEMA_VERSION = 3
+
+/** A facility that is not in the construction catalogue: something that happened in play. */
+export interface CustomFacility {
+  name: string
+  /** Per-turn change to the stockpile; negatives are upkeep. */
+  income: ResourceSet
+  notes?: string
+}
 
 export interface OwnedFacility {
+  /** Catalogue id, or `custom:<uuid>` when `custom` is set. */
   facilityId: string
   count: number
+  custom?: CustomFacility
 }
 
 export interface BuildInProgress {
@@ -63,6 +73,7 @@ export type LedgerKind =
   | 'blueprint'
   | 'colony'
   | 'adjustment'
+  | 'event'
 
 /** One row of the Balance Sheet tab. */
 export interface LedgerLine {
@@ -96,6 +107,8 @@ export interface Empire {
   blueprints: Blueprint[]
   planets: Planet[]
   ledger: LedgerLine[]
+  /** Names of planets removed by GM edit, so their old ledger lines still read well. */
+  formerPlanets?: { id: string; name: string }[]
   updatedAt: string
   updatedBy: string
 }
@@ -184,6 +197,30 @@ export function addFacility(planet: Planet, facilityId: string): Planet {
   return { ...planet, facilities }
 }
 
+/** Take `count` of a facility away (all of them when omitted); the row goes when it reaches zero. */
+export function removeFacility(planet: Planet, facilityId: string, count?: number): Planet {
+  const facilities = planet.facilities
+    .map((f) => (f.facilityId === facilityId ? { ...f, count: count === undefined ? 0 : f.count - count } : { ...f }))
+    .filter((f) => f.count > 0)
+  return { ...planet, facilities }
+}
+
+export const CUSTOM_PREFIX = 'custom:'
+export const isCustomFacility = (o: OwnedFacility): boolean => !!o.custom
+
+export function addCustomFacility(planet: Planet, custom: CustomFacility, count = 1): Planet {
+  return { ...planet, facilities: [...planet.facilities, { facilityId: CUSTOM_PREFIX + newId(), count, custom }] }
+}
+
+/** The first planet is the homeworld by convention; it can never be removed. */
+export const isHomeworld = (empire: Empire, planetId: string): boolean => empire.planets[0]?.id === planetId
+
+/** Planet name for display, falling back to planets removed by GM edit and then the raw id. */
+export function planetNameOf(empire: Empire, id?: string): string {
+  if (!id) return ''
+  return empire.planets.find((p) => p.id === id)?.name ?? empire.formerPlanets?.find((p) => p.id === id)?.name ?? id
+}
+
 /** Colonising a new world: rules under "Planet Types". */
 export const COLONY_POPULATION = 50_000
 export const HOMEWORLD_MIN_POPULATION = 500_000
@@ -202,15 +239,22 @@ interface V1TurnEntry {
   notes?: string
 }
 
-/**
- * Bring a loaded file up to the current schema. v1 files had a per-turn `log` and a fully
- * GM-entered base income; v2 itemises the ledger and derives credits from population, so the
- * old credit base is dropped (the formula replaces it) and the start balance is back-solved
- * so the ledger still reconciles with the stockpile.
- */
+/** Bring a loaded file up to the current schema, one version step at a time. */
 export function migrate(raw: unknown): Empire {
+  const version = (raw as { schemaVersion?: number }).schemaVersion ?? 1
+  if (version > SCHEMA_VERSION) throw new Error('This empire was saved by a newer version of the app. Reload the page to update.')
+  let e: Empire = version < 2 ? migrateV1(raw) : (raw as Empire)
+  if (version < 3) e = migrateV2(e)
+  return e
+}
+
+/**
+ * v1 files had a per-turn `log` and a fully GM-entered base income; v2 itemises the ledger and
+ * derives credits from population, so the old credit base is dropped (the formula replaces it)
+ * and the start balance is back-solved so the ledger still reconciles with the stockpile.
+ */
+function migrateV1(raw: unknown): Empire {
   const e = raw as Record<string, unknown>
-  if (e.schemaVersion === SCHEMA_VERSION) return raw as Empire
 
   const planets = ((e.planets as Planet[]) ?? []).map((p) => ({
     ...p,
@@ -260,7 +304,7 @@ export function migrate(raw: unknown): Empire {
   ledger.unshift({ id: newId(), turn: 0, kind: 'start', label: 'Colony start', delta: start, at, by })
 
   return {
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: 2,
     id: e.id as string,
     name: e.name as string,
     turn: e.turn as number,
@@ -272,5 +316,14 @@ export function migrate(raw: unknown): Empire {
     ledger,
     updatedAt: at,
     updatedBy: by,
+  }
+}
+
+/** v3 adds optional fields only (custom facilities, GM events, former planets); v2 data is already valid. */
+function migrateV2(e: Empire): Empire {
+  return {
+    ...e,
+    schemaVersion: 3,
+    planets: e.planets.map((p) => ({ ...p, facilities: p.facilities.map((f) => ({ ...f, count: f.count ?? 1 })) })),
   }
 }

@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react'
 import { RESOURCE_KEYS, RESOURCE_LABELS } from '../data'
 import type { ResourceSet } from '../data'
-import type { AdvanceStatus } from '../model'
+import { ZERO, isZero } from '../model'
+import type { AdvanceStatus, EditNote } from '../model'
 
 export const fmt = (n: number): string => (Number.isInteger(n) ? n : Math.round(n)).toLocaleString()
 
@@ -120,5 +122,101 @@ export function QueueButton({
     <button className={queued ? 'primary' : ''} disabled={!queued && queuedCount >= slots} onClick={onToggle}>
       {queued ? 'Queued' : 'Queue'}
     </button>
+  )
+}
+
+// --- GM edits ----------------------------------------------------------------------------
+
+/** Draft of the reason (and optional stockpile change) attached to every GM edit. */
+export interface EditNoteDraft {
+  label: string
+  delta: ResourceSet
+  notes: string
+  adjustStock: boolean
+}
+export const EMPTY_EDIT_NOTE: EditNoteDraft = { label: '', delta: ZERO, notes: '', adjustStock: false }
+export const editNoteValid = (v: EditNoteDraft): boolean => v.label.trim().length > 0
+export function toEditNote(v: EditNoteDraft): EditNote {
+  return {
+    label: v.label.trim(),
+    delta: v.adjustStock && !isZero(v.delta) ? v.delta : undefined,
+    notes: v.notes.trim() || undefined,
+  }
+}
+
+/** Reason, optional stockpile change and notes, shared by every GM edit form. */
+export function EditNoteFields({ value, onChange, placeholder }: { value: EditNoteDraft; onChange: (v: EditNoteDraft) => void; placeholder?: string }) {
+  return (
+    <>
+      <label>
+        What happened
+        <input
+          required
+          placeholder={placeholder ?? 'e.g. Captured from pirates in session 12'}
+          value={value.label}
+          onChange={(e) => onChange({ ...value, label: e.target.value })}
+        />
+      </label>
+      <label className="inline">
+        <input type="checkbox" checked={value.adjustStock} onChange={(e) => onChange({ ...value, adjustStock: e.target.checked })} />
+        Also change the stockpile (negative to spend)
+      </label>
+      {value.adjustStock && <ResourceInputs value={value.delta} onChange={(delta) => onChange({ ...value, delta })} />}
+      <label>
+        Notes (optional)
+        <input value={value.notes} onChange={(e) => onChange({ ...value, notes: e.target.value })} />
+      </label>
+    </>
+  )
+}
+
+/** The inline confirmation every GM edit uses: what will happen, any extra fields, the reason, Confirm / Cancel. */
+export function GmForm({
+  title,
+  hint,
+  confirm,
+  danger = false,
+  disabled = false,
+  placeholder,
+  note,
+  onNote,
+  onSubmit,
+  onCancel,
+  children,
+}: {
+  title: string
+  hint?: string
+  confirm: string
+  danger?: boolean
+  disabled?: boolean
+  placeholder?: string
+  note: EditNoteDraft
+  onNote: (n: EditNoteDraft) => void
+  onSubmit: () => void
+  onCancel: () => void
+  children?: ReactNode
+}) {
+  const ok = editNoteValid(note) && !disabled
+  return (
+    <form
+      className="inner"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (ok) onSubmit()
+      }}
+    >
+      <h4>{title}</h4>
+      {hint && <p className="gmnote">{hint}</p>}
+      {children}
+      <EditNoteFields value={note} onChange={onNote} placeholder={placeholder} />
+      <div className="row">
+        <button className={danger ? 'primary danger' : 'primary'} type="submit" disabled={!ok}>
+          {confirm}
+        </button>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </form>
   )
 }

@@ -236,3 +236,10 @@ svg.globe { display: block; flex: none; overflow: visible; }
 .typepick button.active { background: var(--chip); color: var(--text); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
 .typepick button.locked svg.globe { filter: grayscale(0.7) brightness(0.8); opacity: 0.7; }
 .typepick button.locked small { font-size: 11px; line-height: 1.2; }
+
+/* GM edits */
+.kind.event { color: var(--f8, #ec7f3a); }
+button.danger { border-color: var(--neg); color: var(--neg); }
+button.primary.danger { background: var(--neg); border-color: var(--neg); color: #fff; }
+tr.editrow td { padding-top: 0; }
+.gmnote { font-size: 13px; color: var(--muted); margin: 4px 0 8px; }

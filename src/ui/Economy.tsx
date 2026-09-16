@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { FACILITY_BY_ID, FACILITY_CATEGORIES, facilityCategory, facilityIncomeOn } from '../data'
+import { FACILITY_CATEGORIES } from '../data'
 import type { FacilityCategory, ResourceSet } from '../data'
-import { ZERO, add, addAdjustment, balanceAfterTurn, growthRate, isZero, ledgerTurns, mul, populationCredits, projectedIncome } from '../model'
+import { ZERO, add, addAdjustment, balanceAfterTurn, describeFacility, growthRate, isZero, ledgerTurns, mul, ownedIncome, planetNameOf, populationCredits, projectedIncome } from '../model'
 import type { Empire, LedgerKind, LedgerLine } from '../model'
 import { ResCells, ResHeaders, ResourceInputs, SubTabs, fmt, pct } from './common'
 
@@ -49,9 +49,9 @@ function Income({ empire }: { empire: Empire }) {
         per: add(p.baseIncome, { ...ZERO, credits: populationCredits(p, rate) }),
       })
       for (const o of p.facilities) {
-        const f = FACILITY_BY_ID.get(o.facilityId)
-        if (!f) continue
-        out.push({ category: facilityCategory(f), source: f.name, where: p.name, count: o.count, per: facilityIncomeOn(p.type, f) })
+        const info = describeFacility(o)
+        if (!info) continue
+        out.push({ category: info.category, source: info.custom ? `${info.name} (custom)` : info.name, where: p.name, count: o.count, per: ownedIncome(p.type, o) })
       }
     }
     return out
@@ -171,6 +171,7 @@ const KIND_LABEL: Record<LedgerKind, string> = {
   blueprint: 'Blueprint',
   colony: 'Colony',
   adjustment: 'Adjustment',
+  event: 'GM event',
 }
 
 /** The Balance Sheet tab: every line, newest turn first, with the closing balance per turn. */
@@ -178,7 +179,7 @@ function Ledger({ empire, by, onChange }: Props) {
   const turns = ledgerTurns(empire.ledger)
   const [filter, setFilter] = useState<number | 'all'>('all')
   const [adding, setAdding] = useState(false)
-  const planetName = (id?: string) => (id ? empire.planets.find((p) => p.id === id)?.name ?? '' : '')
+  const planetName = (id?: string) => planetNameOf(empire, id)
   const shown = filter === 'all' ? turns : turns.filter((t) => t === filter)
 
   return (

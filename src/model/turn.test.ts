@@ -219,7 +219,7 @@ describe('ledger', () => {
       updatedBy: 'a',
     }
     const e = migrate(v1)
-    expect(e.schemaVersion).toBe(2)
+    expect(e.schemaVersion).toBe(3)
     expect(e.planets[0].baseIncome.credits).toBe(0)
     expect(e.planets[0].species).toEqual([])
     expect(e.ledger.map((l) => l.kind)).toEqual(['start', 'income', 'research'])

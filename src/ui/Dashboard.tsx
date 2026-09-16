@@ -11,7 +11,9 @@ import {
   activeBonuses,
   blueprintSlots,
   colonyProblems,
+  describeFacility,
   foundColony,
+  grantPlanet,
   planetTypeLock,
   governmentOptions,
   growthRate,
@@ -22,7 +24,8 @@ import {
   sub,
 } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { Res, ResourceInputs, ResourceTable, fmt, pct } from './common'
+import { EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, ResourceTable, fmt, pct, toEditNote } from './common'
+import type { EditNoteDraft } from './common'
 
 interface Props {
   empire: Empire
@@ -32,7 +35,7 @@ interface Props {
 }
 
 export function Overview({ empire, actions, by, onChange }: Props) {
-  const [founding, setFounding] = useState(false)
+  const [founding, setFounding] = useState<'found' | 'grant' | null>(null)
   const income = projectedIncome(empire)
   const cost = actionCost(empire, actions)
   const population = empire.planets.reduce((n, p) => n + p.population, 0)
@@ -82,7 +85,7 @@ export function Overview({ empire, actions, by, onChange }: Props) {
               <ul className="compact">
                 {p.facilities.map((f) => (
                   <li key={f.facilityId}>
-                    {FACILITY_BY_ID.get(f.facilityId)?.name ?? f.facilityId}
+                    {describeFacility(f)?.name ?? f.facilityId}
                     {f.count > 1 ? ` ×${f.count}` : ''}
                   </li>
                 ))}
@@ -142,10 +145,15 @@ export function Overview({ empire, actions, by, onChange }: Props) {
           Costs <Res r={COLONY_SETUP_COST} /> and moves {fmt(COLONY_POPULATION)} population from the homeworld (which
           cannot drop below {fmt(HOMEWORLD_MIN_POPULATION)}).
         </p>
-        {founding ? (
-          <FoundColony empire={empire} by={by} onCancel={() => setFounding(false)} onChange={onChange} />
+        {founding === 'found' ? (
+          <FoundColony empire={empire} by={by} onCancel={() => setFounding(null)} onChange={onChange} />
+        ) : founding === 'grant' ? (
+          <GrantPlanet empire={empire} by={by} onCancel={() => setFounding(null)} onChange={onChange} />
         ) : (
-          <button onClick={() => setFounding(true)}>Found colony…</button>
+          <div className="row">
+            <button onClick={() => setFounding('found')}>Found colony…</button>
+            <button onClick={() => setFounding('grant')}>Add a world by GM edit…</button>
+          </div>
         )}
       </div>
 
@@ -157,7 +165,7 @@ export function Overview({ empire, actions, by, onChange }: Props) {
               const lines = empire.ledger.filter((l) => l.turn === t)
               const research = lines.filter((l) => l.kind === 'research').map((l) => l.label)
               const builds = lines.filter((l) => l.kind === 'construction' || l.kind === 'prototype').map((l) => l.label)
-              const other = lines.filter((l) => ['blueprint', 'colony', 'adjustment'].includes(l.kind)).map((l) => l.label)
+              const other = lines.filter((l) => ['blueprint', 'colony', 'adjustment', 'event'].includes(l.kind)).map((l) => l.label)
               return (
                 <li key={t}>
                   <strong>Turn {t}</strong> {research.join(', ') || 'no research'}; {builds.join(', ') || 'no builds'}
@@ -232,5 +240,67 @@ function FoundColony({ empire, by, onCancel, onChange }: { empire: Empire; by: s
         </button>
       </div>
     </form>
+  )
+}
+
+/** A world the empire came by in play: no setup cost, nobody moves, and the research lock is only mentioned. */
+function GrantPlanet({ empire, by, onCancel, onChange }: { empire: Empire; by: string; onCancel: () => void; onChange: (e: Empire) => void }) {
+  const [name, setName] = useState('')
+  const [type, setType] = useState<PlanetType>('arid')
+  const [population, setPopulation] = useState(COLONY_POPULATION)
+  const [baseIncome, setBaseIncome] = useState<ResourceSet>({ credits: 0, rawMats: 200, energy: 200, manpower: 200 })
+  const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
+  const researched = new Set(empire.researched)
+  const lock = planetTypeLock(type, researched)
+
+  return (
+    <GmForm
+      title="Add a world by GM edit"
+      hint="For a world that came to the empire in play. Nothing is paid, nobody moves, and the ledger gets a GM event line."
+      confirm="Add world"
+      disabled={!name.trim() || population < 0}
+      placeholder="e.g. Ceded by the Hutts after the siege"
+      note={note}
+      onNote={setNote}
+      onCancel={onCancel}
+      onSubmit={() => {
+        onChange(grantPlanet(empire, name, type, population, baseIncome, toEditNote(note), by))
+        onCancel()
+      }}
+    >
+      <label>
+        Planet name
+        <input value={name} onChange={(e) => setName(e.target.value)} required />
+      </label>
+      <label className="tight">Planet type</label>
+      <div className="typepick" role="radiogroup" aria-label="Planet type">
+        {PLANET_TYPES.map((t) => {
+          const l = planetTypeLock(t.id, researched)
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="radio"
+              aria-checked={t.id === type}
+              className={t.id === type ? 'active' : ''}
+              title={l ? `Normally needs ${l.name}` : t.summary}
+              onClick={() => setType(t.id)}
+            >
+              <PlanetGlobe type={t.id} size={48} />
+              {t.name}
+              {l && <small className="muted">🔒 {l.name}</small>}
+            </button>
+          )
+        })}
+      </div>
+      <p className="muted">{PLANET_TYPES.find((t) => t.id === type)?.summary}</p>
+      {lock && <p className="muted small">Settling these worlds normally needs {lock.name}. A GM edit goes ahead regardless.</p>}
+      <label>
+        Population
+        <input type="number" min={0} value={population} onChange={(e) => setPopulation(Number(e.target.value))} />
+      </label>
+      <h4>Base income per turn besides population credits (agree with your GM)</h4>
+      <ResourceInputs value={baseIncome} onChange={setBaseIncome} />
+    </GmForm>
   )
 }

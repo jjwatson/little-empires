@@ -1,25 +1,31 @@
 import { useMemo, useState } from 'react'
 import { ADVANCES, BLUEPRINT_COSTS, BLUEPRINT_SCALES, FACILITIES, FIELDS } from '../data'
 import type { Advance, BlueprintScale } from '../data'
-import { advanceStatus, blueprintSlots, missingPrereqs, prereqMet, researchSlots, tierOpen, unlockedTier } from '../model'
+import { advanceStatus, blueprintSlots, grantAdvance, grantBlueprint, missingPrereqs, prereqMet, removeBlueprint, researchSlots, revokeAdvance, tierOpen, unlockedTier } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { QueueButton, Res, SubTabs } from './common'
+import { EMPTY_EDIT_NOTE, GmForm, QueueButton, Res, SubTabs, toEditNote } from './common'
+import type { EditNoteDraft } from './common'
 import { ResearchGraph } from './ResearchGraph'
 
 interface Props {
   empire: Empire
   actions: TurnActions
+  by: string
   onActions: (a: TurnActions) => void
+  onChange: (e: Empire) => void
 }
 
 type View = 'table' | 'graph'
 const VIEW_KEY = 'little-empires.researchView'
 
-export function ResearchTree({ empire, actions, onActions }: Props) {
+export function ResearchTree({ empire, actions, by, onActions, onChange }: Props) {
   const [view, setViewState] = useState<View>(() => (localStorage.getItem(VIEW_KEY) === 'graph' ? 'graph' : 'table'))
   const [field, setField] = useState<string>(FIELDS[0])
   const [query, setQuery] = useState('')
   const [onlyAvailable, setOnlyAvailable] = useState(false)
+  const [gm, setGm] = useState(false)
+  const [pending, setPending] = useState<{ a: Advance; mode: 'grant' | 'revoke' } | null>(null)
+  const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
   const researched = useMemo(() => new Set(empire.researched), [empire.researched])
   const slots = researchSlots(empire)
 
@@ -52,7 +58,7 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
     <section>
       <div className="grid">
         <Unlocked researched={researched} />
-        <Blueprints empire={empire} actions={actions} onActions={onActions} />
+        <Blueprints empire={empire} actions={actions} by={by} onActions={onActions} onChange={onChange} />
       </div>
 
       <div className="card">
@@ -63,10 +69,45 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
             <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)} />
             available only
           </label>
+          {view === 'table' && (
+            <label className="inline">
+              <input
+                type="checkbox"
+                checked={gm}
+                onChange={(e) => {
+                  setGm(e.target.checked)
+                  setPending(null)
+                }}
+              />
+              GM edit
+            </label>
+          )}
           <span className="muted">
             Queued {actions.research.length}/{slots} research slot{slots === 1 ? '' : 's'}
           </span>
         </div>
+        {view === 'table' && gm && pending && (
+          <GmForm
+            title={(pending.mode === 'grant' ? 'Grant ' : 'Revoke ') + pending.a.name}
+            hint={
+              pending.mode === 'grant'
+                ? 'Added to the researched list at no cost.'
+                : 'Anything that depended on it stays researched but shows as locked. A government in operation is cleared.'
+            }
+            confirm={pending.mode === 'grant' ? 'Grant advance' : 'Revoke advance'}
+            danger={pending.mode === 'revoke'}
+            placeholder="e.g. Learned from the captured Imperial scientist"
+            note={note}
+            onNote={setNote}
+            onCancel={() => setPending(null)}
+            onSubmit={() => {
+              const n = toEditNote(note)
+              onChange(pending.mode === 'grant' ? grantAdvance(empire, pending.a.id, n, by) : revokeAdvance(empire, pending.a.id, n, by))
+              setPending(null)
+              setNote(EMPTY_EDIT_NOTE)
+            }}
+          />
+        )}
         {view === 'table' && !query && (
           <div className="tabs">
             {FIELDS.map((f) => {
@@ -112,13 +153,25 @@ export function ResearchTree({ empire, actions, onActions }: Props) {
                     return (
                       <tr key={a.id} className={status}>
                         <td className="act">
-                          <QueueButton
-                            status={status}
-                            queued={queued}
-                            slots={slots}
-                            queuedCount={actions.research.length}
-                            onToggle={() => toggle(a)}
-                          />
+                          {gm ? (
+                            <button
+                              className={status === 'researched' ? 'danger' : ''}
+                              onClick={() => {
+                                setPending({ a, mode: status === 'researched' ? 'revoke' : 'grant' })
+                                setNote(EMPTY_EDIT_NOTE)
+                              }}
+                            >
+                              {status === 'researched' ? 'Revoke…' : 'Grant…'}
+                            </button>
+                          ) : (
+                            <QueueButton
+                              status={status}
+                              queued={queued}
+                              slots={slots}
+                              queuedCount={actions.research.length}
+                              onToggle={() => toggle(a)}
+                            />
+                          )}
                         </td>
                         <td>
                           <strong>{a.name}</strong>
@@ -172,9 +225,14 @@ function Unlocked({ researched }: { researched: ReadonlySet<string> }) {
 }
 
 /** Reverse Engineering: one blueprint per research facility per turn, priced by scale. */
-function Blueprints({ empire, actions, onActions }: Props) {
+function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
   const [name, setName] = useState('')
   const [scale, setScale] = useState<BlueprintScale>('Character')
+  const [gm, setGm] = useState(false)
+  const [heldName, setHeldName] = useState('')
+  const [heldScale, setHeldScale] = useState<BlueprintScale>('Character')
+  const [removing, setRemoving] = useState<string | null>(null)
+  const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
   const slots = blueprintSlots(empire)
   const unlocked = empire.researched.includes('reverse-engineering')
 
@@ -184,9 +242,24 @@ function Blueprints({ empire, actions, onActions }: Props) {
     setName('')
   }
 
+  function finish() {
+    setRemoving(null)
+    setNote(EMPTY_EDIT_NOTE)
+  }
+
   return (
     <div className="card">
-      <h3>Blueprints</h3>
+      <h3>
+        Blueprints{' '}
+        <button
+          onClick={() => {
+            setGm(!gm)
+            finish()
+          }}
+        >
+          {gm ? 'Done' : 'GM edit'}
+        </button>
+      </h3>
       {!unlocked ? (
         <p className="muted">Research Reverse Engineering to copy items you possess.</p>
       ) : slots === 0 ? (
@@ -221,10 +294,77 @@ function Blueprints({ empire, actions, onActions }: Props) {
           )}
         </>
       )}
-      {empire.blueprints.length > 0 && (
+      {(empire.blueprints.length > 0 || gm) && (
         <>
           <h4>Blueprints held</h4>
-          <p className="small">{empire.blueprints.map((b) => `${b.name} (${b.scale})`).join(' · ')}</p>
+          {empire.blueprints.length === 0 ? (
+            <p className="muted small">None yet.</p>
+          ) : (
+            <ul className="compact">
+              {empire.blueprints.map((b) => (
+                <li key={b.id}>
+                  {b.name} <span className="muted">({b.scale}, CT {b.turn})</span>
+                  {gm && (
+                    <>
+                      {' '}
+                      <button
+                        className="danger"
+                        onClick={() => {
+                          setRemoving(b.id)
+                          setNote(EMPTY_EDIT_NOTE)
+                        }}
+                      >
+                        Delete…
+                      </button>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {gm && removing && (
+            <GmForm
+              title={'Delete blueprint: ' + (empire.blueprints.find((b) => b.id === removing)?.name ?? '')}
+              confirm="Confirm deletion"
+              danger
+              placeholder="e.g. Lost when the archive burned"
+              note={note}
+              onNote={setNote}
+              onCancel={finish}
+              onSubmit={() => {
+                onChange(removeBlueprint(empire, removing, toEditNote(note), by))
+                finish()
+              }}
+            />
+          )}
+          {gm && !removing && (
+            <GmForm
+              title="Add a held blueprint"
+              hint="One the empire already has, however it came by it. Free unless you change the stockpile below."
+              confirm="Add blueprint"
+              disabled={!heldName.trim()}
+              placeholder="e.g. Recovered from the derelict in session 9"
+              note={note}
+              onNote={setNote}
+              onCancel={() => setGm(false)}
+              onSubmit={() => {
+                onChange(grantBlueprint(empire, heldName, heldScale, toEditNote(note), by))
+                setHeldName('')
+                finish()
+              }}
+            >
+              <div className="row wrap">
+                <input placeholder="Item, e.g. E-11 blaster rifle" value={heldName} onChange={(e) => setHeldName(e.target.value)} />
+                <select value={heldScale} onChange={(e) => setHeldScale(e.target.value as BlueprintScale)}>
+                  {BLUEPRINT_SCALES.map((s) => (
+                    <option key={s} value={s}>
+                      {s} scale
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </GmForm>
+          )}
         </>
       )}
     </div>

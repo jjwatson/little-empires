@@ -1,30 +1,46 @@
-import { useState } from 'react'
-import { FACILITY_BY_ID, PLANET_TYPES, facilityCostOn, facilityIncomeOn } from '../data'
+import { Fragment, useMemo, useState } from 'react'
+import { FACILITIES, FACILITY_BY_ID, PLANET_TYPES, facilityCostOn, facilityIncomeOn } from '../data'
+import type { ResourceSet } from '../data'
 import { MarkerLegend, PlanetGlobe } from './PlanetGlobe'
 import {
   PROFILE_FIELDS,
+  ZERO,
   availableBuilds,
+  cancelBuild,
+  describeFacility,
+  facilityWarnings,
+  grantCustomFacility,
+  grantFacility,
   growthRate,
+  isHomeworld,
   oncePerPlanet,
+  ownedIncome,
   planetHas,
   planetIncome,
   populationCredits,
+  reduceFacility,
+  removePlanet,
+  updateCustomFacility,
   withSpecies,
 } from '../model'
-import type { Empire, Planet, Species, TurnActions } from '../model'
-import { Res, ResourceInputs, fmt, pct } from './common'
+import type { CustomFacility, Empire, OwnedFacility, Planet, Species, TurnActions } from '../model'
+import { EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, fmt, pct, toEditNote } from './common'
+import type { EditNoteDraft } from './common'
 
 interface Props {
   empire: Empire
   actions: TurnActions
   onActions: (a: TurnActions) => void
+  by: string
   onChange: (e: Empire) => void
 }
 
-export function PlanetView({ empire, actions, onActions, onChange }: Props) {
+export function PlanetView({ empire, actions, by, onActions, onChange }: Props) {
   const [planetId, setPlanetId] = useState(empire.planets[0].id)
   const planet = empire.planets.find((p) => p.id === planetId) ?? empire.planets[0]
   const [editing, setEditing] = useState(false)
+  const [removing, setRemoving] = useState(false)
+  const [removeNote, setRemoveNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
   const [query, setQuery] = useState('')
   const rate = growthRate(empire, planet)
 
@@ -71,7 +87,24 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
             <MarkerLegend facilities={planet.facilities} />
           </div>
         </div>
-        {editing ? (
+        {removing ? (
+          <GmForm
+            title={'Remove ' + planet.name + ' and its ' + fmt(planet.population) + ' people'}
+            hint="The colony and everyone on it leave the empire. Its old ledger lines keep its name."
+            confirm="Confirm removal"
+            danger
+            placeholder="e.g. Overrun by raiders in session 14"
+            note={removeNote}
+            onNote={setRemoveNote}
+            onCancel={() => setRemoving(false)}
+            onSubmit={() => {
+              onChange(removePlanet(empire, planet.id, toEditNote(removeNote), by))
+              setRemoving(false)
+              setRemoveNote(EMPTY_EDIT_NOTE)
+              setPlanetId(empire.planets[0].id)
+            }}
+          />
+        ) : editing ? (
           <PlanetEditor
             planet={planet}
             onSave={(next) => {
@@ -86,6 +119,14 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
               Population {fmt(planet.population)} · growing {pct(rate)} a turn
               {planet.growthAdjust ? ` (includes GM adjustment ${pct(planet.growthAdjust)})` : ''} · yields{' '}
               {fmt(populationCredits(planet, rate))} Cr <button onClick={() => setEditing(true)}>edit</button>
+              {!isHomeworld(empire, planet.id) && (
+                <>
+                  {' '}
+                  <button className="danger" onClick={() => setRemoving(true)}>
+                    Remove colony…
+                  </button>
+                </>
+              )}
             </p>
             <p>
               Other base income <Res r={planet.baseIncome} signedValues /> · Total income{' '}
@@ -100,39 +141,7 @@ export function PlanetView({ empire, actions, onActions, onChange }: Props) {
         <SpeciesCard planet={planet} onSave={updatePlanet} />
       </div>
 
-      <div className="card">
-        <h3>Facilities</h3>
-        {planet.facilities.length === 0 && <p className="muted">Nothing built yet.</p>}
-        <table className="advances">
-          <tbody>
-            {planet.facilities.map((o) => {
-              const f = FACILITY_BY_ID.get(o.facilityId)
-              if (!f) return null
-              return (
-                <tr key={o.facilityId}>
-                  <td>
-                    <strong>{f.name}</strong>
-                    {o.count > 1 ? ` ×${o.count}` : ''}
-                    {f.notes && <div className="muted small">{f.notes}</div>}
-                  </td>
-                  <td className="cost">
-                    <Res r={facilityIncomeOn(planet.type, f)} signedValues /> each
-                  </td>
-                </tr>
-              )
-            })}
-            {planet.inProgress && (
-              <tr className="locked">
-                <td>
-                  Building {FACILITY_BY_ID.get(planet.inProgress.facilityId)?.name} — {planet.inProgress.turnsLeft} turn
-                  {planet.inProgress.turnsLeft === 1 ? '' : 's'} left
-                </td>
-                <td />
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <FacilitiesCard empire={empire} planet={planet} by={by} onChange={onChange} />
 
       <div className="card">
         <h3>
@@ -370,5 +379,272 @@ function SpeciesCard({ planet, onSave }: { planet: Planet; onSave: (p: Planet) =
         </table>
       )}
     </div>
+  )
+}
+
+// --- GM edits ----------------------------------------------------------------------------
+
+type FacilityEdit = { kind: 'remove' | 'edit'; facilityId: string } | { kind: 'cancel' | 'add' | 'custom' }
+
+interface NoteProps {
+  note: EditNoteDraft
+  onNote: (n: EditNoteDraft) => void
+  onCancel: () => void
+}
+
+/** Owned facilities, with a GM edit mode for recording what happened in play. */
+function FacilitiesCard({ empire, planet, by, onChange }: { empire: Empire; planet: Planet; by: string; onChange: (e: Empire) => void }) {
+  const [gm, setGm] = useState(false)
+  const [edit, setEdit] = useState<FacilityEdit | null>(null)
+  const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
+  const building = planet.inProgress ? FACILITY_BY_ID.get(planet.inProgress.facilityId)?.name ?? planet.inProgress.facilityId : ''
+
+  function open(e: FacilityEdit) {
+    setEdit(e)
+    setNote(EMPTY_EDIT_NOTE)
+  }
+  function close() {
+    setEdit(null)
+    setNote(EMPTY_EDIT_NOTE)
+  }
+  function apply(next: Empire) {
+    onChange(next)
+    close()
+  }
+
+  return (
+    <div className="card">
+      <h3>
+        Facilities{' '}
+        <button
+          onClick={() => {
+            setGm(!gm)
+            close()
+          }}
+        >
+          {gm ? 'Done' : 'GM edit'}
+        </button>
+      </h3>
+      {gm && <p className="gmnote">Record what happened in play. Nothing is paid unless you say so, and every change is written to the ledger.</p>}
+      {planet.facilities.length === 0 && !planet.inProgress && <p className="muted">Nothing built yet.</p>}
+      <table className="advances">
+        <tbody>
+          {planet.facilities.map((o) => {
+            const info = describeFacility(o)
+            if (!info) return null
+            const mine = edit && 'facilityId' in edit && edit.facilityId === o.facilityId ? edit.kind : null
+            return (
+              <Fragment key={o.facilityId}>
+                <tr>
+                  {gm && (
+                    <td className="act">
+                      <button className="danger" onClick={() => open({ kind: 'remove', facilityId: o.facilityId })}>
+                        Remove…
+                      </button>
+                      {info.custom && <button onClick={() => open({ kind: 'edit', facilityId: o.facilityId })}>Edit…</button>}
+                    </td>
+                  )}
+                  <td>
+                    <strong>{info.name}</strong>
+                    {o.count > 1 ? ` ×${o.count}` : ''}
+                    {info.custom && <span className="muted small"> · custom</span>}
+                    {info.notes && <div className="muted small">{info.notes}</div>}
+                  </td>
+                  <td className="cost">
+                    <Res r={ownedIncome(planet.type, o)} signedValues /> each
+                  </td>
+                </tr>
+                {mine === 'remove' && (
+                  <tr className="editrow">
+                    <td colSpan={3}>
+                      <RemoveFacilityForm empire={empire} planet={planet} owned={o} name={info.name} by={by} note={note} onNote={setNote} onDone={apply} onCancel={close} />
+                    </td>
+                  </tr>
+                )}
+                {mine === 'edit' && o.custom && (
+                  <tr className="editrow">
+                    <td colSpan={3}>
+                      <CustomFacilityForm
+                        title={`Edit ${info.name}`}
+                        initial={o.custom}
+                        note={note}
+                        onNote={setNote}
+                        onCancel={close}
+                        onSubmit={(custom) => apply(updateCustomFacility(empire, planet.id, o.facilityId, custom, toEditNote(note), by))}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            )
+          })}
+          {planet.inProgress && (
+            <tr className="locked">
+              {gm && (
+                <td className="act">
+                  <button className="danger" onClick={() => open({ kind: 'cancel' })}>
+                    Cancel build…
+                  </button>
+                </td>
+              )}
+              <td>
+                Building {building} — {planet.inProgress.turnsLeft} turn{planet.inProgress.turnsLeft === 1 ? '' : 's'} left
+              </td>
+              <td />
+            </tr>
+          )}
+          {edit?.kind === 'cancel' && planet.inProgress && (
+            <tr className="editrow">
+              <td colSpan={3}>
+                <GmForm
+                  title={`Cancel building ${building}`}
+                  hint="Nothing is refunded unless you change the stockpile below."
+                  confirm="Confirm cancellation"
+                  danger
+                  note={note}
+                  onNote={setNote}
+                  onCancel={close}
+                  onSubmit={() => apply(cancelBuild(empire, planet.id, toEditNote(note), by))}
+                />
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      {gm && !edit && (
+        <div className="row">
+          <button onClick={() => open({ kind: 'add' })}>Add catalogue facility…</button>
+          <button onClick={() => open({ kind: 'custom' })}>Add custom facility…</button>
+        </div>
+      )}
+      {edit?.kind === 'add' && <AddFacilityForm empire={empire} planet={planet} by={by} note={note} onNote={setNote} onDone={apply} onCancel={close} />}
+      {edit?.kind === 'custom' && (
+        <CustomFacilityForm
+          title="Add a custom facility"
+          withCount
+          note={note}
+          onNote={setNote}
+          onCancel={close}
+          onSubmit={(custom, count) => apply(grantCustomFacility(empire, planet.id, custom, count, toEditNote(note), by))}
+        />
+      )}
+    </div>
+  )
+}
+
+function RemoveFacilityForm({
+  empire,
+  planet,
+  owned,
+  name,
+  by,
+  onDone,
+  ...noteProps
+}: NoteProps & { empire: Empire; planet: Planet; owned: OwnedFacility; name: string; by: string; onDone: (e: Empire) => void }) {
+  const [count, setCount] = useState(owned.count)
+  return (
+    <GmForm
+      title={`Remove ${name} from ${planet.name}`}
+      hint="Destroyed, captured, sold or given away. Nothing is refunded unless you change the stockpile below."
+      confirm="Confirm removal"
+      danger
+      disabled={count < 1}
+      {...noteProps}
+      onSubmit={() => onDone(reduceFacility(empire, planet.id, owned.facilityId, count >= owned.count ? undefined : count, toEditNote(noteProps.note), by))}
+    >
+      {owned.count > 1 && (
+        <label>
+          How many of the {owned.count}
+          <input type="number" min={1} max={owned.count} value={count} onChange={(e) => setCount(Math.max(1, Math.min(owned.count, Number(e.target.value))))} />
+        </label>
+      )}
+    </GmForm>
+  )
+}
+
+const CATALOGUE = [...FACILITIES].sort((a, b) => a.name.localeCompare(b.name))
+
+function AddFacilityForm({ empire, planet, by, onDone, ...noteProps }: NoteProps & { empire: Empire; planet: Planet; by: string; onDone: (e: Empire) => void }) {
+  const [query, setQuery] = useState('')
+  const [facilityId, setFacilityId] = useState(CATALOGUE[0].id)
+  const [count, setCount] = useState(1)
+  const options = useMemo(() => CATALOGUE.filter((f) => !query || f.name.toLowerCase().includes(query.toLowerCase())), [query])
+  const selected = options.some((f) => f.id === facilityId) ? facilityId : options[0]?.id
+  const chosen = selected ? FACILITY_BY_ID.get(selected) : undefined
+  const warnings = selected ? facilityWarnings(planet, selected) : []
+  return (
+    <GmForm
+      title={`Add a facility to ${planet.name}`}
+      hint="Anything from the construction list, researched or not. Free unless you change the stockpile below."
+      confirm="Add facility"
+      disabled={!chosen || count < 1}
+      {...noteProps}
+      onSubmit={() => chosen && onDone(grantFacility(empire, planet.id, chosen.id, count, toEditNote(noteProps.note), by))}
+    >
+      <div className="row wrap">
+        <input placeholder="Filter facilities…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <select value={selected ?? ''} onChange={(e) => setFacilityId(e.target.value)}>
+          {options.map((f) => (
+            <option key={f.id} value={f.id}>
+              {f.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      {chosen && (
+        <p className="muted small">
+          {chosen.effects} · Monthly on this world: <Res r={facilityIncomeOn(planet.type, chosen)} signedValues />
+        </p>
+      )}
+      {warnings.map((w) => (
+        <p key={w} className="error">
+          {w}
+        </p>
+      ))}
+      <label>
+        How many
+        <input type="number" min={1} value={count} onChange={(e) => setCount(Math.max(1, Number(e.target.value)))} />
+      </label>
+    </GmForm>
+  )
+}
+
+function CustomFacilityForm({
+  title,
+  initial,
+  withCount = false,
+  onSubmit,
+  ...noteProps
+}: NoteProps & { title: string; initial?: CustomFacility; withCount?: boolean; onSubmit: (custom: CustomFacility, count: number) => void }) {
+  const [name, setName] = useState(initial?.name ?? '')
+  const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [income, setIncome] = useState<ResourceSet>(initial?.income ?? ZERO)
+  const [count, setCount] = useState(1)
+  return (
+    <GmForm
+      title={title}
+      hint="Something not in the construction list. Its monthly yield joins the planet's income; use negatives for upkeep."
+      confirm={initial ? 'Save' : 'Add facility'}
+      disabled={!name.trim() || count < 1}
+      {...noteProps}
+      onSubmit={() => onSubmit({ name: name.trim(), income, notes: notes.trim() || undefined }, count)}
+    >
+      <label>
+        Name
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Captured pirate base" required />
+      </label>
+      <label>
+        Description (optional)
+        <input value={notes} onChange={(e) => setNotes(e.target.value)} />
+      </label>
+      <h4>Monthly yield per facility</h4>
+      <ResourceInputs value={income} onChange={setIncome} />
+      {withCount && (
+        <label>
+          How many
+          <input type="number" min={1} value={count} onChange={(e) => setCount(Math.max(1, Number(e.target.value)))} />
+        </label>
+      )}
+    </GmForm>
   )
 }

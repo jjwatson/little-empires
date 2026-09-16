@@ -6,6 +6,7 @@ import {
   add,
   canHostPrototype,
   endTurn,
+  planetNameOf,
   projectedIncome,
   prototypePlanet,
   prototypesFor,
@@ -29,7 +30,7 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
   const cost = actionCost(empire, actions)
   const income = projectedIncome(empire)
   const after = add(sub(empire.resources, cost), income)
-  const planetName = (id: string) => empire.planets.find((p) => p.id === id)?.name ?? id
+  const planetName = (id: string) => planetNameOf(empire, id)
   const prototypes = prototypesFor(empire, actions.research)
 
   return (

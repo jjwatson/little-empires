@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { signIn, signOut, whoAmI } from '../drive/auth'
 import { ConflictError, download, listJsonFiles, parseFolderId, updateJson, createJson, getFolder } from '../drive/files'
 import type { DriveFile } from '../drive/files'
-import { EMPTY_ACTIONS, migrate } from '../model'
+import { EMPTY_ACTIONS, migrate, pruneActions } from '../model'
 import type { Empire, TurnActions } from '../model'
 import { SignIn } from './SignIn'
 import { Overview } from './Dashboard'
@@ -108,6 +108,7 @@ export function App() {
       if (!loaded) return
       const stamped = { ...next, updatedAt: new Date().toISOString(), updatedBy: user ?? 'unknown' }
       setLoaded({ ...loaded, empire: stamped })
+      setActions((a) => pruneActions(stamped, a))
       setDirty(true)
       setBusy('Saving…')
       setError(null)
@@ -207,9 +208,9 @@ export function App() {
         ) : tab === 'overview' ? (
           <Overview empire={empire} actions={actions} by={by} onChange={commit} />
         ) : tab === 'research' ? (
-          <ResearchTree empire={empire} actions={actions} onActions={setActions} />
+          <ResearchTree empire={empire} actions={actions} by={by} onActions={setActions} onChange={commit} />
         ) : tab === 'planets' ? (
-          <PlanetView empire={empire} actions={actions} onActions={setActions} onChange={commit} />
+          <PlanetView empire={empire} actions={actions} by={by} onActions={setActions} onChange={commit} />
         ) : tab === 'economy' ? (
           <Economy empire={empire} by={by} onChange={commit} />
         ) : (
