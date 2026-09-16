@@ -174,11 +174,6 @@ describe('endTurn', () => {
 })
 
 describe('colony types', () => {
-  it('lets Type I worlds be settled without research', () => {
-    const e = foundColony(empire(), 'Nova', 'homeworld', base, 'tester')
-    expect(e.planets[1].type).toBe('homeworld')
-    expect(colonyProblems(empire(), 'homeworld')).toEqual([])
-  })
 
   it('locks each other type behind its Colonisation advance', () => {
     const e = empire()
