@@ -7,9 +7,24 @@ export type PlanetType = 'homeworld' | 'arid' | 'arctic' | 'barren' | 'space' | 
  * world; Type I worlds match the homeworld and need no research (house rules, "Planet Types").
  */
 export const PLANET_TYPES: { id: PlanetType; name: string; summary: string; unlockedBy?: string }[] = [
-  { id: 'homeworld', name: 'Type I', summary: 'Matches the homeworld: no bonuses or penalties, and no research needed to settle.' },
-  { id: 'arid', name: 'Arid', summary: 'Solar generators double income. Farms half output, double costs.', unlockedBy: 'improved-arid-colonies' },
-  { id: 'arctic', name: 'Arctic', summary: 'Buildings cost 20% less Raw Mats. Cannot build Geothermal.', unlockedBy: 'arctic-exploitation' },
+  {
+    id: 'homeworld',
+    name: 'Type I',
+    summary: 'Matches the homeworld: no bonuses or penalties.',
+    unlockedBy: 'high-density-zoning'
+  },
+  {
+    id: 'arid',
+    name: 'Arid',
+    summary: 'Solar generators double income. Farms half output, double costs.',
+    unlockedBy: 'improved-arid-colonies'
+  },
+  {
+    id: 'arctic',
+    name: 'Arctic',
+    summary: 'Buildings cost 20% less Raw Mats. Cannot build Geothermal.',
+    unlockedBy: 'arctic-exploitation'
+  },
   {
     id: 'barren',
     name: 'Barren',
