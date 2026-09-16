@@ -11,7 +11,7 @@ export const PLANET_TYPES: { id: PlanetType; name: string; summary: string; unlo
     id: 'homeworld',
     name: 'Type I',
     summary: 'Matches the homeworld: no bonuses or penalties.',
-    unlockedBy: 'high-density-zoning'
+    unlockedBy: 'colonisation-research'
   },
   {
     id: 'arid',
