@@ -24,7 +24,7 @@ import {
   planetHas,
   sub,
 } from './empire'
-import type { Empire, LedgerLine, Planet } from './empire'
+import type { Empire, ItemRef, LedgerLine, Planet } from './empire'
 import { ownedIncome } from './facilities'
 import { line } from './ledger'
 import { isGovernmentSystem } from './modifiers'
@@ -36,7 +36,7 @@ export interface BuildAction {
   facilityId: string
 }
 
-export interface BlueprintAction {
+export interface BlueprintAction extends ItemRef {
   name: string
   scale: BlueprintScale
 }
@@ -50,6 +50,18 @@ export interface TurnActions {
 }
 
 export const EMPTY_ACTIONS: TurnActions = { research: [], builds: [], blueprints: [], prototypes: {} }
+
+/** "List price 7,000 Cr" for the ledger, when the item came from the wiki with a price. */
+export const listPrice = (ref: ItemRef): string | undefined =>
+  ref.credits != null ? `List price ${ref.credits.toLocaleString('en-GB')} Cr` : undefined
+
+/** The wiki link fields worth keeping on a held blueprint, omitted when absent so saved files stay tidy. */
+export function itemRef(ref: ItemRef): ItemRef {
+  const out: ItemRef = {}
+  if (ref.itemId) out.itemId = ref.itemId
+  if (ref.credits != null) out.credits = ref.credits
+  return out
+}
 
 export const RESEARCH_LABS = ['small-research-lab', 'large-research-lab', 'orbital-research-lab']
 
@@ -246,8 +258,8 @@ export function endTurn(empire: Empire, actions: TurnActions, by: string, notes?
   }
 
   const blueprints = actions.blueprints.map((b) => {
-    lines.push(line(turn, 'blueprint', `Blueprint: ${b.name.trim()} (${b.scale})`, neg(BLUEPRINT_COSTS[b.scale]), by, at))
-    return { id: newId(), name: b.name.trim(), scale: b.scale, turn }
+    lines.push(line(turn, 'blueprint', `Blueprint: ${b.name.trim()} (${b.scale})`, neg(BLUEPRINT_COSTS[b.scale]), by, at, { notes: listPrice(b) }))
+    return { id: newId(), name: b.name.trim(), scale: b.scale, turn, ...itemRef(b) }
   })
 
   let planets = empire.planets.map((p) => {

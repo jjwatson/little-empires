@@ -88,7 +88,14 @@ export interface LedgerLine {
   notes?: string
 }
 
-export interface Blueprint {
+/** Link from a blueprint to the D6 Holocron item it was picked from, with its list price. */
+export interface ItemRef {
+  itemId?: string
+  /** List price in credits from the wiki, for reference; the blueprint's own cost is by scale. */
+  credits?: number
+}
+
+export interface Blueprint extends ItemRef {
   id: string
   name: string
   scale: BlueprintScale

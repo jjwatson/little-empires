@@ -206,3 +206,24 @@ describe('pruneActions', () => {
     expect(pruneActions(e0, actions)).toEqual(actions)
   })
 })
+
+describe('blueprints picked from the D6 Holocron', () => {
+  it('carry the item id and list price from the queue to the held blueprint and ledger', () => {
+    const e0 = empire({ researched: ['higher-education', 'r-and-d-program', 'reverse-engineering'] })
+    e0.planets[0].facilities.push({ facilityId: 'small-research-lab', count: 1 })
+    const next = endTurn(e0, { ...EMPTY_ACTIONS, blueprints: [{ name: 'BlasTech E-11', scale: 'Character', itemId: 'blastech-e-11', credits: 1000 }] }, 'tester')
+    expect(next.blueprints[0]).toMatchObject({ name: 'BlasTech E-11', scale: 'Character', itemId: 'blastech-e-11', credits: 1000 })
+    expect(next.ledger.find((l) => l.kind === 'blueprint')?.notes).toBe('List price 1,000 Cr')
+
+    const free = endTurn(e0, { ...EMPTY_ACTIONS, blueprints: [{ name: 'Family heirloom', scale: 'Character' }] }, 'tester')
+    expect(Object.keys(free.blueprints[0]).sort()).toEqual(['id', 'name', 'scale', 'turn'])
+    expect(free.ledger.find((l) => l.kind === 'blueprint')?.notes).toBeUndefined()
+  })
+
+  it('are recorded by GM edit too', () => {
+    const e = grantBlueprint(empire(), 'X-26 StarHaul', 'Starfighter', note, 'gm', { itemId: 'x-26-starhaul', credits: 325_000 })
+    expect(e.blueprints[0]).toMatchObject({ itemId: 'x-26-starhaul', credits: 325_000 })
+    expect(last(e).notes).toMatch(/Gained blueprint: X-26 StarHaul \(Starfighter\) · list price 325,000 Cr/)
+    expect(Object.keys(grantBlueprint(empire(), 'Knife', 'Character', note, 'gm').blueprints[0]).sort()).toEqual(['id', 'name', 'scale', 'turn'])
+  })
+})

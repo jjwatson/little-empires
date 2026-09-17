@@ -1,10 +1,10 @@
 import { ADVANCE_BY_ID, FACILITY_BY_ID, PLANET_TYPES, canBuildOnPlanet } from '../data'
 import type { BlueprintScale, PlanetType, ResourceSet } from '../data'
 import { ZERO, add, addCustomFacility, addFacility, isHomeworld, newId, newPlanet, planetHas, removeFacility } from './empire'
-import type { CustomFacility, Empire, Planet } from './empire'
+import type { CustomFacility, Empire, ItemRef, Planet } from './empire'
 import { describeFacility } from './facilities'
 import { line } from './ledger'
-import { oncePerPlanet } from './turn'
+import { itemRef, listPrice, oncePerPlanet } from './turn'
 
 /**
  * GM edits: changes made because of what happened in the roleplaying game rather than through
@@ -158,9 +158,10 @@ export function revokeAdvance(empire: Empire, advanceId: string, note: EditNote,
 
 // --- blueprints --------------------------------------------------------------------------
 
-export function grantBlueprint(empire: Empire, name: string, scale: BlueprintScale, note: EditNote, by: string): Empire {
-  const blueprint = { id: newId(), name: name.trim(), scale, turn: empire.turn }
-  return recordEvent(empire, { blueprints: [...empire.blueprints, blueprint] }, note, by, `Gained blueprint: ${blueprint.name} (${scale})`)
+export function grantBlueprint(empire: Empire, name: string, scale: BlueprintScale, note: EditNote, by: string, ref: ItemRef = {}): Empire {
+  const blueprint = { id: newId(), name: name.trim(), scale, turn: empire.turn, ...itemRef(ref) }
+  const price = listPrice(ref)
+  return recordEvent(empire, { blueprints: [...empire.blueprints, blueprint] }, note, by, `Gained blueprint: ${blueprint.name} (${scale})${price ? ` · l${price.slice(1)}` : ''}`)
 }
 
 export function removeBlueprint(empire: Empire, blueprintId: string, note: EditNote, by: string): Empire {

@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
 import { ADVANCES, BLUEPRINT_COSTS, BLUEPRINT_SCALES, FACILITIES, FIELDS } from '../data'
-import type { Advance, BlueprintScale } from '../data'
+import type { Advance, BlueprintScale, Item } from '../data'
+import { availabilityNote, blueprintWarning } from '../data'
+import { ItemCard, ItemPicker, useItems } from './ItemPicker'
 import { advanceStatus, blueprintSlots, grantAdvance, grantBlueprint, missingPrereqs, prereqMet, removeBlueprint, researchSlots, revokeAdvance, tierOpen, unlockedTier } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { EMPTY_EDIT_NOTE, GmForm, QueueButton, Res, SubTabs, toEditNote } from './common'
+import { EMPTY_EDIT_NOTE, GmForm, QueueButton, Res, SubTabs, fmt, toEditNote } from './common'
 import type { EditNoteDraft } from './common'
 import { ResearchGraph } from './ResearchGraph'
 
@@ -233,14 +235,34 @@ function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
   const [heldScale, setHeldScale] = useState<BlueprintScale>('Character')
   const [removing, setRemoving] = useState<string | null>(null)
   const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
+  /** The wiki item behind the typed name, cleared as soon as the text is edited. */
+  const [picked, setPicked] = useState<Item>()
+  const [heldPicked, setHeldPicked] = useState<Item>()
+  /** Item whose stat card is open. */
+  const [showing, setShowing] = useState<string | null>(null)
   const slots = blueprintSlots(empire)
   const unlocked = empire.researched.includes('reverse-engineering')
+  const items = useItems(unlocked || gm || empire.blueprints.length > 0)
+
+  const ref = (item?: Item) => (item ? { itemId: item.id, credits: item.credits } : {})
+  const warning = picked && blueprintWarning(picked)
 
   function addBlueprint() {
     if (!name.trim()) return
-    onActions({ ...actions, blueprints: [...actions.blueprints, { name: name.trim(), scale }] })
+    onActions({ ...actions, blueprints: [...actions.blueprints, { name: name.trim(), scale, ...ref(picked) }] })
     setName('')
+    setPicked(undefined)
   }
+
+  const statsButton = (itemId?: string) =>
+    itemId && (
+      <>
+        {' '}
+        <button className="link" onClick={() => setShowing(showing === itemId ? null : itemId)}>
+          stats
+        </button>
+      </>
+    )
 
   function finish() {
     setRemoving(null)
@@ -272,25 +294,52 @@ function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
           <ul className="compact">
             {actions.blueprints.map((b, i) => (
               <li key={i}>
-                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />{' '}
+                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />
+                {b.credits != null && <span className="muted small"> · list price {fmt(b.credits)} Cr</span>}
+                {statsButton(b.itemId)}{' '}
                 <button onClick={() => onActions({ ...actions, blueprints: actions.blueprints.filter((_, j) => j !== i) })}>remove</button>
               </li>
             ))}
           </ul>
           {actions.blueprints.length < slots && (
-            <div className="row wrap">
-              <input placeholder="Item, e.g. E-11 blaster rifle" value={name} onChange={(e) => setName(e.target.value)} />
-              <select value={scale} onChange={(e) => setScale(e.target.value as BlueprintScale)}>
-                {BLUEPRINT_SCALES.map((s) => (
-                  <option key={s} value={s}>
-                    {s} scale
-                  </option>
-                ))}
-              </select>
-              <button onClick={addBlueprint} disabled={!name.trim()}>
-                Queue blueprint
-              </button>
-            </div>
+            <>
+              <div className="row wrap">
+                <ItemPicker
+                  value={name}
+                  commonOnly
+                  items={items}
+                  placeholder="Item, e.g. E-11 blaster rifle (search the D6 Holocron)"
+                  onChange={(t) => {
+                    setName(t)
+                    setPicked(undefined)
+                  }}
+                  onPick={(item) => {
+                    setName(item.name)
+                    setPicked(item)
+                    if (item.scale) setScale(item.scale)
+                  }}
+                />
+                <select value={scale} onChange={(e) => setScale(e.target.value as BlueprintScale)}>
+                  {BLUEPRINT_SCALES.map((s) => (
+                    <option key={s} value={s}>
+                      {s} scale
+                    </option>
+                  ))}
+                </select>
+                <button onClick={addBlueprint} disabled={!name.trim()}>
+                  Queue blueprint
+                </button>
+              </div>
+              {picked && (
+                <p className="muted small">
+                  {picked.credits != null ? `List price ${fmt(picked.credits)} Cr` : 'No list price on the wiki'}
+                  {picked.scale ? '' : ' · no scale given, pick one'}
+                  {statsButton(picked.id)}
+                </p>
+              )}
+              {picked && availabilityNote(picked) && <p className="muted small">{availabilityNote(picked)}</p>}
+              {warning && <p className="small neg">{warning}</p>}
+            </>
           )}
         </>
       )}
@@ -304,6 +353,8 @@ function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
               {empire.blueprints.map((b) => (
                 <li key={b.id}>
                   {b.name} <span className="muted">({b.scale}, CT {b.turn})</span>
+                  {b.credits != null && <span className="muted small"> · list price {fmt(b.credits)} Cr</span>}
+                  {statsButton(b.itemId)}
                   {gm && (
                     <>
                       {' '}
@@ -348,13 +399,27 @@ function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
               onNote={setNote}
               onCancel={() => setGm(false)}
               onSubmit={() => {
-                onChange(grantBlueprint(empire, heldName, heldScale, toEditNote(note), by))
+                onChange(grantBlueprint(empire, heldName, heldScale, toEditNote(note), by, ref(heldPicked)))
                 setHeldName('')
+                setHeldPicked(undefined)
                 finish()
               }}
             >
               <div className="row wrap">
-                <input placeholder="Item, e.g. E-11 blaster rifle" value={heldName} onChange={(e) => setHeldName(e.target.value)} />
+                <ItemPicker
+                  value={heldName}
+                  items={items}
+                  placeholder="Item, e.g. E-11 blaster rifle (search the D6 Holocron)"
+                  onChange={(t) => {
+                    setHeldName(t)
+                    setHeldPicked(undefined)
+                  }}
+                  onPick={(item) => {
+                    setHeldName(item.name)
+                    setHeldPicked(item)
+                    if (item.scale) setHeldScale(item.scale)
+                  }}
+                />
                 <select value={heldScale} onChange={(e) => setHeldScale(e.target.value as BlueprintScale)}>
                   {BLUEPRINT_SCALES.map((s) => (
                     <option key={s} value={s}>
@@ -367,6 +432,7 @@ function Blueprints({ empire, actions, by, onActions, onChange }: Props) {
           )}
         </>
       )}
+      {showing && <ItemCard itemId={showing} items={items} onClose={() => setShowing(null)} />}
     </div>
   )
 }

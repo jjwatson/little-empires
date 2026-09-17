@@ -14,7 +14,7 @@ import {
   validateActions,
 } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { Res, ResourceTable } from './common'
+import { Res, ResourceTable, fmt } from './common'
 
 interface Props {
   empire: Empire
@@ -91,7 +91,8 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
           <ul className="compact">
             {actions.blueprints.map((b, i) => (
               <li key={i}>
-                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />{' '}
+                {b.name} <span className="muted">({b.scale})</span> <Res r={BLUEPRINT_COSTS[b.scale]} />
+                {b.credits != null && <span className="muted small"> · list price {fmt(b.credits)} Cr</span>}{' '}
                 <button onClick={() => onActions({ ...actions, blueprints: actions.blueprints.filter((_, j) => j !== i) })}>remove</button>
               </li>
             ))}

@@ -41,6 +41,12 @@ The screens follow the tabs of the rule creator's own tracking sheet
   cost; on Research you can grant or revoke advances (no cascade, a revoked government is cleared) and
   add or delete held blueprints. Every edit asks what happened, is free unless you also change the
   stockpile, and is written to the ledger as a **GM event** so the history stays complete.
+- **Blueprint item lookup** from a snapshot of the [D6 Holocron wiki](http://d6holocron.com/wiki/)
+  (about 4,200 weapons, gear, droids, vehicles and ships). Typing a blueprint name offers matches;
+  picking one fills the name, pre-selects the scale when the page states it (droid stat blocks count as
+  Droid), records the list price on the blueprint and in the ledger, and warns when the item is above
+  availability 2 or carries an R/X/F code (house rule: the GM decides). A **stats** link shows the
+  item's stat block with a link to its wiki page. Free-text items still work.
 
 Rulings from the rule creator (2026-09-07) that the app applies:
 
@@ -114,6 +120,24 @@ starting point with `npx vite-node scripts/layout-research.ts --mode centre` (Re
 with `?tune` on the URL: nodes become draggable and **Copy layout** puts the positions on the clipboard. `npm test` checks every
 advance has a position, nothing overlaps, and link crossings and label clashes stay under their ceilings.
 
+### D6 Holocron item snapshot
+
+The wiki is served over plain HTTP, so the app (on HTTPS) cannot read it live. Instead
+`scripts/fetch-holocron.mjs` crawls every article once (about 200 requests, a few minutes) and writes
+`src/data/items.json` (the compact searchable list, loaded on demand) and `src/data/itemStats/<letter>.json`
+(full stat blocks, one shard loaded when a stat card opens). The snapshot date is stored in the data and
+shown on the stat card.
+
+```bash
+npm run fetch-holocron              # download into .cache/ (git-ignored), then parse
+npm run fetch-holocron -- --parse   # re-parse the cached download after editing the overrides
+npm run fetch-holocron -- --refresh # download again
+```
+
+The parser reads the wiki's free-form `Key: value` stat lines. It prints how many pages became items,
+how many have a scale and a price, and the split by scale; unparsed cost or scale spellings can be
+handled in `scripts/holocron-overrides.mjs`. `npm run validate-data` checks the snapshot too.
+
 ## Layout
 
 ```
@@ -121,6 +145,14 @@ src/data     JSON rules data, types, planet-type modifiers, facility categories,
 src/model    pure game logic: prerequisites, population, modifiers, ledger, end-turn (unit tested)
 src/drive    Google sign-in and Drive file access
 src/ui       React screens
-scripts      xlsx converter and data validator
+scripts      xlsx converter, D6 Holocron crawler and data validator
 docs         the house rules this implements
+```
+
+## Attribution
+
+Item statistics and prices are a snapshot of the [D6 Holocron](http://d6holocron.com/wiki/), a
+fan-maintained compendium of West End Games' Star Wars D6 material; every item in the app links back to
+its wiki page. Star Wars is a trademark of Lucasfilm Ltd. This tracker is a private hobby tool with no
+affiliation to either.
 ```
