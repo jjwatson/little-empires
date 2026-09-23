@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { ZERO, migrate, newEmpire, newPlanet } from './empire'
-import type { Empire } from './empire'
+import { ZERO, migrate, neg, newEmpire, newPlanet } from './empire'
+import type { CustomBuild, Empire } from './empire'
 import {
   EMPTY_ACTIONS,
   blueprintSlots,
   colonyProblems,
+  committedCost,
+  turnCost,
   planetTypeLock,
   endTurn,
   foundColony,
@@ -233,5 +235,75 @@ describe('ledger', () => {
     expect(e.planets[0].species).toEqual([])
     expect(e.ledger.map((l) => l.kind)).toEqual(['start', 'income', 'research'])
     expect(ledgerTotal(e.ledger)).toEqual(e.resources)
+  })
+})
+
+describe('Custom Builds', () => {
+  const refit = {
+    name: 'Orbital refit',
+    notes: 'Agreed in session 9',
+    turns: 3,
+    costPerTurn: { credits: 1_000, rawMats: 100, energy: 50, manpower: 10 },
+    income: { credits: 500, rawMats: 0, energy: -20, manpower: 0 },
+  }
+  const queue = (planetId: string, custom: CustomBuild = refit) => act({ builds: [{ planetId, facilityId: 'custom:x', custom }] })
+
+  it('needs a name and a whole number of turns', () => {
+    const e = empire()
+    const pid = e.planets[0].id
+    expect(validateActions(e, queue(pid, { ...refit, name: ' ' }))[0]).toMatch(/needs a name/)
+    expect(validateActions(e, queue(pid, { ...refit, turns: 1.5 }))[0]).toMatch(/whole number/)
+    expect(validateActions(e, queue(pid))).toEqual([])
+  })
+
+  it('pays an instalment every turn, holds the slot, then becomes a custom facility', () => {
+    const e = empire()
+    const pid = e.planets[0].id
+    const t1 = endTurn(e, queue(pid), 'tester')
+    expect(t1.planets[0].inProgress).toMatchObject({ facilityId: 'custom:x', turnsLeft: 2, custom: refit })
+    expect(t1.ledger.at(-1)).toMatchObject({
+      kind: 'construction',
+      label: 'Orbital refit (1/3)',
+      delta: neg(refit.costPerTurn),
+      planetId: pid,
+      notes: 'Agreed in session 9',
+    })
+    expect(t1.resources.credits).toBeCloseTo(start.credits - 1_000 + 101_000)
+    // the slot is taken and the next instalment is already owed
+    expect(validateActions(t1, act({ builds: [{ planetId: pid, facilityId: 'farms' }] }))).toContainEqual(expect.stringMatching(/still building Orbital refit/))
+    expect(committedCost(t1)).toEqual(refit.costPerTurn)
+    expect(turnCost(t1, EMPTY_ACTIONS)).toEqual(refit.costPerTurn)
+
+    const t2 = endTurn(t1, EMPTY_ACTIONS, 'tester')
+    expect(t2.planets[0].inProgress?.turnsLeft).toBe(1)
+    expect(t2.ledger.at(-1)?.label).toBe('Orbital refit (2/3)')
+    expect(t2.resources.rawMats).toBe(t1.resources.rawMats - 100 + base.rawMats)
+
+    const t3 = endTurn(t2, EMPTY_ACTIONS, 'tester')
+    expect(t3.planets[0].inProgress).toBeUndefined()
+    expect(t3.ledger.at(-1)?.label).toBe('Orbital refit (3/3)')
+    expect(t3.planets[0].facilities).toEqual([
+      { facilityId: 'custom:x', count: 1, custom: { name: 'Orbital refit', notes: 'Agreed in session 9', income: refit.income } },
+    ])
+    // nothing more is owed, and its yield arrives from the following turn
+    expect(committedCost(t3)).toEqual(ZERO)
+    expect(projectedIncome(t3).energy).toBe(base.energy - 20)
+    expect(projectedIncome(t3).credits).toBeCloseTo(t3.planets[0].population * 1.01 * 0.1 + 500)
+    for (const t of [t1, t2, t3]) expect(ledgerTotal(t.ledger)).toEqual(t.resources)
+  })
+
+  it('finishes a one-turn Custom Build like any other build, with a plain ledger label', () => {
+    const e = empire()
+    const { notes: _notes, ...plain } = refit
+    const t1 = endTurn(e, queue(e.planets[0].id, { ...plain, turns: 1 }), 'tester')
+    expect(t1.planets[0].inProgress).toBeUndefined()
+    expect(t1.planets[0].facilities[0].custom).toEqual({ name: 'Orbital refit', income: refit.income })
+    expect(t1.ledger.at(-1)?.label).toBe('Orbital refit')
+  })
+
+  it('blocks the turn when an instalment cannot be paid', () => {
+    const e = empire()
+    e.planets[0].inProgress = { facilityId: 'custom:x', turnsLeft: 2, custom: { ...refit, costPerTurn: { ...ZERO, credits: start.credits + 1 } } }
+    expect(validateActions(e, EMPTY_ACTIONS)[0]).toMatch(/instalments due this turn/)
   })
 })

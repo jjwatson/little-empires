@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SCHEMA_VERSION, migrate, newEmpire, newPlanet, planetNameOf } from './empire'
+import { SCHEMA_VERSION, ZERO, migrate, newEmpire, newPlanet, planetNameOf } from './empire'
 import type { Empire } from './empire'
 import {
   cancelBuild,
@@ -119,6 +119,16 @@ describe('facilities by GM edit', () => {
     expect(home(e).inProgress).toBeUndefined()
     expect(last(e).notes).toMatch(/Cancelled building Farms/)
     expect(() => cancelBuild(e, home(e).id, note, 'gm')).toThrow(/not building/)
+  })
+
+  it('cancels a Custom Build by its own name, with nothing further owed', () => {
+    const e0 = empire()
+    const custom = { name: 'Orbital refit', turns: 3, costPerTurn: { credits: 1000, rawMats: 0, energy: 0, manpower: 0 }, income: ZERO }
+    e0.planets[0].inProgress = { facilityId: 'custom:x', turnsLeft: 2, custom }
+    const e = cancelBuild(e0, home(e0).id, note, 'gm')
+    expect(home(e).inProgress).toBeUndefined()
+    expect(last(e).notes).toMatch(/Cancelled building Orbital refit/)
+    expect(ledgerTotal(e.ledger)).toEqual(e.resources)
   })
 })
 

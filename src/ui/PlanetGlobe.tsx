@@ -1,7 +1,7 @@
 import { useId } from 'react'
-import { FACILITY_BY_ID, PLANET_TYPES } from '../data'
+import { PLANET_TYPES } from '../data'
 import type { FacilityCategory, PlanetType } from '../data'
-import { describeFacility } from '../model'
+import { buildName, describeFacility } from '../model'
 import type { BuildInProgress, OwnedFacility } from '../model'
 
 /**
@@ -331,7 +331,7 @@ export function PlanetGlobe({ type, size = 48, seed = type, facilities = [], inP
           })}
           {inProgress && (
             <g>
-              <title>{`Building ${FACILITY_BY_ID.get(inProgress.facilityId)?.name ?? inProgress.facilityId}, ${inProgress.turnsLeft} turn${inProgress.turnsLeft === 1 ? '' : 's'} left`}</title>
+              <title>{`Building ${buildName(inProgress)}, ${inProgress.turnsLeft} turn${inProgress.turnsLeft === 1 ? '' : 's'} left`}</title>
               <circle
                 cx={C + Math.cos(-Math.PI / 2 + ((total - 0.5) / total) * Math.PI * 2) * RING}
                 cy={C + Math.sin(-Math.PI / 2 + ((total - 0.5) / total) * Math.PI * 2) * RING}

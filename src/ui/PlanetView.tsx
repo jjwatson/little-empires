@@ -6,13 +6,17 @@ import {
   PROFILE_FIELDS,
   ZERO,
   availableBuilds,
+  buildName,
   cancelBuild,
+  customBuildProblems,
+  customBuildTotal,
   describeFacility,
   facilityWarnings,
   grantCustomFacility,
   grantFacility,
   growthRate,
   isHomeworld,
+  newCustomId,
   oncePerPlanet,
   ownedIncome,
   planetHas,
@@ -23,8 +27,8 @@ import {
   updateCustomFacility,
   withSpecies,
 } from '../model'
-import type { CustomFacility, Empire, OwnedFacility, Planet, Species, TurnActions } from '../model'
-import { EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, fmt, pct, toEditNote } from './common'
+import type { CustomBuild, CustomFacility, Empire, OwnedFacility, Planet, Species, TurnActions } from '../model'
+import { BuildProgress, EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, fmt, pct, toEditNote } from './common'
 import type { EditNoteDraft } from './common'
 
 interface Props {
@@ -42,6 +46,7 @@ export function PlanetView({ empire, actions, by, onActions, onChange }: Props) 
   const [removing, setRemoving] = useState(false)
   const [removeNote, setRemoveNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
   const [query, setQuery] = useState('')
+  const [customForm, setCustomForm] = useState(false)
   const rate = growthRate(empire, planet)
 
   const queued = actions.builds.find((b) => b.planetId === planet.id)
@@ -49,9 +54,9 @@ export function PlanetView({ empire, actions, by, onActions, onChange }: Props) 
     (f) => !query || f.name.toLowerCase().includes(query.toLowerCase()),
   )
 
-  function setBuild(facilityId: string | null) {
+  function setBuild(facilityId: string | null, custom?: CustomBuild) {
     const builds = actions.builds.filter((b) => b.planetId !== planet.id)
-    if (facilityId) builds.push({ planetId: planet.id, facilityId })
+    if (facilityId) builds.push(custom ? { planetId: planet.id, facilityId, custom } : { planetId: planet.id, facilityId })
     onActions({ ...actions, builds })
   }
 
@@ -144,19 +149,46 @@ export function PlanetView({ empire, actions, by, onActions, onChange }: Props) 
       <FacilitiesCard empire={empire} planet={planet} by={by} onChange={onChange} />
 
       <div className="card">
-        <h3>
-          Build this turn{' '}
-          {queued && (
-            <span className="muted">
-              · queued: {FACILITY_BY_ID.get(queued.facilityId)?.name}{' '}
-              <button onClick={() => setBuild(null)}>clear</button>
-            </span>
-          )}
+        <h3 className="spread">
+          <span>
+            Build this turn{' '}
+            {queued && (
+              <span className="muted">
+                · queued: {queued.custom ? `${queued.custom.name} (Custom Build)` : FACILITY_BY_ID.get(queued.facilityId)?.name}{' '}
+                {queued.custom && !customForm && <button onClick={() => setCustomForm(true)}>edit</button>}{' '}
+                <button onClick={() => setBuild(null)}>clear</button>
+              </span>
+            )}
+          </span>
+          {!planet.inProgress && !customForm && <button onClick={() => setCustomForm(true)}>Custom Build…</button>}
         </h3>
         {planet.inProgress ? (
-          <p className="muted">This planet's construction slot is busy until the current build finishes.</p>
+          <p className="muted">This planet's construction slot is busy until {buildName(planet.inProgress)} finishes.</p>
+        ) : customForm ? (
+          <CustomBuildForm
+            initial={queued?.custom}
+            onCancel={() => setCustomForm(false)}
+            onSubmit={(custom) => {
+              setBuild(queued?.custom ? queued.facilityId : newCustomId(), custom)
+              setCustomForm(false)
+            }}
+          />
         ) : (
           <>
+            {queued?.custom && (
+              <p className="small">
+                <strong>{queued.custom.name}</strong> · {queued.custom.turns} turn{queued.custom.turns === 1 ? '' : 's'} · costs{' '}
+                <Res r={queued.custom.costPerTurn} /> a turn while building
+                {queued.custom.turns > 1 && (
+                  <>
+                    {' '}
+                    (<Res r={customBuildTotal(queued.custom)} /> in all)
+                  </>
+                )}{' '}
+                · then yields <Res r={queued.custom.income} signedValues /> a turn
+                {queued.custom.notes && <span className="muted"> · {queued.custom.notes}</span>}
+              </p>
+            )}
             <input placeholder="Filter facilities…" value={query} onChange={(e) => setQuery(e.target.value)} />
             {options.length === 0 && <p className="muted">No facilities available. Research unlocks them.</p>}
             <table className="advances">
@@ -397,7 +429,7 @@ function FacilitiesCard({ empire, planet, by, onChange }: { empire: Empire; plan
   const [gm, setGm] = useState(false)
   const [edit, setEdit] = useState<FacilityEdit | null>(null)
   const [note, setNote] = useState<EditNoteDraft>(EMPTY_EDIT_NOTE)
-  const building = planet.inProgress ? FACILITY_BY_ID.get(planet.inProgress.facilityId)?.name ?? planet.inProgress.facilityId : ''
+  const building = planet.inProgress ? buildName(planet.inProgress) : ''
 
   function open(e: FacilityEdit) {
     setEdit(e)
@@ -487,10 +519,9 @@ function FacilitiesCard({ empire, planet, by, onChange }: { empire: Empire; plan
                   </button>
                 </td>
               )}
-              <td>
-                Building {building} — {planet.inProgress.turnsLeft} turn{planet.inProgress.turnsLeft === 1 ? '' : 's'} left
+              <td colSpan={2}>
+                <BuildProgress build={planet.inProgress} />
               </td>
-              <td />
             </tr>
           )}
           {edit?.kind === 'cancel' && planet.inProgress && (
@@ -646,5 +677,63 @@ function CustomFacilityForm({
         </label>
       )}
     </GmForm>
+  )
+}
+
+// --- Custom Build ------------------------------------------------------------------------
+
+/** A multi-round project agreed in play: what it costs each turn, how long it takes, what it yields when done. */
+function CustomBuildForm({ initial, onSubmit, onCancel }: { initial?: CustomBuild; onSubmit: (c: CustomBuild) => void; onCancel: () => void }) {
+  const [name, setName] = useState(initial?.name ?? '')
+  const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [turns, setTurns] = useState(initial?.turns ?? 1)
+  const [costPerTurn, setCostPerTurn] = useState<ResourceSet>(initial?.costPerTurn ?? ZERO)
+  const [income, setIncome] = useState<ResourceSet>(initial?.income ?? ZERO)
+  const draft: CustomBuild = { name: name.trim(), turns, costPerTurn, income }
+  if (notes.trim()) draft.notes = notes.trim()
+  const problems = customBuildProblems(draft)
+  return (
+    <form
+      className="inner"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (!problems.length) onSubmit(draft)
+      }}
+    >
+      <h4>{initial ? 'Edit Custom Build' : 'Custom Build'}</h4>
+      <p className="gmnote">
+        Something agreed in play rather than taken from the catalogue. It takes this planet's construction slot for the whole run, the cost is
+        paid at the end of every turn it is in progress, and when it finishes it joins the facilities and yields the amount below each turn.
+      </p>
+      <label>
+        Name
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Refit the orbital shipyard" required />
+      </label>
+      <label>
+        Description (optional)
+        <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Goes on the ledger lines" />
+      </label>
+      <label>
+        Turns to build
+        <input type="number" min={1} step={1} value={turns} onChange={(e) => setTurns(Math.max(1, Math.floor(Number(e.target.value) || 1)))} />
+      </label>
+      <h4>Cost per turn while building</h4>
+      <ResourceInputs value={costPerTurn} onChange={setCostPerTurn} />
+      {turns > 1 && (
+        <p className="muted small">
+          <Res r={customBuildTotal(draft)} /> over the {turns} turns.
+        </p>
+      )}
+      <h4>Yield per turn once complete (negative for upkeep)</h4>
+      <ResourceInputs value={income} onChange={setIncome} />
+      <div className="row">
+        <button className="primary" type="submit" disabled={problems.length > 0}>
+          {initial ? 'Save' : 'Queue Custom Build'}
+        </button>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </form>
   )
 }

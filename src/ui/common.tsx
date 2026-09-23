@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { RESOURCE_KEYS, RESOURCE_LABELS } from '../data'
 import type { ResourceSet } from '../data'
-import { ZERO, isZero } from '../model'
-import type { AdvanceStatus, EditNote } from '../model'
+import { ZERO, buildName, buildTurns, isZero, neg } from '../model'
+import type { AdvanceStatus, BuildInProgress, EditNote } from '../model'
 
 export const fmt = (n: number): string => (Number.isInteger(n) ? n : Math.round(n)).toLocaleString()
 
@@ -86,6 +86,39 @@ export function ResourceInputs({ value, onChange }: { value: ResourceSet; onChan
           <input type="number" value={value[k]} onChange={(e) => onChange({ ...value, [k]: Number(e.target.value) })} />
         </label>
       ))}
+    </div>
+  )
+}
+
+/**
+ * A planet's construction slot: what is being built, turns left, the instalment a Custom Build
+ * takes each turn, and a bar of turns done. With `step`, the turn about to be resolved is shown
+ * as a lighter segment on the end of the bar.
+ */
+export function BuildProgress({ build, where, step = false }: { build: BuildInProgress; where?: string; step?: boolean }) {
+  const total = buildTurns(build)
+  const done = Math.max(0, total - build.turnsLeft)
+  const left = build.turnsLeft
+  const pctOf = (n: number) => `${(Math.min(n, total) / total) * 100}%`
+  return (
+    <div className="progress">
+      <div className="small">
+        Building <strong>{buildName(build)}</strong>
+        {where && <> on {where}</>}
+        {total > 1 && <span className="muted"> · {done} of {total} turns done</span>}
+        {' · '}
+        {step ? (left === 1 ? 'finishes this turn' : `${left - 1} turn${left === 2 ? '' : 's'} left after this one`) : `${left} turn${left === 1 ? '' : 's'} left`}
+        {build.custom && (
+          <span className="muted">
+            {' · '}
+            <Res r={neg(build.custom.costPerTurn)} signedValues /> a turn while building
+          </span>
+        )}
+      </div>
+      <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done} aria-label={`${done} of ${total} turns done`}>
+        <span className="done" style={{ width: pctOf(done) }} />
+        {step && <span className="next" style={{ width: pctOf(1) }} />}
+      </div>
     </div>
   )
 }

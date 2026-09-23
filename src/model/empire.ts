@@ -18,9 +18,22 @@ export interface OwnedFacility {
   custom?: CustomFacility
 }
 
+/**
+ * A Custom Build: a multi-round project agreed in play rather than taken from the catalogue.
+ * Its cost is paid at the end of every colony turn it is in progress, the first included, and
+ * when it finishes it becomes a custom facility yielding `income` a turn (negative for upkeep).
+ */
+export interface CustomBuild extends CustomFacility {
+  costPerTurn: ResourceSet
+  /** Colony turns from start to finish. */
+  turns: number
+}
+
 export interface BuildInProgress {
+  /** Catalogue id, or `custom:<uuid>` when `custom` is set. */
   facilityId: string
   turnsLeft: number
+  custom?: CustomBuild
 }
 
 /** One row of the Demographics tab: a species and how many of them live on the planet. */
@@ -215,8 +228,10 @@ export function removeFacility(planet: Planet, facilityId: string, count?: numbe
 export const CUSTOM_PREFIX = 'custom:'
 export const isCustomFacility = (o: OwnedFacility): boolean => !!o.custom
 
-export function addCustomFacility(planet: Planet, custom: CustomFacility, count = 1): Planet {
-  return { ...planet, facilities: [...planet.facilities, { facilityId: CUSTOM_PREFIX + newId(), count, custom }] }
+export const newCustomId = (): string => CUSTOM_PREFIX + newId()
+
+export function addCustomFacility(planet: Planet, custom: CustomFacility, count = 1, facilityId = newCustomId()): Planet {
+  return { ...planet, facilities: [...planet.facilities, { facilityId, count, custom }] }
 }
 
 /** The first planet is the homeworld by convention; it can never be removed. */

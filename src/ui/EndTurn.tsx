@@ -5,16 +5,21 @@ import {
   actionCost,
   add,
   canHostPrototype,
+  committedCost,
+  customBuildTotal,
   endTurn,
+  isZero,
+  neg,
   planetNameOf,
   projectedIncome,
   prototypePlanet,
   prototypesFor,
   sub,
+  turnCost,
   validateActions,
 } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { Res, ResourceTable, fmt } from './common'
+import { BuildProgress, Res, ResourceTable, fmt } from './common'
 
 interface Props {
   empire: Empire
@@ -28,10 +33,12 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
   const [notes, setNotes] = useState('')
   const errors = validateActions(empire, actions)
   const cost = actionCost(empire, actions)
+  const committed = committedCost(empire)
   const income = projectedIncome(empire)
-  const after = add(sub(empire.resources, cost), income)
+  const after = add(sub(empire.resources, turnCost(empire, actions)), income)
   const planetName = (id: string) => planetNameOf(empire, id)
   const prototypes = prototypesFor(empire, actions.research)
+  const inProgress = empire.planets.flatMap((p) => (p.inProgress ? [{ planet: p, build: p.inProgress }] : []))
 
   return (
     <section>
@@ -106,17 +113,43 @@ export function EndTurn({ empire, actions, by, onActions, onCommit }: Props) {
           <ul className="compact">
             {actions.builds.map((b) => (
               <li key={b.planetId}>
-                {planetName(b.planetId)}: {FACILITY_BY_ID.get(b.facilityId)?.name ?? b.facilityId}{' '}
+                {planetName(b.planetId)}:{' '}
+                {b.custom ? (
+                  <>
+                    {b.custom.name}{' '}
+                    <span className="muted">
+                      (Custom Build, {b.custom.turns} turn{b.custom.turns === 1 ? '' : 's'})
+                    </span>{' '}
+                    <Res r={b.custom.costPerTurn} />
+                    {b.custom.turns > 1 && (
+                      <span className="muted small">
+                        {' '}
+                        a turn · <Res r={customBuildTotal(b.custom)} /> in all
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  FACILITY_BY_ID.get(b.facilityId)?.name ?? b.facilityId
+                )}{' '}
                 <button onClick={() => onActions({ ...actions, builds: actions.builds.filter((x) => x !== b) })}>remove</button>
               </li>
             ))}
           </ul>
         )}
+        {inProgress.length > 0 && (
+          <>
+            <h4>In progress</h4>
+            {inProgress.map(({ planet, build }) => (
+              <BuildProgress key={planet.id} build={build} where={planet.name} step />
+            ))}
+          </>
+        )}
 
         <ResourceTable
           rows={[
             { label: 'Stockpile now', r: empire.resources },
-            { label: 'Spent on actions', r: sub(ZERO, cost), signedValues: true },
+            { label: 'Spent on actions', r: neg(cost), signedValues: true },
+            ...(isZero(committed) ? [] : [{ label: 'Custom Build instalments', r: neg(committed), signedValues: true }]),
             { label: 'Income (after growth)', r: income, signedValues: true },
             { label: 'Stockpile after', r: after },
           ]}

@@ -27,6 +27,10 @@ The screens follow the tabs of the rule creator's own tracking sheet
   radial map of all 207 advances with your empire at the centre, one spoke per field, rings by
   distance from the start. Click an advance to light up its whole chain and queue it from the side panel.
 - **Construction** per planet: build costs, monthly income, planet-type bonuses and restrictions.
+- **Custom Build** (top right of the build section): a multi-round project agreed in play. Give it a
+  cost per turn, a number of turns and what it yields per turn once finished (negative for upkeep).
+  It takes the planet's construction slot for the whole run, each instalment is paid at the end of
+  turn and itemised in the ledger, and the End Turn screen shows a progress bar until it is done.
 - **Population** grows 1% a turn plus research bonuses (Monarchy +1%), per species if you list them.
   Base credit income is one credit per ten population after growth, as in the sheet; Raw Mats,
   Energy and Manpower base income stay GM-entered numbers.

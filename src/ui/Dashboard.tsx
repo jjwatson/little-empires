@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FACILITY_BY_ID, PLANET_TYPES } from '../data'
+import { PLANET_TYPES } from '../data'
 import { PlanetGlobe } from './PlanetGlobe'
 import type { PlanetType, ResourceSet } from '../data'
 import {
@@ -24,7 +24,7 @@ import {
   sub,
 } from '../model'
 import type { Empire, TurnActions } from '../model'
-import { EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, ResourceTable, fmt, pct, toEditNote } from './common'
+import { BuildProgress, EMPTY_EDIT_NOTE, GmForm, Res, ResourceInputs, ResourceTable, fmt, pct, toEditNote } from './common'
 import type { EditNoteDraft } from './common'
 
 interface Props {
@@ -89,13 +89,8 @@ export function Overview({ empire, actions, by, onChange }: Props) {
                     {f.count > 1 ? ` ×${f.count}` : ''}
                   </li>
                 ))}
-                {p.inProgress && (
-                  <li className="muted">
-                    Building {FACILITY_BY_ID.get(p.inProgress.facilityId)?.name} ({p.inProgress.turnsLeft} turn
-                    {p.inProgress.turnsLeft === 1 ? '' : 's'} left)
-                  </li>
-                )}
               </ul>
+              {p.inProgress && <BuildProgress build={p.inProgress} />}
             </div>
           )
         })}

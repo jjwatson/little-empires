@@ -11,21 +11,25 @@ import type { Advance, BlueprintScale, Facility, PlanetType, ResourceSet } from 
 import {
   COLONY_POPULATION,
   COLONY_SETUP_COST,
+  CUSTOM_PREFIX,
   HOMEWORLD_MIN_POPULATION,
   ZERO,
   add,
+  addCustomFacility,
   addFacility,
   countFacility,
   covers,
+  isZero,
   mul,
   neg,
+  newCustomId,
   newId,
   newPlanet,
   planetHas,
   sub,
 } from './empire'
-import type { Empire, ItemRef, LedgerLine, Planet } from './empire'
-import { ownedIncome } from './facilities'
+import type { CustomBuild, Empire, ItemRef, LedgerLine, Planet } from './empire'
+import { buildName, finishedCustom, ownedIncome } from './facilities'
 import { line } from './ledger'
 import { isGovernmentSystem } from './modifiers'
 import { CREDITS_PER_HEAD, grow, growthRate, takePopulation, withSpecies } from './population'
@@ -33,7 +37,10 @@ import { advanceStatus, prereqMet } from './prereqs'
 
 export interface BuildAction {
   planetId: string
+  /** Catalogue id, or `custom:<uuid>` when `custom` is set. */
   facilityId: string
+  /** A Custom Build agreed in play; the catalogue is not consulted. */
+  custom?: CustomBuild
 }
 
 export interface BlueprintAction extends ItemRef {
@@ -167,12 +174,40 @@ export function actionCost(empire: Empire, actions: TurnActions): ResourceSet {
     if (a) total = add(total, a.cost)
   }
   for (const b of actions.builds) {
+    if (b.custom) {
+      total = add(total, b.custom.costPerTurn)
+      continue
+    }
     const f = FACILITY_BY_ID.get(b.facilityId)
     const p = empire.planets.find((x) => x.id === b.planetId)
     if (f && p) total = add(total, facilityCostOn(p.type, f))
   }
   return add(total, blueprintCost(actions))
 }
+
+/** Instalments already owed this turn on Custom Builds in progress, before any new action. */
+export function committedCost(empire: Empire): ResourceSet {
+  return empire.planets.reduce((acc, p) => (p.inProgress?.custom ? add(acc, p.inProgress.custom.costPerTurn) : acc), ZERO)
+}
+
+/** Everything leaving the stockpile when the turn ends: new actions plus committed instalments. */
+export function turnCost(empire: Empire, actions: TurnActions): ResourceSet {
+  return add(actionCost(empire, actions), committedCost(empire))
+}
+
+/** Total a Custom Build costs over its whole run. */
+export const customBuildTotal = (c: CustomBuild): ResourceSet => mul(c.costPerTurn, c.turns)
+
+/** Problems with a Custom Build as entered; empty when it is fine. */
+export function customBuildProblems(c: CustomBuild): string[] {
+  const out: string[] = []
+  if (!c.name.trim()) out.push('A Custom Build needs a name.')
+  if (!Number.isInteger(c.turns) || c.turns < 1) out.push('A Custom Build takes a whole number of turns, at least one.')
+  return out
+}
+
+/** "Orbital refit (2/3)": the ledger label for one instalment of a Custom Build. */
+const instalmentLabel = (c: CustomBuild, k: number): string => (c.turns > 1 ? `${c.name} (${k}/${c.turns})` : c.name)
 
 /** Drop queued actions a GM edit has made meaningless: builds and prototypes on a planet that has gone, research now already known. */
 export function pruneActions(empire: Empire, actions: TurnActions): TurnActions {
@@ -221,8 +256,9 @@ export function validateActions(empire: Empire, actions: TurnActions): string[] 
     }
     if (seenPlanets.has(p.id)) errors.push(`${p.name} can only build one facility per turn.`)
     seenPlanets.add(p.id)
-    if (p.inProgress) errors.push(`${p.name} is still building ${FACILITY_BY_ID.get(p.inProgress.facilityId)?.name}.`)
-    if (!f) errors.push(`Unknown facility ${b.facilityId}.`)
+    if (p.inProgress) errors.push(`${p.name} is still building ${buildName(p.inProgress)}.`)
+    if (b.custom) errors.push(...customBuildProblems(b.custom))
+    else if (!f) errors.push(`Unknown facility ${b.facilityId}.`)
     else {
       if (!prereqMet(f.requires, researched)) errors.push(`${f.name} has unmet research prerequisites.`)
       if (!canBuildOnPlanet(p.type, f)) errors.push(`${f.name} cannot be built on a ${p.type} planet.`)
@@ -230,8 +266,14 @@ export function validateActions(empire: Empire, actions: TurnActions): string[] 
     }
   }
 
-  const cost = actionCost(empire, actions)
-  if (!covers(empire.resources, cost)) errors.push('Not enough resources for the selected actions.')
+  const committed = committedCost(empire)
+  if (!covers(empire.resources, turnCost(empire, actions))) {
+    errors.push(
+      isZero(committed)
+        ? 'Not enough resources for the selected actions.'
+        : 'Not enough resources for the selected actions plus the Custom Build instalments due this turn. Free up resources or cancel a build under GM edit.',
+    )
+  }
   return errors
 }
 
@@ -246,7 +288,7 @@ export function endTurn(empire: Empire, actions: TurnActions, by: string, notes?
 
   const at = new Date().toISOString()
   const turn = empire.turn
-  const spent = actionCost(empire, actions)
+  const spent = turnCost(empire, actions)
   const income = projectedIncome(empire)
   const lines: LedgerLine[] = []
 
@@ -265,18 +307,30 @@ export function endTurn(empire: Empire, actions: TurnActions, by: string, notes?
   let planets = empire.planets.map((p) => {
     let planet: Planet = grow({ ...p, facilities: p.facilities.map((f) => ({ ...f })) }, growthRate(empire, p))
     const build = actions.builds.find((b) => b.planetId === p.id)
-    if (build) {
+    if (build?.custom) {
+      const id = build.facilityId.startsWith(CUSTOM_PREFIX) ? build.facilityId : newCustomId()
+      planet.inProgress = { facilityId: id, turnsLeft: build.custom.turns, custom: build.custom }
+    } else if (build) {
       const f = FACILITY_BY_ID.get(build.facilityId)!
       planet.inProgress = { facilityId: f.id, turnsLeft: f.buildTime ?? 1 }
       lines.push(line(turn, 'construction', f.name, neg(facilityCostOn(p.type, f)), by, at, { planetId: p.id }))
     }
     if (planet.inProgress) {
-      const left = planet.inProgress.turnsLeft - 1
+      const current = planet.inProgress
+      if (current.custom) {
+        // Catalogue builds are paid up front; a Custom Build pays one instalment every turn, this one included.
+        const c = current.custom
+        const k = c.turns - current.turnsLeft + 1
+        lines.push(line(turn, 'construction', instalmentLabel(c, k), neg(c.costPerTurn), by, at, { planetId: p.id, notes: c.notes }))
+      }
+      const left = current.turnsLeft - 1
       if (left <= 0) {
-        planet = addFacility(planet, planet.inProgress.facilityId)
+        planet = current.custom
+          ? addCustomFacility(planet, finishedCustom(current.custom), 1, current.facilityId)
+          : addFacility(planet, current.facilityId)
         delete planet.inProgress
       } else {
-        planet.inProgress = { ...planet.inProgress, turnsLeft: left }
+        planet.inProgress = { ...current, turnsLeft: left }
       }
     }
     return planet

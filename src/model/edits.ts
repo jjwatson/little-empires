@@ -2,7 +2,7 @@ import { ADVANCE_BY_ID, FACILITY_BY_ID, PLANET_TYPES, canBuildOnPlanet } from '.
 import type { BlueprintScale, PlanetType, ResourceSet } from '../data'
 import { ZERO, add, addCustomFacility, addFacility, isHomeworld, newId, newPlanet, planetHas, removeFacility } from './empire'
 import type { CustomFacility, Empire, ItemRef, Planet } from './empire'
-import { describeFacility } from './facilities'
+import { buildName, describeFacility } from './facilities'
 import { line } from './ledger'
 import { itemRef, listPrice, oncePerPlanet } from './turn'
 
@@ -94,7 +94,7 @@ export function updateCustomFacility(empire: Empire, planetId: string, facilityI
 export function cancelBuild(empire: Empire, planetId: string, note: EditNote, by: string): Empire {
   const planet = planetOf(empire, planetId)
   if (!planet.inProgress) throw new Error(`${planet.name} is not building anything.`)
-  const name = FACILITY_BY_ID.get(planet.inProgress.facilityId)?.name ?? planet.inProgress.facilityId
+  const name = buildName(planet.inProgress)
   const next = { ...planet }
   delete next.inProgress
   return recordEvent(empire, { planets: replacePlanet(empire, next) }, note, by, `Cancelled building ${name} on ${planet.name}`, planetId)

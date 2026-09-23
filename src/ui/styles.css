@@ -253,3 +253,10 @@ a { color: var(--accent); }
 .suggestions li.active { background: var(--chip); }
 .itemcard .kv { display: block; max-height: 360px; overflow: auto; }
 .itemcard .kv th { white-space: nowrap; vertical-align: top; }
+
+/* Build section header with the Custom Build button on the right; construction progress bars. */
+h3.spread { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.progress { margin: 6px 0; }
+.bar { display: flex; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.bar .done { display: block; background: var(--accent); }
+.bar .next { display: block; background: var(--accent); opacity: 0.4; }
