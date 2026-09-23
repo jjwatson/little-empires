@@ -22,6 +22,37 @@ for (const f of facilities) {
 for (const a of advances) checkPrereq(a.id, a.prereq)
 for (const f of facilities) checkPrereq(`facility:${f.id}`, f.requires)
 
+// The Construction sheet sometimes lists the *prerequisites of* the research that unlocks a facility rather
+// than that research itself (Ground Based Hangers <- "Colonisation Research", whose advance is Hanger Defense).
+// Flag a facility whose requires.all equals the prereq.all of an advance that says it builds that facility.
+const STOP = new Set(['the', 'of', 'and', 'a', 'research', 'blueprints', 'facility', 'facilities', 'factory', 'design', 'construction', 'station', 'stations'])
+const words = (s) =>
+  new Set(
+    String(s)
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, ' ')
+      .split(/\s+/)
+      .filter((w) => w && !STOP.has(w))
+      .map((w) => w.replace(/s$/, '')),
+  )
+const setKey = (xs) => [...(xs ?? [])].sort().join('+')
+const advanceById = new Map(advances.map((a) => [a.id, a]))
+const buildsFacility = (a, f) => {
+  if (!/construct|build|buid|produce/i.test(a.effects)) return false
+  const aw = words(`${a.name} ${a.effects}`)
+  return [...words(f.name)].every((w) => aw.has(w))
+}
+for (const f of facilities) {
+  if (!f.requires.all?.length || f.requires.any) continue
+  // already tied to research that says it builds it (Planetary Shields <- planetary-shields), so a later node
+  // that also mentions it (Superior Planetary Shields) is not a mis-wiring
+  if (f.requires.all.some((id) => advanceById.has(id) && buildsFacility(advanceById.get(id), f))) continue
+  for (const a of advances) {
+    if (a.prereq.any || setKey(a.prereq.all) !== setKey(f.requires.all)) continue
+    if (buildsFacility(a, f)) errors.push(`facility:${f.id}: requires the prerequisites of ${a.id} rather than ${a.id} itself`)
+  }
+}
+
 function checkCost(owner, c) {
   for (const k of ['credits', 'rawMats', 'energy', 'manpower']) {
     if (typeof c?.[k] !== 'number' || Number.isNaN(c[k])) errors.push(`${owner}: ${k} is not a number`)

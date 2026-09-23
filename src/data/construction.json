@@ -152,8 +152,7 @@
     },
     "requires": {
       "all": [
-        "mineral-extractors-research",
-        "fuel-extractors-research"
+        "refinery-research"
       ]
     }
   },
@@ -175,8 +174,7 @@
     },
     "requires": {
       "all": [
-        "refinery-research",
-        "small-space-station-construction"
+        "gas-cloud-mining-station-research"
       ]
     }
   },
@@ -313,8 +311,7 @@
     },
     "requires": {
       "all": [
-        "hydroponics-bay-research",
-        "space-station-design"
+        "orbital-farms-research"
       ]
     }
   },
@@ -469,7 +466,7 @@
     },
     "requires": {
       "all": [
-        "advanced-civic-design"
+        "systems-sensor-net"
       ]
     }
   },
@@ -514,7 +511,7 @@
     },
     "requires": {
       "all": [
-        "huge-cargo-holds"
+        "trade-fleets"
       ]
     }
   },
@@ -537,7 +534,7 @@
     },
     "requires": {
       "all": [
-        "colonisation-research"
+        "hanger-defense"
       ]
     }
   },
@@ -559,7 +556,7 @@
     },
     "requires": {
       "all": [
-        "hanger-defense-turrets"
+        "proximity-mines"
       ]
     }
   },
@@ -581,7 +578,7 @@
     },
     "requires": {
       "all": [
-        "improved-shield-arrays"
+        "planetary-shields"
       ]
     }
   },
@@ -603,7 +600,7 @@
     },
     "requires": {
       "all": [
-        "planetary-shields"
+        "superior-planetary-shields"
       ]
     }
   },
@@ -626,7 +623,7 @@
     },
     "requires": {
       "all": [
-        "space-station-design"
+        "satellite"
       ]
     }
   },
@@ -670,8 +667,7 @@
     },
     "requires": {
       "all": [
-        "satellite",
-        "hanger-defense"
+        "orbital-hangers"
       ]
     }
   },
@@ -693,8 +689,7 @@
     },
     "requires": {
       "all": [
-        "asteroid-mining",
-        "small-space-station-construction"
+        "asteroid-mining-stations"
       ]
     }
   },
@@ -716,7 +711,7 @@
     },
     "requires": {
       "all": [
-        "military-space-station-design"
+        "small-military-space-station"
       ]
     }
   },
@@ -738,7 +733,7 @@
     },
     "requires": {
       "all": [
-        "hanger-defense"
+        "small-military-outpost-research"
       ]
     }
   },
@@ -760,7 +755,7 @@
     },
     "requires": {
       "all": [
-        "small-military-outpost-research"
+        "medium-military-outpost-research"
       ]
     }
   },
@@ -782,7 +777,7 @@
     },
     "requires": {
       "all": [
-        "medium-military-outpost-research"
+        "large-military-outpost"
       ]
     }
   },

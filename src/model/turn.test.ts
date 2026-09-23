@@ -134,6 +134,20 @@ describe('endTurn', () => {
     expect(blueprintSlots({ ...lab, researched: [...lab.researched, 'reverse-engineering'] })).toBe(1)
   })
 
+  it('ties a prototype to the research named for it, not to the gateway research before it', () => {
+    // The sheet listed the gateway (Colonisation Research / Space Station Design) as the prerequisite for
+    // these; the advances that actually allow their construction are Hanger Defense and Satellite.
+    const e = empire()
+    expect(prototypesFor(e, ['colonisation-research']).map((f) => f.id)).not.toContain('ground-based-hangers')
+    const colonised = { ...e, researched: ['colonisation-research'] }
+    expect(availableBuilds(colonised, colonised.planets[0]).map((f) => f.id)).not.toContain('ground-based-hangers')
+    expect(prototypesFor(colonised, ['hanger-defense']).map((f) => f.id)).toEqual(['ground-based-hangers'])
+
+    expect(prototypesFor(e, ['space-station-design']).map((f) => f.id)).not.toContain('satellite')
+    const stations = { ...e, researched: ['space-station-design'] }
+    expect(prototypesFor(stations, ['satellite']).map((f) => f.id)).toEqual(['satellite'])
+  })
+
   it('only grants a prototype when this turn completes the last prerequisite', () => {
     const e = empire()
     // automated-mining-facilities needs two advances; researching one of them alone gives nothing

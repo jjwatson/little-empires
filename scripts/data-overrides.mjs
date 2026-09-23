@@ -82,6 +82,24 @@ export const PREREQ_OVERRIDES = {
   'facility:mining-barges-walker-scale': { note: 'Produced in a Walker Factory with the necessary blueprints.' },
   'facility:mining-barges-starfighter-scale': { note: 'Produced in a Starfighter Factory with the necessary blueprints.' },
   'facility:mining-barges-capital-scale': { note: 'Produced in a Capital Ship Dock with the necessary blueprints.' },
+  // The Construction sheet lists the *prerequisites of* the research that unlocks these, not the research
+  // itself (e.g. "Colonisation Research" for Ground Based Hangers, whose advance is Hanger Defense).
+  'facility:ground-based-hangers': { all: ['hanger-defense'] },
+  'facility:satellite': { all: ['satellite'] },
+  'facility:orbital-hangers': { all: ['orbital-hangers'] },
+  'facility:proximity-mines': { all: ['proximity-mines'] },
+  'facility:system-sensor-net': { all: ['systems-sensor-net'] },
+  'facility:trade-fleets': { all: ['trade-fleets'] },
+  'facility:refinery': { all: ['refinery-research'] },
+  'facility:gas-cloud-mining-station': { all: ['gas-cloud-mining-station-research'] },
+  'facility:orbital-farms': { all: ['orbital-farms-research'] },
+  'facility:asteroid-mining-stations': { all: ['asteroid-mining-stations'] },
+  'facility:small-military-stations': { all: ['small-military-space-station'] },
+  'facility:small-military-outpost': { all: ['small-military-outpost-research'] },
+  'facility:medium-military-outpost': { all: ['medium-military-outpost-research'] },
+  'facility:large-military-outpost': { all: ['large-military-outpost'] },
+  'facility:planetary-shields': { all: ['planetary-shields'] },
+  'facility:overlapping-planetary-shields': { all: ['superior-planetary-shields'] },
 }
 
 // advance id -> tier, when the overview block doesn't list it
