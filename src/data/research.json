@@ -440,7 +440,8 @@
     "name": "Military Academy",
     "field": "Military",
     "tier": 2,
-    "effects": "Improved levels of training for Officers and Non-Comms",
+    "unlocksTier": 3,
+    "effects": "Improved levels of training for Officers and Non-Comms. Unlocks tier 3 advances.",
     "notes": "Military Personal are rated using the Veteran Rebel skill Range",
     "cost": {
       "credits": 20000,
